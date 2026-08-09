@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO · 二次元 Sci-Fi 风格预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #0a0a12;
+    color: #e0e0f0;
+    min-height: 100vh;
+  }
+
+  /* 全局网格背景 */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(138, 100, 235, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138, 100, 235, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; }
+
+  /* Header */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,18,0.88);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(138,100,235,0.15);
+    padding: 28px 40px;
+    text-align: center;
+  }
+  .header .badge {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.7em;
+    letter-spacing: 3px;
+    color: #a78bfa;
+    border: 1px solid rgba(167,139,250,0.3);
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 2.6em;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff7eb3, #a78bfa, #4a90d9, #00d4aa, #c9a87c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  @keyframes gradient-shift {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .header .subtitle {
+    color: #666;
+    margin-top: 8px;
+    font-size: 1em;
+  }
+
+  /* Hero character row */
+  .character-bar {
+    display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+    padding: 32px 40px 8px; max-width: 1200px; margin: 0 auto;
+  }
+  .char-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; border-radius: 30px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    transition: all 0.35s;
+    text-decoration: none; color: #777;
+  }
+  .char-chip:hover {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.06);
+  }
+  .char-chip .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    box-shadow: 0 0 10px currentColor;
+  }
+  .char-chip .name { font-size: 0.85em; font-weight: 600; }
+  .char-chip.miku:hover { border-color: #00d4aa; color: #00d4aa; }
+  .char-chip.gura:hover { border-color: #4a90d9; color: #4a90d9; }
+  .char-chip.eva:hover { border-color: #ff6600; color: #ff6600; }
+  .char-chip.frieren:hover { border-color: #c9a87c; color: #c9a87c; }
+  .char-chip.sakura:hover { border-color: #ff7eb3; color: #ff7eb3; }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 28px; padding: 28px 40px 60px;
+    max-width: 1600px; margin: 0 auto;
+  }
+
+  /* Card */
+  .style-card {
+    background: rgba(20,18,30,0.7);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    backdrop-filter: blur(10px);
+  }
+  .style-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  }
+  .card-miku:hover { border-color: rgba(0,212,170,0.5); box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,212,170,0.1); }
+  .card-gura:hover { border-color: rgba(74,144,217,0.5); box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(74,144,217,0.1); }
+  .card-eva:hover { border-color: rgba(255,102,0,0.5); box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,102,0,0.1); }
+  .card-frieren:hover { border-color: rgba(201,168,124,0.5); box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,124,0.1); }
+  .card-sakura:hover { border-color: rgba(255,126,179,0.5); box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,126,179,0.1); }
+
+  /* Preview iframe */
+  .card-preview {
+    position: relative; height: 280px; overflow: hidden;
+    background: #0a0a12; cursor: pointer;
+  }
+  .card-preview iframe {
+    width: 140%; height: 140%; border: none;
+    transform: scale(0.714); transform-origin: top left;
+    pointer-events: none; transition: transform 0.5s;
+  }
+  .style-card:hover .card-preview iframe { transform: scale(0.74); }
+  .card-preview .veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(10,10,18,0.8));
+    transition: background 0.3s;
+  }
+  .card-preview .view-badge {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(10px);
+    padding: 8px 22px; border-radius: 20px;
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    color: #ccc; font-size: 0.8em; opacity: 0;
+    transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .style-card:hover .view-badge { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Info */
+  .card-info { padding: 20px 24px; }
+  .card-info .char-icon { font-size: 2em; margin-bottom: 4px; }
+  .card-info h3 { font-size: 1.15em; font-weight: 700; margin-bottom: 4px; }
+  .card-info .jp { font-size: 0.75em; color: #555; margin-bottom: 10px; }
+  .card-info .desc { font-size: 0.85em; color: #888; line-height: 1.6; }
+  .card-info .palette { display: flex; gap: 8px; margin-top: 14px; }
+  .card-info .palette .swatch {
+    width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .card-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .card-actions a {
+    flex: 1; text-align: center; padding: 10px 0; border-radius: 10px;
+    font-size: 0.82em; font-weight: 600; text-decoration: none; transition: all 0.3s;
+  }
+  .btn-live { color: #fff; }
+  .btn-live:hover { filter: brightness(1.2); }
+  .btn-code { background: transparent; color: #777; border: 1px solid rgba(255,255,255,0.08); }
+  .btn-code:hover { border-color: rgba(255,255,255,0.2); color: #ccc; }
+
+  .footer { text-align: center; padding: 40px; color: #444; border-top: 1px solid rgba(255,255,255,0.03); }
+
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; padding: 16px; }
+    .header { padding: 20px; }
+    .header h1 { font-size: 1.6em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <div class="badge">ANIME × SCI-FI COLLECTION</div>
+    <h1>🌟 Cola_CaO 二次元科幻风格</h1>
+    <p class="subtitle">融合 moejue.cn 二次元美学 × Sci-Fi HUD 界面 · 5 位角色主题 · 5 种完全不同的视觉体验</p>
+  </header>
+
+  <!-- Character quick-jump -->
+  <div class="character-bar">
+    <a href="#miku" class="char-chip miku">
+      <span class="dot" style="background:#00d4aa;color:#00d4aa;"></span>
+      <span class="name">初音未来 · Miku</span>
+    </a>
+    <a href="#gura" class="char-chip gura">
+      <span class="dot" style="background:#4a90d9;color:#4a90d9;"></span>
+      <span class="name">Gawr Gura · Shark</span>
+    </a>
+    <a href="#eva" class="char-chip eva">
+      <span class="dot" style="background:#ff6600;color:#ff6600;"></span>
+      <span class="name">EVA · 福音战士</span>
+    </a>
+    <a href="#frieren" class="char-chip frieren">
+      <span class="dot" style="background:#c9a87c;color:#c9a87c;"></span>
+      <span class="name">芙莉莲 · Frieren</span>
+    </a>
+    <a href="#sakura" class="char-chip sakura">
+      <span class="dot" style="background:#ff7eb3;color:#ff7eb3;"></span>
+      <span class="name">総合 · Sakura</span>
+    </a>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid">
+
+    <!-- 01 - Miku -->
+    <div class="style-card card-miku" id="miku">
+      <div class="card-preview" onclick="window.open('blog-style-anime-01.html','_blank')">
+        <iframe src="blog-style-anime-01.html" loading="lazy"></iframe>
+        <div class="veil"></div>
+        <div class="view-badge">🔗 全屏预览</div>
+      </div>
+      <div class="card-info">
+        <div class="char-icon">🎤</div>
+        <h3 style="color:#00d4aa;">初音未来 · 电音葱娘</h3>
+        <div class="jp">HATSUNE MIKU — VOCALOID</div>
+        <p class="desc">青绿色调融合赛博舞台美学。音乐波形装饰、霓虹发光边框、Vocaloid 科技感——为代码注入电音的律动。</p>
+        <div class="palette">
+          <span class="swatch" style="background:#00d4aa;"></span>
+          <span class="swatch" style="background:#39c5bb;"></span>
+          <span class="swatch" style="background:#86cecb;"></span>
+          <span class="swatch" style="background:#0a1a1a;"></span>
+        </div>
+        <div class="card-actions">
+          <a href="blog-style-anime-01.html" target="_blank" class="btn-live" style="background:#00d4aa;">🎵 预览 Miku</a>
+          <a href="blog-style-anime-01.html" target="_blank" class="btn-code">📄 源码</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 - Gura -->
+    <div class="style-card card-gura" id="gura">
+      <div class="card-preview" onclick="window.open('blog-style-anime-02.html','_blank')">
+        <iframe src="blog-style-anime-02.html" loading="lazy"></iframe>
+        <div class="veil"></div>
+        <div class="view-badge">🔗 全屏预览</div>
+      </div>
+      <div class="card-info">
+        <div class="char-icon">🦈</div>
+        <h3 style="color:#4a90d9;">Gawr Gura · 深海鲨鱼</h3>
+        <div class="jp">がうる・ぐら — hololive EN</div>
+        <p class="desc">深海蓝调配上亚特兰蒂斯科技。气泡粒子上升、鲨鱼鳍装饰、海洋般深邃的渐变——潜入代码的蔚蓝深海。</p>
+        <div class="palette">
+          <span class="swatch" style="background:#4a90d9;"></span>
+          <span class="swatch" style="background:#e8734a;"></span>
+          <span class="swatch" style="background:#7ec8e3;"></span>
+          <span class="swatch" style="background:#05101e;"></span>
+        </div>
+        <div class="card-actions">
+          <a href="blog-style-anime-02.html" target="_blank" class="btn-live" style="background:#4a90d9;">🐟 预览 Gura</a>
+          <a href="blog-style-anime-02.html" target="_blank" class="btn-code">📄 源码</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 - Eva -->
+    <div class="style-card card-eva" id="eva">
+      <div class="card-preview" onclick="window.open('blog-style-anime-03.html','_blank')">
+        <iframe src="blog-style-anime-03.html" loading="lazy"></iframe>
+        <div class="veil"></div>
+        <div class="view-badge">🔗 全屏预览</div>
+      </div>
+      <div class="card-info">
+        <div class="char-icon">⚡</div>
+        <h3 style="color:#ff6600;">EVA · 神经同步</h3>
+        <div class="jp">EVANGELION — NERV HQ</div>
+        <p class="desc">紫绿橙三色警报配色。六边形蜂巢背景、NERV 风格界面、紧急状态闪烁——突破 AT 力场的视觉冲击。</p>
+        <div class="palette">
+          <span class="swatch" style="background:#6b3fa0;"></span>
+          <span class="swatch" style="background:#43b02a;"></span>
+          <span class="swatch" style="background:#ff6600;"></span>
+          <span class="swatch" style="background:#0a0a0f;"></span>
+        </div>
+        <div class="card-actions">
+          <a href="blog-style-anime-03.html" target="_blank" class="btn-live" style="background:#6b3fa0;">💜 预览 EVA</a>
+          <a href="blog-style-anime-03.html" target="_blank" class="btn-code">📄 源码</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 - Frieren -->
+    <div class="style-card card-frieren" id="frieren">
+      <div class="card-preview" onclick="window.open('blog-style-anime-04.html','_blank')">
+        <iframe src="blog-style-anime-04.html" loading="lazy"></iframe>
+        <div class="veil"></div>
+        <div class="view-badge">🔗 全屏预览</div>
+      </div>
+      <div class="card-info">
+        <div class="char-icon">✨</div>
+        <h3 style="color:#c9a87c;">葬送的芙莉莲 · 千年旅路</h3>
+        <div class="jp">葬送のフリーレン — ELF MAGE</div>
+        <p class="desc">柔和金色与薰衣草紫。星尘粒子飘散、魔法阵装饰圈、古籍魔法书质感——千年旅途的优雅与从容。</p>
+        <div class="palette">
+          <span class="swatch" style="background:#c9a87c;"></span>
+          <span class="swatch" style="background:#a78bfa;"></span>
+          <span class="swatch" style="background:#e8d5f5;"></span>
+          <span class="swatch" style="background:#1a1520;"></span>
+        </div>
+        <div class="card-actions">
+          <a href="blog-style-anime-04.html" target="_blank" class="btn-live" style="background:#c9a87c;">📖 预览 Frieren</a>
+          <a href="blog-style-anime-04.html" target="_blank" class="btn-code">📄 源码</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 - Sakura -->
+    <div class="style-card card-sakura" id="sakura">
+      <div class="card-preview" onclick="window.open('blog-style-anime-05.html','_blank')">
+        <iframe src="blog-style-anime-05.html" loading="lazy"></iframe>
+        <div class="veil"></div>
+        <div class="view-badge">🔗 全屏预览</div>
+      </div>
+      <div class="card-info">
+        <div class="char-icon">🌸</div>
+        <h3 style="color:#ff7eb3;">桜 · 総合二次元</h3>
+        <div class="jp">SAKURA — 2D DREAM WORLD</div>
+        <p class="desc">经典樱花粉与梦幻天空蓝。飘落花瓣动画、渐变光晕、萌系配色——最纯正的二次元体验，与科幻的完美融合。</p>
+        <div class="palette">
+          <span class="swatch" style="background:#ff7eb3;"></span>
+          <span class="swatch" style="background:#8ec5fc;"></span>
+          <span class="swatch" style="background:#ffb3d0;"></span>
+          <span class="swatch" style="background:#0d0d1a;"></span>
+        </div>
+        <div class="card-actions">
+          <a href="blog-style-anime-05.html" target="_blank" class="btn-live" style="background:#ff7eb3;">🌸 预览 Sakura</a>
+          <a href="blog-style-anime-05.html" target="_blank" class="btn-code">📄 源码</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Guide -->
+  <div style="max-width:800px;margin:0 auto 60px;padding:0 20px;">
+    <h2 style="font-size:1.6em;margin-bottom:20px;text-align:center;color:#a78bfa;">📐 设计体系说明</h2>
+    <div style="display:grid;gap:12px;">
+      <div style="background:rgba(20,18,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;">
+        <strong style="color:#a78bfa;">🔬 Sci-Fi 基因（继承自 Style-18）</strong>
+        <p style="color:#777;margin-top:6px;font-size:0.88em;">扫描线覆盖 · 网格背景 · 发光边框 · 角落括号 · HUD面板 · 菱形装饰 · 脉冲指示器 · 数据行 · 六边形元素</p>
+      </div>
+      <div style="background:rgba(20,18,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;">
+        <strong style="color:#ff7eb3;">🎀 二次元基因（借鉴自 moejue.cn）</strong>
+        <p style="color:#777;margin-top:6px;font-size:0.88em;">玻璃态卡片 · 大圆角 · 多层柔和阴影 · 渐变光晕球 · 平滑hover提升 · 角色信息面板 · Live2D装饰区 · 主题预加载器 · 半透明背景</p>
+      </div>
+      <div style="background:rgba(20,18,30,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:18px;">
+        <strong style="color:#00d4aa;">✨ 角色差异化</strong>
+        <p style="color:#777;margin-top:6px;font-size:0.88em;">每位角色拥有独特的：配色系统 · 专属CSS动画 · 装饰图案（波形/气泡/蜂巢/星尘/花瓣）· 排版风格 · 情感氛围</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Cola_CaO · 可乐的二次元博客 · 风格文件位于 www 目录下 blog-style-anime-01~05.html</p>
+    <p style="margin-top:6px;font-size:0.8em;">可直接在浏览器中打开查看 · 选择喜欢的风格后继续深入开发</p>
+  </footer>
+</div>
+
+</body>
+</html>

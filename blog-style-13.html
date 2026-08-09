@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cola_CaO &mdash; 可乐的博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           Gradient Modern 渐变现代 — Cola_CaO 博客
+           鲜艳渐变 · 流畅卡片 · 现代圆角 · 动态色彩过渡
+           ============================================================ */
+
+        :root {
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --white: #ffffff;
+            --bg: #f8f9fc;
+            --text: #2d3748;
+            --text-light: #718096;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 全局背景柔和渐变 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(240, 147, 251, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 40%, rgba(79, 172, 254, 0.04) 0%, transparent 50%);
+        }
+
+        /* ---------- 容器 ---------- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           导航栏 — 玻璃效果
+           ============================================================ */
+        .site-header {
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(248, 249, 252, 0.75);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .site-logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .main-nav a {
+            display: block;
+            padding: 8px 18px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        /* ============================================================
+           Hero — 大面积渐变
+           ============================================================ */
+        .hero {
+            background: var(--gradient-hero);
+            padding: 100px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            clip-path: ellipse(120% 100% at 50% 0%);
+        }
+
+        /* Hero 动画光斑 */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -10%;
+            width: 60%;
+            height: 160%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            animation: heroShimmer 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -10%;
+            width: 60%;
+            height: 160%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            transform: rotate(15deg);
+            animation: heroShimmer 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes heroShimmer {
+            0%, 100% { opacity: 0.6; transform: rotate(-15deg) scale(1); }
+            50% { opacity: 1; transform: rotate(-15deg) scale(1.1); }
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .hero-desc {
+            max-width: 480px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 14px 36px;
+            background: #fff;
+            color: #667eea;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.35s ease;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, 0.22);
+            background: linear-gradient(135deg, #fff 0%, #f0f0ff 100%);
+        }
+
+        /* ============================================================
+           主内容区
+           ============================================================ */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 40px;
+            padding: 60px 0;
+        }
+
+        /* ---------- 文章列表 ---------- */
+        .section-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 28px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 3px;
+            background: var(--gradient-1);
+        }
+
+        .post-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        /* 卡片左侧渐变装饰条 */
+        .post-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+            background: var(--gradient-1);
+            transition: width 0.35s ease;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .post-card:hover::before {
+            width: 6px;
+        }
+
+        .post-card:nth-child(2)::before { background: var(--gradient-2); }
+        .post-card:nth-child(3)::before { background: var(--gradient-3); }
+        .post-card:nth-child(4)::before { background: var(--gradient-1); }
+        .post-card:nth-child(5)::before { background: var(--gradient-2); }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .post-meta .category {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .cat-tech { background: var(--gradient-1); }
+        .cat-prod { background: var(--gradient-2); }
+        .cat-oss  { background: var(--gradient-3); }
+        .cat-read { background: var(--gradient-1); }
+        .cat-life { background: var(--gradient-2); }
+
+        .post-card h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        .post-card:hover h3 {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .post-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #667eea;
+            text-decoration: none;
+            transition: gap 0.3s ease, color 0.3s ease;
+        }
+
+        .read-more::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .read-more:hover {
+            gap: 12px;
+            color: #764ba2;
+        }
+
+        .read-more:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* ============================================================
+           侧边栏
+           ============================================================ */
+        .sidebar > * {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .about-widget .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .about-widget p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        /* 标签云 */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-cloud a {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 50px;
+            background: #f0f2f8;
+            transition: all 0.3s ease;
+        }
+
+        .tag-cloud a:hover {
+            color: #fff;
+            background: var(--gradient-1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+        }
+
+        .tag-cloud a:nth-child(3n+1):hover { background: var(--gradient-1); }
+        .tag-cloud a:nth-child(3n+2):hover { background: var(--gradient-2); }
+        .tag-cloud a:nth-child(3n+3):hover { background: var(--gradient-3); }
+
+        /* ============================================================
+           页脚
+           ============================================================ */
+        .site-footer {
+            background: #2d3748;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .site-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-hero);
+        }
+
+        .site-footer .footer-brand {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .site-footer .footer-copy {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ============================================================
+           滚动条美化
+           ============================================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+           响应式
+           ============================================================ */
+        @media (max-width: 860px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            .hero {
+                clip-path: ellipse(140% 100% at 50% 0%);
+                padding: 60px 0 50px;
+            }
+            .main-nav a {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== 导航栏 ========== -->
+    <header class="site-header">
+        <div class="container">
+            <div class="site-logo"><a href="#">Cola_CaO</a></div>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">文章</a></li>
+                    <li><a href="#">关于</a></li>
+                    <li><a href="#">联系</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ========== Hero ========== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">✦ Welcome to My Blog</div>
+            <h1 class="hero-title">可乐</h1>
+            <p class="hero-tagline">记录生活 · 分享技术 · 品味人生</p>
+            <p class="hero-desc">
+                在代码与文字之间寻找平衡。这里是我记录技术探索、生活感悟与阅读笔记的一方天地。
+            </p>
+            <a href="#" class="hero-cta">开始阅读</a>
+        </div>
+    </section>
+
+    <!-- ========== 主内容 ========== -->
+    <main class="content-wrapper container">
+
+        <!-- 文章列表 -->
+        <section class="posts">
+            <h2 class="section-title">最新文章</h2>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <span>2024年12月15日</span>
+                    <span class="category cat-tech">技术</span>
+                </div>
+                <h3>探索现代 Web 开发的新趋势</h3>
+                <p>
+                    Web 技术日新月异，从 WebAssembly 到边缘计算，从微前端到 Island Architecture，每一项新技术都在重新定义前端开发的边界。本文梳理了当前最值得关注的几个方向，帮助你在这个快速变化的领域中保持敏锐。
+                </p>
+                <a href="#" class="read-more">阅读全文</a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <span>2024年11月20日</span>
+                    <span class="category cat-prod">效率</span>
+                </div>
+                <h3>如何打造高效的工作流</h3>
+                <p>
+                    效率不在于做更多的事，而在于做对的事。经过多年的尝试和迭代，我总结了一套结合 GTD 与番茄工作法的个人生产力系统。在本文中你将看到具体的工具链与习惯养成方法。
+                </p>
+                <a href="#" class="read-more">阅读全文</a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <span>2024年10月8日</span>
+                    <span class="category cat-oss">开源</span>
+                </div>
+                <h3>我的开源之旅：从零到一</h3>
+                <p>
+                    从一个 GitHub 新手的第一个 Pull Request，到维护拥有数百 Star 的项目，这段旅程教会了我协作、耐心和持续学习的价值。开源不仅仅是代码，更是一种文化。
+                </p>
+                <a href="#" class="read-more">阅读全文</a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <span>2024年9月15日</span>
+                    <span class="category cat-read">阅读</span>
+                </div>
+                <h3>读书笔记：《设计心理学》</h3>
+                <p>
+                    Don Norman 的经典之作让我重新审视日常物品的设计逻辑。好的设计应该让人不必思考就能正确使用，这一原则同样适用于软件产品的交互设计。
+                </p>
+                <a href="#" class="read-more">阅读全文</a>
+            </article>
+
+            <article class="post-card">
+                <div class="post-meta">
+                    <span>2024年8月22日</span>
+                    <span class="category cat-life">生活</span>
+                </div>
+                <h3>城市漫步：寻找隐藏的咖啡馆</h3>
+                <p>
+                    忙碌的都市节奏中，偶尔放慢脚步，穿梭在巷弄之间，发现那些隐蔽而独特的咖啡馆，是生活中最简单却最珍贵的乐趣之一。这篇文章记录了我发现的几家宝藏店铺。
+                </p>
+                <a href="#" class="read-more">阅读全文</a>
+            </article>
+        </section>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="about-widget">
+                <div class="avatar">C</div>
+                <h4 style="text-align:center;">关于博主</h4>
+                <p>
+                    我是可乐，一名热爱技术与生活的全栈开发者。在这里记录我的学习心得、读书笔记以及城市漫游的发现。相信代码可以改变世界，也相信文字能温暖人心。
+                </p>
+            </div>
+
+            <div class="tags-widget">
+                <h4>标签云</h4>
+                <div class="tag-cloud">
+                    <a href="#">Web开发</a>
+                    <a href="#">JavaScript</a>
+                    <a href="#">CSS</a>
+                    <a href="#">Python</a>
+                    <a href="#">设计</a>
+                    <a href="#">开源</a>
+                    <a href="#">读书</a>
+                    <a href="#">效率</a>
+                    <a href="#">生活</a>
+                    <a href="#">咖啡</a>
+                    <a href="#">摄影</a>
+                    <a href="#">旅行</a>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- ========== 页脚 ========== -->
+    <footer class="site-footer">
+        <div class="footer-brand">Cola_CaO</div>
+        <p class="footer-copy">&copy; 2024 可乐的博客 — 记录生活，分享技术，品味人生</p>
+    </footer>
+
+</body>
+</html>

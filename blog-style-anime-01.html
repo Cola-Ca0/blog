@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO — 可乐的电音基站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS Custom Properties
+   ============================================================ */
+:root {
+  --holo-teal:       #00d4aa;
+  --holo-mint:       #39c5bb;
+  --holo-aqua:       #86cecb;
+  --bg-deep:         #0a1a1a;
+  --bg-card:         rgba(0, 30, 30, 0.70);
+  --bg-card-hover:   rgba(0, 40, 38, 0.82);
+  --border-glow:     rgba(0, 212, 170, 0.30);
+  --border-strong:   rgba(0, 212, 170, 0.55);
+  --text-primary:    #e0f5f0;
+  --text-secondary:  #a0c8c0;
+  --text-muted:      #6a9a90;
+  --shadow-card:     0 4px 24px rgba(0, 0, 0, 0.45), 0 0 12px rgba(0, 212, 170, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 28px rgba(0, 212, 170, 0.18);
+  --shadow-glow:     0 0 20px rgba(0, 212, 170, 0.35), 0 0 60px rgba(0, 212, 170, 0.10);
+  --radius-sm:       8px;
+  --radius-md:       14px;
+  --radius-lg:       20px;
+  --radius-xl:       26px;
+  --font-body:       'Exo 2', 'Rajdhani', sans-serif;
+  --font-display:    'Orbitron', 'Exo 2', sans-serif;
+  --transition-smooth: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --max-width:       1200px;
+}
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================================
+   Scanline Overlay (Sci-Fi)
+   ============================================================ */
+.scanlines {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+}
+
+.scanlines::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(10, 26, 26, 0.55) 100%);
+}
+
+/* ============================================================
+   Grid Background (Sci-Fi)
+   ============================================================ */
+.grid-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 170, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 170, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ============================================================
+   Glow Orbs (Anime)
+   ============================================================ */
+.glow-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(120px);
+  opacity: 0.12;
+}
+
+.glow-orb--top {
+  top: -15%;
+  right: -8%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--holo-teal), transparent 70%);
+  animation: orb-breathe 8s ease-in-out infinite;
+}
+
+.glow-orb--bottom {
+  bottom: -12%;
+  left: -6%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, var(--holo-mint), transparent 70%);
+  animation: orb-breathe 10s ease-in-out infinite reverse;
+}
+
+.glow-orb--mid {
+  top: 45%;
+  left: 55%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--holo-aqua), transparent 70%);
+  animation: orb-breathe 9s ease-in-out infinite 2s;
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.10; }
+  50%      { transform: scale(1.25); opacity: 0.16; }
+}
+
+/* ============================================================
+   Music Waveform Background (Miku Theme)
+   ============================================================ */
+.waveform-bg {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--holo-teal) 0px,
+    var(--holo-teal) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  mask: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  -webkit-mask: radial-gradient(ellipse at center, black 30%, transparent 70%);
+}
+
+/* ============================================================
+   Floating Musical Notes
+   ============================================================ */
+.floating-notes {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.note {
+  position: absolute;
+  font-size: 28px;
+  color: var(--holo-teal);
+  opacity: 0;
+  animation: float-note 6s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+}
+
+.note:nth-child(1) { left: 8%;  top: 70%; animation-delay: 0s; animation-duration: 5.5s; font-size: 24px; }
+.note:nth-child(2) { left: 18%; top: 55%; animation-delay: 1.2s; animation-duration: 6.5s; font-size: 32px; }
+.note:nth-child(3) { left: 28%; top: 78%; animation-delay: 2.4s; animation-duration: 5.0s; font-size: 20px; }
+.note:nth-child(4) { left: 75%; top: 60%; animation-delay: 3.6s; animation-duration: 7.0s; font-size: 26px; }
+.note:nth-child(5) { left: 85%; top: 72%; animation-delay: 1.8s; animation-duration: 5.8s; font-size: 30px; }
+.note:nth-child(6) { left: 92%; top: 50%; animation-delay: 4.2s; animation-duration: 6.2s; font-size: 22px; }
+.note:nth-child(7) { left: 48%; top: 82%; animation-delay: 0.6s; animation-duration: 4.8s; font-size: 18px; }
+.note:nth-child(8) { left: 58%; top: 88%; animation-delay: 2.8s; animation-duration: 5.4s; font-size: 28px; }
+
+@keyframes float-note {
+  0%   { transform: translateY(0) rotate(0deg);    opacity: 0; }
+  15%  { opacity: 0.45; }
+  50%  { transform: translateY(-30px) rotate(12deg); opacity: 0.60; }
+  85%  { opacity: 0.45; }
+  100% { transform: translateY(0) rotate(0deg);    opacity: 0; }
+}
+
+/* ============================================================
+   Page Wrapper
+   ============================================================ */
+.page-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   Navigation Bar
+   ============================================================ */
+.navbar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: calc(100% - 48px);
+  max-width: var(--max-width);
+  background: rgba(10, 26, 26, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-smooth);
+}
+
+.navbar:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-brand__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--holo-teal), var(--holo-mint));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 14px rgba(0, 212, 170, 0.45);
+  animation: icon-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(0, 212, 170, 0.45); }
+  50%      { box-shadow: 0 0 26px rgba(0, 212, 170, 0.75); }
+}
+
+.nav-brand__text {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--holo-teal);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 8px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-smooth);
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: var(--holo-teal);
+  border-radius: 1px;
+  transition: transform var(--transition-smooth);
+}
+
+.nav-links a:hover {
+  color: var(--holo-teal);
+  text-shadow: 0 0 8px rgba(0, 212, 170, 0.4);
+}
+
+.nav-links a:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* ============================================================
+   Hero Section
+   ============================================================ */
+.hero {
+  margin-top: 120px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: center;
+  min-height: 420px;
+}
+
+.hero__content {
+  position: relative;
+}
+
+/* Corner brackets on hero card */
+.hero__content::before,
+.hero__content::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--holo-teal);
+  border-style: solid;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 5;
+}
+.hero__content::before { top: -6px; left: -6px; border-width: 2px 0 0 2px; }
+.hero__content::after  { bottom: -6px; right: -6px; border-width: 0 2px 2px 0; }
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 14px;
+  text-shadow: 0 0 30px rgba(0, 212, 170, 0.3);
+}
+
+.hero__title span {
+  background: linear-gradient(135deg, var(--holo-teal), var(--holo-aqua));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero__subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  max-width: 480px;
+  line-height: 1.8;
+}
+
+.hero__stats {
+  display: flex;
+  gap: 24px;
+}
+
+.hero__stat {
+  text-align: center;
+}
+
+.hero__stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--holo-teal);
+  text-shadow: 0 0 12px rgba(0, 212, 170, 0.4);
+}
+
+.hero__stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Hero HUD Panel */
+.hero__panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  position: relative;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Diamond decorations */
+.hero__panel::before {
+  content: '◆';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: var(--holo-teal);
+  text-shadow: 0 0 10px var(--holo-teal);
+  animation: diamond-pulse 2s ease-in-out infinite;
+}
+
+@keyframes diamond-pulse {
+  0%, 100% { opacity: 0.5; text-shadow: 0 0 6px var(--holo-teal); }
+  50%      { opacity: 1;   text-shadow: 0 0 18px var(--holo-teal); }
+}
+
+.hero__panel-title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--holo-mint);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero__panel-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--holo-teal);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--holo-teal);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 6px var(--holo-teal); }
+  50%      { box-shadow: 0 0 18px var(--holo-teal), 0 0 30px rgba(0, 212, 170, 0.5); }
+}
+
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 212, 170, 0.12);
+  font-size: 0.9rem;
+}
+
+.hud-row:last-child { border-bottom: none; }
+
+.hud-row__label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hud-row__value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+}
+
+.hud-row__value--active {
+  color: var(--holo-teal);
+  text-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
+}
+
+.hud-bar {
+  margin-top: 16px;
+}
+
+.hud-bar__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.hud-bar__track {
+  height: 6px;
+  background: rgba(0, 212, 170, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hud-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--holo-teal), var(--holo-mint));
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 212, 170, 0.4);
+  animation: bar-glow 2s ease-in-out infinite;
+  transition: width 1.5s ease-out;
+}
+
+@keyframes bar-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 212, 170, 0.35); }
+  50%      { box-shadow: 0 0 20px rgba(0, 212, 170, 0.7); }
+}
+
+/* ============================================================
+   Character Showcase
+   ============================================================ */
+.char-showcase {
+  margin: 60px 0 50px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.char-showcase__divider {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+}
+
+.char-showcase__content {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.char-showcase__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--holo-teal);
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 14px rgba(0, 212, 170, 0.4);
+}
+
+.char-showcase__sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   Main Layout
+   ============================================================ */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  margin-bottom: 60px;
+}
+
+/* ============================================================
+   Blog Cards
+   ============================================================ */
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-glow), transparent);
+}
+
+.posts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-smooth);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Corner brackets on cards */
+.post-card::before,
+.post-card::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border-color: var(--holo-teal);
+  border-style: solid;
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+  pointer-events: none;
+}
+
+.post-card::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.post-card::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+.post-card:hover::before,
+.post-card:hover::after { opacity: 0.8; }
+
+/* Animated glow line on hover */
+.post-card__glow-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--holo-teal), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+  pointer-events: none;
+}
+
+.post-card:hover .post-card__glow-line { opacity: 0.9; }
+
+.post-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.post-card__date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.post-card__date::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--holo-mint);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--holo-mint);
+}
+
+.post-card__category {
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--holo-mint);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(0, 212, 170, 0.2);
+}
+
+.post-card__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  transition: color var(--transition-smooth);
+  letter-spacing: 0.03em;
+}
+
+.post-card:hover .post-card__title {
+  color: var(--holo-teal);
+  text-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+}
+
+.post-card__excerpt {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.post-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-card__read-more {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--holo-teal);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap var(--transition-smooth);
+}
+
+.post-card:hover .post-card__read-more { gap: 12px; }
+
+.post-card__read-more::after {
+  content: '→';
+  font-family: var(--font-display);
+  transition: transform var(--transition-smooth);
+}
+
+.post-card:hover .post-card__read-more::after { transform: translateX(4px); }
+
+.post-card__tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.post-card__tag {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border: 1px solid rgba(0, 212, 170, 0.15);
+  border-radius: 12px;
+  transition: all var(--transition-smooth);
+}
+
+.post-card:hover .post-card__tag {
+  border-color: rgba(0, 212, 170, 0.35);
+  color: var(--holo-aqua);
+}
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.sidebar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-smooth);
+  position: relative;
+}
+
+.sidebar-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.sidebar-card__title {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--holo-mint);
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-card__title::before {
+  content: '◆';
+  font-size: 8px;
+  color: var(--holo-teal);
+  text-shadow: 0 0 6px var(--holo-teal);
+}
+
+/* About */
+.about-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: block;
+  border: 2px solid var(--holo-teal);
+  box-shadow: 0 0 18px rgba(0, 212, 170, 0.35);
+}
+
+.about-name {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--holo-teal);
+  margin-bottom: 4px;
+}
+
+.about-role {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.about-bio {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.about-miku-ref {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 212, 170, 0.15);
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--holo-aqua);
+  font-style: italic;
+}
+
+/* Tag Cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-cloud__item {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border: 1px solid rgba(0, 212, 170, 0.2);
+  border-radius: 16px;
+  text-decoration: none;
+  transition: all var(--transition-smooth);
+  cursor: pointer;
+}
+
+.tag-cloud__item:hover {
+  background: rgba(0, 212, 170, 0.1);
+  border-color: var(--holo-teal);
+  color: var(--holo-teal);
+  box-shadow: 0 0 12px rgba(0, 212, 170, 0.15);
+}
+
+/* Archive */
+.archive-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.archive-list li {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.archive-list li:hover {
+  background: rgba(0, 212, 170, 0.06);
+  color: var(--holo-teal);
+}
+
+.archive-list li .count {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(0, 212, 170, 0.08);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  text-align: center;
+  padding: 36px 24px;
+  border-top: 1px solid rgba(0, 212, 170, 0.15);
+  position: relative;
+}
+
+.footer__brand {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--holo-teal);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.footer__tagline {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.footer__copy {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Footer diamond row */
+.footer__diamonds {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.footer__diamond {
+  width: 8px; height: 8px;
+  background: var(--holo-teal);
+  transform: rotate(45deg);
+  opacity: 0.4;
+  animation: diamond-fade 2s ease-in-out infinite;
+}
+
+.footer__diamond:nth-child(2) { animation-delay: 0.3s; }
+.footer__diamond:nth-child(3) { animation-delay: 0.6s; }
+.footer__diamond:nth-child(4) { animation-delay: 0.9s; }
+.footer__diamond:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes diamond-fade {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 0.8; box-shadow: 0 0 10px var(--holo-teal); }
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 170, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 170, 0.45); }
+
+/* ============================================================
+   Selection
+   ============================================================ */
+::selection {
+  background: rgba(0, 212, 170, 0.3);
+  color: #fff;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .hero__panel { max-width: 500px; }
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero__title { font-size: 2.2rem; }
+  .nav-links { display: none; }
+  .navbar { padding: 12px 20px; }
+  .hero { margin-top: 100px; }
+  .sidebar { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Data Rain Particle Effect
+   ============================================================ */
+.data-rain {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.data-drop {
+  position: absolute;
+  color: var(--holo-teal);
+  font-family: var(--font-display);
+  font-size: 12px;
+  opacity: 0;
+  animation: data-fall linear infinite;
+}
+
+@keyframes data-fall {
+  0%   { transform: translateY(-40px); opacity: 0; }
+  10%  { opacity: 0.15; }
+  90%  { opacity: 0.15; }
+  100% { transform: translateY(105vh); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Scanline Overlay -->
+<div class="scanlines" aria-hidden="true"></div>
+
+<!-- Grid Background -->
+<div class="grid-bg" aria-hidden="true"></div>
+
+<!-- Glow Orbs -->
+<div class="glow-orb glow-orb--top" aria-hidden="true"></div>
+<div class="glow-orb glow-orb--bottom" aria-hidden="true"></div>
+<div class="glow-orb glow-orb--mid" aria-hidden="true"></div>
+
+<!-- Music Waveform -->
+<div class="waveform-bg" aria-hidden="true"></div>
+
+<!-- Floating Musical Notes -->
+<div class="floating-notes" aria-hidden="true">
+  <span class="note">♪</span>
+  <span class="note">♫</span>
+  <span class="note">♪</span>
+  <span class="note">♬</span>
+  <span class="note">♩</span>
+  <span class="note">♪</span>
+  <span class="note">♫</span>
+  <span class="note">♬</span>
+</div>
+
+<!-- Data Rain -->
+<div class="data-rain" id="dataRain" aria-hidden="true"></div>
+
+<!-- ============================================================
+     Navigation
+     ============================================================ -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="nav-brand__icon">🎵</div>
+    <span class="nav-brand__text">Cola_CaO</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#home">HOME</a></li>
+    <li><a href="#blog">BLOG</a></li>
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#projects">PROJECTS</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+
+  <!-- ============================================================
+       Hero Section
+       ============================================================ -->
+  <section class="hero" id="home">
+    <div class="hero__content">
+      <h1 class="hero__title">
+        歌声<span>连接</span>世界
+      </h1>
+      <p class="hero__subtitle">
+        在数据的海洋中，每一个音符都是一个宇宙。这里是可乐的电音基站——用代码谱曲，以技术为歌。
+      </p>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <div class="hero__stat-value">39</div>
+          <div class="hero__stat-label">Articles</div>
+        </div>
+        <div class="hero__stat">
+          <div class="hero__stat-value">1.2k</div>
+          <div class="hero__stat-label">Stars</div>
+        </div>
+        <div class="hero__stat">
+          <div class="hero__stat-value">∞</div>
+          <div class="hero__stat-label">Music</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__panel">
+      <div class="hero__panel-title">SYSTEM STATUS // HUD v2.7</div>
+      <div class="hud-row">
+        <span class="hud-row__label">Node ID</span>
+        <span class="hud-row__value">CV01-MIKU-2026</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-row__label">Connection</span>
+        <span class="hud-row__value hud-row__value--active">ONLINE</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-row__label">Bandwidth</span>
+        <span class="hud-row__value">128 kbps</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-row__label">Frequency</span>
+        <span class="hud-row__value">440.00 Hz</span>
+      </div>
+      <div class="hud-row">
+        <span class="hud-row__label">Encoding</span>
+        <span class="hud-row__value">VOCALOID / FLAC</span>
+      </div>
+      <div class="hud-bar">
+        <div class="hud-bar__label"><span>Signal Strength</span><span>97%</span></div>
+        <div class="hud-bar__track"><div class="hud-bar__fill" style="width:97%"></div></div>
+      </div>
+      <div class="hud-bar" style="margin-top:10px">
+        <div class="hud-bar__label"><span>Harmonic Sync</span><span>88%</span></div>
+        <div class="hud-bar__track"><div class="hud-bar__fill" style="width:88%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Character Showcase
+       ============================================================ -->
+  <div class="char-showcase">
+    <div class="char-showcase__divider"></div>
+    <div class="char-showcase__content">
+      <div class="char-showcase__title">CHARACTER: 初音未来</div>
+      <div class="char-showcase__sub">VOCALOID: HATSUNE MIKU // CODE NAME: CV01</div>
+    </div>
+    <div class="char-showcase__divider"></div>
+  </div>
+
+  <!-- ============================================================
+       Main Content + Sidebar
+       ============================================================ -->
+  <div class="main-layout">
+
+    <!-- Blog Posts -->
+    <main id="blog">
+      <h2 class="section-title">RECENT TRANSMISSIONS</h2>
+      <div class="posts-grid">
+
+        <!-- Post 1 -->
+        <article class="post-card">
+          <div class="post-card__glow-line"></div>
+          <div class="post-card__meta">
+            <span class="post-card__date">2026.07.28</span>
+            <span class="post-card__category">Web</span>
+          </div>
+          <h3 class="post-card__title">2026 Web 开发趋势：边缘计算与 AI 驱动的全栈变革</h3>
+          <p class="post-card__excerpt">从边缘函数到 AI 辅助编码，2026 年的 Web 开发生态正在经历一场静默革命。本文探讨了 Next.js 15 的 Streaming SSR、Bun 运行时生态的成熟，以及 WebAssembly 在浏览器中的全新应用场景。</p>
+          <div class="post-card__footer">
+            <span class="post-card__read-more">READ ARTICLE</span>
+            <div class="post-card__tags">
+              <span class="post-card__tag">WebDev</span>
+              <span class="post-card__tag">Edge</span>
+              <span class="post-card__tag">AI</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 2 -->
+        <article class="post-card">
+          <div class="post-card__glow-line"></div>
+          <div class="post-card__meta">
+            <span class="post-card__date">2026.07.15</span>
+            <span class="post-card__category">Productivity</span>
+          </div>
+          <h3 class="post-card__title">打造高效工作流：我的 CLI 工具链与自动化实践</h3>
+          <p class="post-card__excerpt">一个精心配置的开发环境能提升数倍效率。本文分享我的终端美化方案、一键部署脚本、Git Hooks 自动化，以及如何用 Makefile 统一管理项目命令。</p>
+          <div class="post-card__footer">
+            <span class="post-card__read-more">READ ARTICLE</span>
+            <div class="post-card__tags">
+              <span class="post-card__tag">CLI</span>
+              <span class="post-card__tag">Automation</span>
+              <span class="post-card__tag">DevOps</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 3 -->
+        <article class="post-card">
+          <div class="post-card__glow-line"></div>
+          <div class="post-card__meta">
+            <span class="post-card__date">2026.06.30</span>
+            <span class="post-card__category">Open Source</span>
+          </div>
+          <h3 class="post-card__title">开源之旅：从第一个 PR 到维护 500+ Star 项目的心路历程</h3>
+          <p class="post-card__excerpt">回望我的开源之路——从战战兢兢地提交第一个 Pull Request，到如今维护着一个被数千开发者使用的工具库。这不仅是技术的成长，更是对社区协作精神的深刻理解。</p>
+          <div class="post-card__footer">
+            <span class="post-card__read-more">READ ARTICLE</span>
+            <div class="post-card__tags">
+              <span class="post-card__tag">OSS</span>
+              <span class="post-card__tag">GitHub</span>
+              <span class="post-card__tag">Community</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 4 -->
+        <article class="post-card">
+          <div class="post-card__glow-line"></div>
+          <div class="post-card__meta">
+            <span class="post-card__date">2026.06.18</span>
+            <span class="post-card__category">Design</span>
+          </div>
+          <h3 class="post-card__title">设计心理学笔记：认知负荷与界面简约主义的平衡艺术</h3>
+          <p class="post-card__excerpt">为什么有些界面让人一见倾心，有些却令人望而生畏？答案藏在认知心理学中。本文从 Hick's Law、Fitts's Law 到 Miller's Law，拆解了什么才是真正的好设计。</p>
+          <div class="post-card__footer">
+            <span class="post-card__read-more">READ ARTICLE</span>
+            <div class="post-card__tags">
+              <span class="post-card__tag">UX</span>
+              <span class="post-card__tag">Psychology</span>
+              <span class="post-card__tag">Design</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 5 -->
+        <article class="post-card">
+          <div class="post-card__glow-line"></div>
+          <div class="post-card__meta">
+            <span class="post-card__date">2026.06.01</span>
+            <span class="post-card__category">Life</span>
+          </div>
+          <h3 class="post-card__title">城市咖啡馆巡礼：藏在巷弄里的代码灵感与手冲咖啡</h3>
+          <p class="post-card__excerpt">每座城市都有属于自己的咖啡馆故事。从上海的弄堂精品咖啡到东京的喫茶店，本书记录了我在旅途中遇见的最适合写代码的十家咖啡馆。</p>
+          <div class="post-card__footer">
+            <span class="post-card__read-more">READ ARTICLE</span>
+            <div class="post-card__tags">
+              <span class="post-card__tag">Coffee</span>
+              <span class="post-card__tag">Travel</span>
+              <span class="post-card__tag">Lifestyle</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="about">
+
+      <!-- About Card -->
+      <div class="sidebar-card">
+        <h3 class="sidebar-card__title">ABOUT ME</h3>
+        <svg class="about-avatar" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00d4aa"/>
+              <stop offset="100%" style="stop-color:#39c5bb"/>
+            </linearGradient>
+          </defs>
+          <circle cx="36" cy="36" r="35" fill="#0a2a2a" stroke="url(#avatarGrad)" stroke-width="2"/>
+          <text x="36" y="27" text-anchor="middle" fill="#00d4aa" font-size="16" font-family="sans-serif">🎤</text>
+          <text x="36" y="48" text-anchor="middle" fill="#86cecb" font-size="10" font-family="Orbitron, sans-serif" font-weight="700">MIKU</text>
+        </svg>
+        <div class="about-name">Cola_CaO</div>
+        <div class="about-role">Full-Stack Developer // Music Lover</div>
+        <p class="about-bio">
+          可乐的电音基站。热爱 Web 技术与电子音乐，相信代码和音符都是表达自我的语言。用初音的声线唱出对技术的热爱。
+        </p>
+        <p class="about-miku-ref">
+          「世界で一番お姫様、そう言う私を——世界一のバカにして。」<br>
+          — inspired by 初音ミク
+        </p>
+      </div>
+
+      <!-- Tag Cloud -->
+      <div class="sidebar-card">
+        <h3 class="sidebar-card__title">FREQUENCY TAGS</h3>
+        <div class="tag-cloud">
+          <a class="tag-cloud__item">JavaScript</a>
+          <a class="tag-cloud__item">TypeScript</a>
+          <a class="tag-cloud__item">React</a>
+          <a class="tag-cloud__item">Vue</a>
+          <a class="tag-cloud__item">Node.js</a>
+          <a class="tag-cloud__item">CSS</a>
+          <a class="tag-cloud__item">DevOps</a>
+          <a class="tag-cloud__item">AI/ML</a>
+          <a class="tag-cloud__item">Music</a>
+          <a class="tag-cloud__item">VOCALOID</a>
+          <a class="tag-cloud__item">Design</a>
+          <a class="tag-cloud__item">Open Source</a>
+        </div>
+      </div>
+
+      <!-- Archive -->
+      <div class="sidebar-card">
+        <h3 class="sidebar-card__title">ARCHIVE LOG</h3>
+        <ul class="archive-list">
+          <li>2026 July <span class="count">4</span></li>
+          <li>2026 June <span class="count">5</span></li>
+          <li>2026 May <span class="count">3</span></li>
+          <li>2026 April <span class="count">6</span></li>
+          <li>2026 March <span class="count">4</span></li>
+          <li>2026 February <span class="count">5</span></li>
+          <li>Older Archives <span class="count">12</span></li>
+        </ul>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- ============================================================
+       Footer
+       ============================================================ -->
+  <footer class="footer">
+    <div class="footer__diamonds">
+      <div class="footer__diamond"></div>
+      <div class="footer__diamond"></div>
+      <div class="footer__diamond"></div>
+      <div class="footer__diamond"></div>
+      <div class="footer__diamond"></div>
+    </div>
+    <div class="footer__brand">Cola_CaO // 可乐的电音基站</div>
+    <div class="footer__tagline">记录生活 · 分享技术 · 品味人生</div>
+    <div class="footer__copy">&copy; 2026 Cola_CaO. Powered by Code &amp; Music. All rights reserved.</div>
+  </footer>
+
+</div><!-- /.page-wrapper -->
+
+<!-- ============================================================
+     Data Rain Script
+     ============================================================ -->
+<script>
+(function() {
+  const container = document.getElementById('dataRain');
+  if (!container) return;
+
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン♪♫♬♩';
+  const dropCount = 28;
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < dropCount; i++) {
+    const drop = document.createElement('span');
+    drop.className = 'data-drop';
+    drop.textContent = chars[Math.floor(Math.random() * chars.length)];
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (8 + Math.random() * 16) + 's';
+    drop.style.animationDelay = Math.random() * 10 + 's';
+    drop.style.fontSize = (10 + Math.random() * 8) + 'px';
+    fragment.appendChild(drop);
+  }
+
+  container.appendChild(fragment);
+
+  // Periodic refresh: cycle characters for dynamic effect
+  setInterval(() => {
+    const drops = container.querySelectorAll('.data-drop');
+    drops.forEach(d => {
+      d.textContent = chars[Math.floor(Math.random() * chars.length)];
+      if (Math.random() < 0.08) {
+        d.style.left = Math.random() * 100 + '%';
+        d.style.animationDuration = (8 + Math.random() * 16) + 's';
+      }
+    });
+  }, 6000);
+})();
+</script>
+
+</body>
+</html>

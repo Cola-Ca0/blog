@@ -1,0 +1,29 @@
+[
+    {
+        "id": "6a6c869051e4e_6584",
+        "name": "cola",
+        "message": "luv(sic)pt.1",
+        "tag": "🍹 日常",
+        "time": "2026-08-01 03:27:12",
+        "ip": "127.0.0.1",
+        "is_pinned": false
+    },
+    {
+        "id": "6a6d818e73a9c_4525",
+        "name": "cola",
+        "message": "Hello world",
+        "tag": "🍹 日常",
+        "time": "2026-08-01 13:18:06",
+        "ip": "::1",
+        "is_pinned": false
+    },
+    {
+        "id": "6a6d84180bd7a_2322",
+        "name": "cola",
+        "message": "hello",
+        "tag": "🍹 日常",
+        "time": "2026-08-01 13:28:56",
+        "ip": "::1",
+        "is_pinned": false
+    }
+]

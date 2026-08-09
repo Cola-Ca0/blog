@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO — Swiss Grid</title>
+<style>
+/* ============================================================
+   BLOG STYLE 16: SWISS GRID
+   Helvetica, strict 12-column grid, asymmetric layout, red accents
+   ============================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --black: #111111;
+  --red: #e63946;
+  --light-gray: #f0f0f0;
+  --mid-gray: #cccccc;
+  --dark-gray: #555555;
+  --grid-gap: 20px;
+  --col-width: calc((1200px - 11 * var(--grid-gap)) / 12);
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- 12-Column Grid Container --- */
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+}
+
+/* --- Top Navigation --- */
+.site-header {
+  border-bottom: 2px solid var(--black);
+  padding: 24px 0;
+  margin-bottom: 0;
+}
+
+.site-header .grid {
+  align-items: end;
+}
+
+.site-brand {
+  grid-column: 1 / 4;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.site-brand .logo-mark {
+  width: 18px;
+  height: 18px;
+  background: var(--red);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.site-brand h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--black);
+}
+
+.site-brand h1 span {
+  color: var(--red);
+}
+
+.site-nav {
+  grid-column: 7 / 13;
+  display: flex;
+  justify-content: flex-end;
+  gap: 32px;
+  padding-bottom: 4px;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--black);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s;
+}
+
+.site-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--red);
+  transition: width 0.25s ease;
+}
+
+.site-nav a:hover { color: var(--red); }
+.site-nav a:hover::after { width: 100%; }
+.site-nav a.active { color: var(--red); }
+.site-nav a.active::after { width: 100%; }
+
+/* --- Hero Section --- */
+.hero {
+  padding: 60px 0 50px;
+  background: var(--white);
+}
+
+.hero .grid {
+  align-items: start;
+}
+
+.hero-text {
+  grid-column: 1 / 6;
+  padding-top: 20px;
+}
+
+.hero-text .number {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--red);
+  line-height: 1;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.hero-text h2 {
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.hero-text p {
+  font-size: 1rem;
+  color: var(--dark-gray);
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+.hero-image {
+  grid-column: 7 / 13;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gap);
+}
+
+.hero-image .img-block {
+  background: var(--light-gray);
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image .img-block:first-child {
+  grid-column: 1 / 3;
+  aspect-ratio: 3 / 2;
+}
+
+.hero-image .img-block .dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--red);
+  border-radius: 50%;
+}
+
+.hero-image .img-block .dot.tl { top: 16px; left: 16px; }
+.hero-image .img-block .dot.br { bottom: 16px; right: 16px; }
+
+.hero-image .img-block .block-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dark-gray);
+}
+
+/* --- Red Dot Decoration --- */
+.red-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* --- Section Headers --- */
+.section-header {
+  grid-column: 1 / 4;
+  border-top: 2px solid var(--black);
+  padding-top: 16px;
+}
+
+.section-header .section-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.section-header h3 {
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+  padding: 50px 0 60px;
+}
+
+.posts-section {
+  grid-column: 5 / 13;
+}
+
+/* Post Card - Asymmetric grid within */
+.post-card {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: var(--grid-gap);
+  padding: 32px 0;
+  border-bottom: 1px solid var(--mid-gray);
+  transition: background 0.2s;
+}
+
+.post-card:hover {
+  background: var(--light-gray);
+  margin: 0 -12px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.post-card .post-number {
+  grid-column: 1 / 2;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--mid-gray);
+  line-height: 1;
+  transition: color 0.25s;
+}
+
+.post-card:hover .post-number { color: var(--red); }
+
+.post-card .post-body {
+  grid-column: 2 / 6;
+}
+
+.post-card .post-body .post-date {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--red);
+  margin-bottom: 6px;
+}
+
+.post-card .post-body h4 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.post-card .post-body h4 a {
+  text-decoration: none;
+  color: var(--black);
+  transition: color 0.2s;
+}
+
+.post-card .post-body h4 a:hover { color: var(--red); }
+
+.post-card .post-body .post-excerpt {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+  line-height: 1.6;
+}
+
+.post-card .post-visual {
+  grid-column: 6 / 9;
+  display: flex;
+  align-items: center;
+}
+
+.post-card .post-visual .visual-block {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--light-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mid-gray);
+  position: relative;
+}
+
+.post-card:nth-child(even) .post-visual .visual-block {
+  aspect-ratio: 3 / 2;
+}
+
+.post-card:nth-child(odd) .post-body {
+  grid-column: 2 / 7;
+}
+
+.post-card:nth-child(odd) .post-visual {
+  grid-column: 7 / 9;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  grid-column: 1 / 4;
+  align-self: start;
+  position: sticky;
+  top: 20px;
+}
+
+.sidebar-widget {
+  margin-bottom: 40px;
+}
+
+.sidebar-widget .widget-title {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-top: 2px solid var(--black);
+  padding-top: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-widget .widget-title .red-dot {
+  margin-right: 0;
+}
+
+.about-widget p {
+  font-size: 0.85rem;
+  color: var(--dark-gray);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.about-widget .avatar {
+  width: 52px;
+  height: 52px;
+  background: var(--light-gray);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: var(--red);
+}
+
+/* Tag Cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-cloud a {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--black);
+  border: 1.5px solid var(--mid-gray);
+  transition: all 0.2s;
+}
+
+.tag-cloud a:hover {
+  border-color: var(--red);
+  color: var(--white);
+  background: var(--red);
+}
+
+/* --- Footer --- */
+.site-footer {
+  border-top: 4px solid var(--black);
+  padding: 50px 0 30px;
+  background: var(--white);
+}
+
+.site-footer .grid {
+  align-items: start;
+}
+
+.footer-brand {
+  grid-column: 1 / 4;
+}
+
+.footer-brand h3 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.footer-brand p {
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+  line-height: 1.6;
+}
+
+.footer-links {
+  grid-column: 5 / 8;
+}
+
+.footer-links h4 {
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+}
+
+.footer-links ul {
+  list-style: none;
+}
+
+.footer-links ul li {
+  margin-bottom: 6px;
+}
+
+.footer-links ul li a {
+  text-decoration: none;
+  color: var(--dark-gray);
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.footer-links ul li a:hover { color: var(--red); }
+
+.footer-social {
+  grid-column: 9 / 13;
+  text-align: right;
+}
+
+.footer-social h4 {
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+}
+
+.footer-social .social-links {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.footer-social .social-links a {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--black);
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.footer-social .social-links a:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+
+.footer-bottom {
+  grid-column: 1 / 13;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--mid-gray);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .site-brand { grid-column: 1 / 7; }
+  .site-nav { grid-column: 1 / 13; justify-content: flex-start; margin-top: 16px; gap: 20px; }
+  .hero-text { grid-column: 1 / 13; margin-bottom: 30px; }
+  .hero-image { grid-column: 1 / 13; }
+  .section-header { grid-column: 1 / 13; margin-bottom: 20px; }
+  .posts-section { grid-column: 1 / 13; }
+  .sidebar { grid-column: 1 / 13; position: static; margin-top: 40px; }
+  .footer-brand { grid-column: 1 / 7; margin-bottom: 24px; }
+  .footer-links { grid-column: 1 / 7; }
+  .footer-social { grid-column: 7 / 13; text-align: left; }
+  .footer-social .social-links { justify-content: flex-start; }
+  .post-card .post-number { grid-column: 1 / 2; font-size: 2.5rem; }
+  .post-card .post-body { grid-column: 2 / 9; }
+  .post-card .post-visual { grid-column: 1 / 9; margin-top: 12px; }
+  .post-card:nth-child(odd) .post-body { grid-column: 2 / 9; }
+  .post-card:nth-child(odd) .post-visual { grid-column: 1 / 9; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container">
+    <div class="grid">
+      <div class="site-brand">
+        <span class="logo-mark"></span>
+        <h1>Cola<span>_CaO</span></h1>
+      </div>
+      <nav class="site-nav">
+        <a href="#" class="active">首页</a>
+        <a href="#">文章</a>
+        <a href="#">项目</a>
+        <a href="#">关于</a>
+        <a href="#">联系</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="grid">
+      <div class="hero-text">
+        <span class="number">16</span>
+        <h2>瑞士网格<br>Swiss Grid</h2>
+        <p>精确、克制、有序。在严格的12列网格中寻找自由 —— 就像在约束中发现创造力的真正源泉。</p>
+      </div>
+      <div class="hero-image">
+        <div class="img-block">
+          <span class="dot tl"></span>
+          <span class="block-label">Grid System</span>
+          <span class="dot br"></span>
+        </div>
+        <div class="img-block">
+          <span class="dot tl"></span>
+          <span class="block-label">Typography</span>
+          <span class="dot br"></span>
+        </div>
+        <div class="img-block">
+          <span class="dot tl"></span>
+          <span class="block-label">Structure</span>
+          <span class="dot br"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MAIN CONTENT ============ -->
+<div class="container main-content">
+  <div class="grid">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-widget about-widget">
+        <div class="widget-title"><span class="red-dot"></span>关于我</div>
+        <div class="avatar">可</div>
+        <p>我是可乐，一名热爱设计系统的前端开发者。信仰瑞士设计学派 —— 少即是多，网格即秩序。</p>
+        <p>这里记录我的技术探索与生活碎片。</p>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="widget-title"><span class="red-dot"></span>标签云</div>
+        <div class="tag-cloud">
+          <a href="#">前端开发</a>
+          <a href="#">设计系统</a>
+          <a href="#">CSS Grid</a>
+          <a href="#">瑞士设计</a>
+          <a href="#">排版</a>
+          <a href="#">JavaScript</a>
+          <a href="#">极简主义</a>
+          <a href="#">开源</a>
+          <a href="#">读书笔记</a>
+          <a href="#">生活</a>
+        </div>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="widget-title"><span class="red-dot"></span>归档</div>
+        <div class="tag-cloud">
+          <a href="#">2024年12月</a>
+          <a href="#">2024年11月</a>
+          <a href="#">2024年10月</a>
+          <a href="#">2024年9月</a>
+          <a href="#">2024年8月</a>
+          <a href="#">2024年7月</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Posts -->
+    <main class="posts-section">
+      <!-- Post 01 -->
+      <article class="post-card">
+        <div class="post-number">01</div>
+        <div class="post-body">
+          <span class="post-date">2024年12月 · 技术</span>
+          <h4><a href="#">探索现代 Web 开发的新趋势</a></h4>
+          <p class="post-excerpt">从 WebAssembly 到边缘计算，从 CSS 容器查询到 View Transitions API——现代 Web 开发正在经历一场静默的革命。本文带你梳理 2024 年最重要的技术趋势。</p>
+        </div>
+        <div class="post-visual">
+          <div class="visual-block">Visual 01</div>
+        </div>
+      </article>
+
+      <!-- Post 02 -->
+      <article class="post-card">
+        <div class="post-number">02</div>
+        <div class="post-body">
+          <span class="post-date">2024年11月 · 效率</span>
+          <h4><a href="#">如何打造高效的工作流</a></h4>
+          <p class="post-excerpt">工欲善其事，必先利其器。分享我在过去一年中打磨出来的开发工作流：终端配置、编辑器插件、自动化脚本，以及最重要的 —— 如何保持专注。</p>
+        </div>
+        <div class="post-visual">
+          <div class="visual-block">Visual 02</div>
+        </div>
+      </article>
+
+      <!-- Post 03 -->
+      <article class="post-card">
+        <div class="post-number">03</div>
+        <div class="post-body">
+          <span class="post-date">2024年10月 · 开源</span>
+          <h4><a href="#">我的开源之旅：从零到一</a></h4>
+          <p class="post-excerpt">一年前我发布了第一个开源项目，如今它已收获 2000+ Star。这篇文章回顾了从 idea 到发布的全过程，以及开源社区带给我的成长与感动。</p>
+        </div>
+        <div class="post-visual">
+          <div class="visual-block">Visual 03</div>
+        </div>
+      </article>
+
+      <!-- Post 04 -->
+      <article class="post-card">
+        <div class="post-number">04</div>
+        <div class="post-body">
+          <span class="post-date">2024年9月 · 读书</span>
+          <h4><a href="#">读书笔记：《设计心理学》</a></h4>
+          <p class="post-excerpt">唐·诺曼的经典之作。好的设计不是装饰，而是让用户无需思考就能正确操作。重新审视我们每天都在做的「设计决策」。</p>
+        </div>
+        <div class="post-visual">
+          <div class="visual-block">Visual 04</div>
+        </div>
+      </article>
+
+      <!-- Post 05 -->
+      <article class="post-card">
+        <div class="post-number">05</div>
+        <div class="post-body">
+          <span class="post-date">2024年8月 · 生活</span>
+          <h4><a href="#">城市漫步：寻找隐藏的咖啡馆</a></h4>
+          <p class="post-excerpt">放下键盘，走出家门。我在城市的街角巷尾发现了五家不为人知的独立咖啡馆 —— 每一杯咖啡背后，都有一个关于热爱与坚持的故事。</p>
+        </div>
+        <div class="post-visual">
+          <div class="visual-block">Visual 05</div>
+        </div>
+      </article>
+    </main>
+
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="grid">
+      <div class="footer-brand">
+        <h3>Cola_CaO</h3>
+        <p>记录生活，分享技术，品味人生。<br>以瑞士设计的精确与克制，书写每一个像素的故事。</p>
+      </div>
+      <div class="footer-links">
+        <h4>快速链接</h4>
+        <ul>
+          <li><a href="#">关于博客</a></li>
+          <li><a href="#">所有文章</a></li>
+          <li><a href="#">RSS 订阅</a></li>
+          <li><a href="#">友情链接</a></li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <h4>社交媒体</h4>
+        <div class="social-links">
+          <a href="#" title="GitHub">GH</a>
+          <a href="#" title="Twitter">TW</a>
+          <a href="#" title="Email">EM</a>
+          <a href="#" title="RSS">RS</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2024 Cola_CaO · 可乐的博客</span>
+        <span>Built with Swiss Precision</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

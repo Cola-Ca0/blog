@@ -1,0 +1,56 @@
+/* ============================================================
+   DESIGN.md Tokens — Single Source of Truth
+   Included by: index.php, login.php, projects/index.php
+   §4.4 Shape Consistency Lock:
+     Interactive → pill (50px)
+     Containers → soft (20px)
+     Inputs    → medium (14px)
+   ============================================================ */
+:root {
+  --primary: #5ba0e0;
+  --primary-soft: #7ab8e8;
+  --secondary: #f08060;
+  --accent: #8ed0e8;
+  --bg-deep: #081828;
+  --bg-card: rgba(8, 28, 48, 0.72);
+  --bg-card-hover: rgba(10, 32, 55, 0.85);
+  --border-glow: rgba(91, 160, 224, 0.28);
+  --border-glow-strong: rgba(91, 160, 224, 0.5);
+  --text-primary: #d8eaf8;
+  --text-secondary: #98bcd8;
+  --text-muted: #68889e;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 50px;
+  --shadow-sm: 0 2px 12px rgba(91, 160, 224, 0.07);
+  --shadow-md: 0 8px 28px rgba(91, 160, 224, 0.1);
+  --shadow-lg: 0 16px 44px rgba(91, 160, 224, 0.15);
+  --shadow-glow: 0 0 20px rgba(91, 160, 224, 0.2), 0 0 55px rgba(142, 208, 232, 0.08);
+  --font-body: 'Exo 2', 'Quicksand', sans-serif;
+  --font-display: 'Rajdhani', 'Exo 2', sans-serif;
+  --font-mono: 'Fira Code', 'Courier New', monospace;
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Light theme — Sea Surface / 海面白昼 */
+[data-theme="light"] {
+  --primary: #458ab8;
+  --primary-soft: #5f9ec8;
+  --secondary: #d06848;
+  --accent: #3a80b0;
+  --bg-deep: #d6e4f0;
+  --bg-card: rgba(240, 246, 252, 0.78);
+  --bg-card-hover: rgba(245, 250, 255, 0.95);
+  --border-glow: rgba(58, 128, 176, 0.2);
+  --border-glow-strong: rgba(58, 128, 176, 0.42);
+  --text-primary: #1a3040;
+  --text-secondary: #3a5868;
+  --text-muted: #628090;
+  --shadow-sm: 0 2px 12px rgba(58, 128, 176, 0.06);
+  --shadow-md: 0 8px 28px rgba(58, 128, 176, 0.08);
+  --shadow-lg: 0 16px 44px rgba(58, 128, 176, 0.12);
+  --shadow-glow: 0 0 20px rgba(58, 128, 176, 0.15), 0 0 55px rgba(142, 208, 232, 0.05);
+}

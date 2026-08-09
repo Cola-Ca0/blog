@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO — 旅はまだ終わらない</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BLOG STYLE ANIME-04: ANIME x SCI-FI FUSION
+   芙莉莲 (Frieren) — Magic Grimoire Theme
+   Glassmorphism + HUD + Stardust + Magic Circles
+   ============================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Primary palette — 芙莉莲 (Frieren) */
+  --gold: #c9a87c;
+  --gold-dim: rgba(201, 168, 124, 0.35);
+  --gold-glow: rgba(201, 168, 124, 0.5);
+  --gold-soft: rgba(201, 168, 124, 0.12);
+
+  --purple: #a78bfa;
+  --purple-dim: rgba(167, 139, 250, 0.3);
+  --purple-glow: rgba(167, 139, 250, 0.45);
+  --purple-soft: rgba(167, 139, 250, 0.08);
+
+  --lavender: #e8d5f5;
+  --lavender-dim: rgba(232, 213, 245, 0.4);
+  --lavender-soft: rgba(232, 213, 245, 0.06);
+
+  /* Surfaces */
+  --bg-deep: #1a1520;
+  --bg-card: rgba(30, 25, 40, 0.75);
+  --bg-card-hover: rgba(35, 28, 48, 0.82);
+  --bg-panel: rgba(24, 20, 32, 0.7);
+  --bg-nav: rgba(20, 16, 28, 0.78);
+
+  /* Borders & Glows */
+  --border-glow: rgba(201, 168, 124, 0.25);
+  --border-strong: rgba(201, 168, 124, 0.45);
+  --border-subtle: rgba(201, 168, 124, 0.1);
+  --border-purple: rgba(167, 139, 250, 0.25);
+
+  /* Text */
+  --text-primary: #efe8d8;
+  --text-secondary: rgba(239, 232, 216, 0.65);
+  --text-dim: rgba(239, 232, 216, 0.4);
+
+  /* Typography */
+  --font-body: 'Noto Serif SC', 'Cormorant Garamond', serif;
+  --font-display: 'Cinzel', 'Noto Serif SC', serif;
+  --font-mono: 'Rajdhani', 'Consolas', monospace;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(201, 168, 124, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), 0 2px 12px rgba(201, 168, 124, 0.15), 0 0 40px rgba(167, 139, 250, 0.08);
+  --shadow-glow-gold: 0 0 20px rgba(201, 168, 124, 0.2), 0 0 60px rgba(201, 168, 124, 0.06);
+  --shadow-glow-purple: 0 0 20px rgba(167, 139, 250, 0.2), 0 0 60px rgba(167, 139, 250, 0.06);
+
+  /* Layout */
+  --max-width: 1200px;
+  --scanline-opacity: 0.025;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.75;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   AMBIENT BACKGROUND ORBS (Anime gradient glow)
+   ============================================ */
+.ambient-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(120px);
+  opacity: 0.12;
+  animation: orb-drift 18s ease-in-out infinite;
+}
+
+.ambient-orb.orb-gold {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+  top: -15%;
+  right: -10%;
+  animation-delay: 0s;
+}
+
+.ambient-orb.orb-purple {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--purple) 0%, transparent 70%);
+  bottom: -10%;
+  left: -8%;
+  animation-delay: -9s;
+}
+
+.ambient-orb.orb-lavender {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--lavender) 0%, transparent 70%);
+  top: 45%;
+  left: 55%;
+  animation-delay: -5s;
+}
+
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.08); }
+  50% { transform: translate(-15px, 25px) scale(0.94); }
+  75% { transform: translate(-25px, -10px) scale(1.05); }
+}
+
+/* ============================================
+   SCANLINE OVERLAY (Sci-Fi)
+   ============================================ */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(201, 168, 124, 0.012) 2px,
+    rgba(201, 168, 124, 0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ============================================
+   GRID BACKGROUND (Sci-Fi)
+   ============================================ */
+.bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(201, 168, 124, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 168, 124, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ============================================
+   STARDUST PARTICLES (Frieren theme — Anime)
+   ============================================ */
+.stardust-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+@keyframes stardust {
+  0% { transform: translate(0, 0) scale(0); opacity: 0; }
+  20% { opacity: 0.7; }
+  70% { opacity: 0.2; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+}
+
+.star-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--gold), 0 0 8px rgba(201, 168, 124, 0.3);
+  animation: stardust var(--dur) ease-out var(--delay) infinite;
+}
+
+.star-particle.purple {
+  background: var(--purple);
+  box-shadow: 0 0 4px var(--purple), 0 0 8px rgba(167, 139, 250, 0.3);
+}
+
+.star-particle.lavender {
+  background: var(--lavender);
+  box-shadow: 0 0 4px var(--lavender), 0 0 6px rgba(232, 213, 245, 0.25);
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 28px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   DIAMOND / GEOMETRIC DECORATIONS (Sci-Fi)
+   ============================================ */
+.diamond {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px var(--gold-glow);
+  flex-shrink: 0;
+  transition: all 0.4s ease;
+}
+
+.diamond-sm { width: 5px; height: 5px; }
+.diamond-lg { width: 12px; height: 12px; }
+
+.diamond.purple {
+  background: var(--purple);
+  box-shadow: 0 0 6px var(--purple-glow);
+}
+
+/* Diamond pulse animation */
+@keyframes diamond-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--gold-glow); }
+  50% { opacity: 0.4; box-shadow: 0 0 3px rgba(201, 168, 124, 0.2); }
+}
+
+.diamond.animate { animation: diamond-pulse 2.5s ease-in-out infinite; }
+
+/* ============================================
+   CORNER BRACKETS (Sci-Fi + Anime Rounded)
+   ============================================ */
+.corner-brackets {
+  position: relative;
+}
+
+.corner-brackets::before,
+.corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.corner-brackets::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid var(--gold);
+  border-left: 2px solid var(--gold);
+  border-radius: 4px 0 0 0;
+}
+
+.corner-brackets::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+  border-radius: 0 0 4px 0;
+}
+
+.corner-brackets.purple::before,
+.corner-brackets.purple::after {
+  border-color: var(--purple);
+}
+
+/* ============================================
+   GLOW BORDER UTILITY
+   ============================================ */
+.glow-border {
+  border: 1px solid var(--border-glow);
+  box-shadow:
+    0 0 8px rgba(201, 168, 124, 0.08),
+    inset 0 0 8px rgba(201, 168, 124, 0.03);
+}
+
+.glow-border-strong {
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 15px rgba(201, 168, 124, 0.15),
+    0 0 30px rgba(201, 168, 124, 0.06),
+    inset 0 0 15px rgba(201, 168, 124, 0.03);
+}
+
+/* ============================================
+   MAGIC CIRCLE DECORATION (Anime — Frieren)
+   ============================================ */
+.magic-circle {
+  border: 1px solid rgba(201, 168, 124, 0.2);
+  border-radius: 50%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.magic-circle::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(201, 168, 124, 0.1);
+  border-radius: 50%;
+}
+
+.magic-circle::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px dashed rgba(167, 139, 250, 0.08);
+  border-radius: 50%;
+  animation: magic-rotate 20s linear infinite;
+}
+
+@keyframes magic-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   PULSE DOT (Sci-Fi status indicator)
+   ============================================ */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--gold-glow), 0 0 14px rgba(201, 168, 124, 0.3);
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--gold-glow), 0 0 14px rgba(201, 168, 124, 0.3); }
+  50% { opacity: 0.35; box-shadow: 0 0 2px rgba(201, 168, 124, 0.3), 0 0 5px rgba(201, 168, 124, 0.1); }
+}
+
+/* ============================================
+   HEADER / NAVIGATION (Glassmorphism)
+   ============================================ */
+.site-header {
+  padding: 20px 0;
+  background: var(--bg-nav);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--border-glow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.site-brand .brand-icon {
+  width: 42px;
+  height: 42px;
+}
+
+.site-brand h1 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.site-brand h1 .accent {
+  background: linear-gradient(135deg, var(--gold) 0%, #e0c78a 40%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 6px rgba(201, 168, 124, 0.3));
+}
+
+.site-nav {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.site-nav a {
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 9px 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--gold);
+  border-color: var(--border-glow);
+  background: var(--gold-soft);
+  text-shadow: 0 0 10px rgba(201, 168, 124, 0.3);
+  box-shadow: 0 0 12px rgba(201, 168, 124, 0.06);
+}
+
+.site-nav a.active {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 16px rgba(201, 168, 124, 0.1);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero {
+  padding: 64px 0 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: 5%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+  align-items: center;
+}
+
+/* Hero text */
+.hero-text .sys-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+.hero-text .sys-tag .line {
+  width: 36px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.hero-text h2 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+}
+
+.hero-text h2 .gradient-text {
+  background: linear-gradient(135deg, var(--gold) 0%, #e8d5c8 35%, var(--lavender) 65%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 18px rgba(201, 168, 124, 0.35));
+}
+
+.hero-text .subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  max-width: 460px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+/* Hero panel (Character info card — glassmorphism) */
+.hero-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 28px 28px 24px;
+  position: relative;
+  box-shadow: var(--shadow-card);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-panel:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+
+.hero-panel .panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hero-panel .panel-header .label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.hero-panel .data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(201, 168, 124, 0.05);
+}
+
+.hero-panel .data-row:last-of-type { border-bottom: none; }
+
+.hero-panel .data-row .data-key {
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.hero-panel .data-row .data-val {
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(201, 168, 124, 0.2);
+}
+
+.hero-panel .data-row .data-val.purple-val {
+  color: var(--purple);
+  text-shadow: 0 0 8px rgba(167, 139, 250, 0.2);
+}
+
+/* Hex grid in panel */
+.hex-grid {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+  justify-content: center;
+}
+
+.hex {
+  width: 34px;
+  height: 34px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: rgba(201, 168, 124, 0.06);
+  border: 1px solid rgba(201, 168, 124, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--gold);
+  transition: all 0.35s ease;
+}
+
+.hex:hover {
+  background: rgba(201, 168, 124, 0.15);
+  border-color: rgba(201, 168, 124, 0.5);
+  box-shadow: 0 0 10px rgba(201, 168, 124, 0.2);
+}
+
+/* ============================================
+   CHARACTER SHOWCASE SECTION
+   ============================================ */
+.char-showcase {
+  padding: 40px 0 50px;
+}
+
+.char-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-card);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.char-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+
+.char-card .char-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(167, 139, 250, 0.15));
+  border: 2px solid var(--border-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.char-card .char-avatar .star-icon {
+  font-size: 2.4rem;
+  filter: drop-shadow(0 0 10px rgba(201, 168, 124, 0.5));
+}
+
+.char-card .char-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.char-card .char-info .char-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.char-card .char-info p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 500px;
+}
+
+.char-card .char-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.char-card .char-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.char-card .char-stats .stat-label {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+.char-card .char-stats .stat-bar-bg {
+  width: 80px;
+  height: 5px;
+  background: rgba(201, 168, 124, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.char-card .char-stats .stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--purple));
+  position: relative;
+}
+
+.char-card .char-stats .stat-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  animation: bar-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes bar-shimmer {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.char-card .char-stats .stat-val {
+  color: var(--gold);
+  font-weight: 600;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* Magic circle decoration on char card */
+.char-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgba(201, 168, 124, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.char-card::after {
+  content: '';
+  position: absolute;
+  top: -22px;
+  right: -22px;
+  width: 84px;
+  height: 84px;
+  border: 1px dashed rgba(167, 139, 250, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: magic-rotate 20s linear infinite;
+}
+
+/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+.main-content {
+  padding: 40px 0 60px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 36px;
+}
+
+/* ============================================
+   SECTION HEADER
+   ============================================ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-header .section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.section-header .section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-glow), transparent);
+}
+
+/* ============================================
+   POST CARDS (Glassmorphism + Sci-Fi glow)
+   ============================================ */
+.post-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Top scan line that sweeps across on hover */
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transition: left 0.55s ease;
+  z-index: 1;
+}
+
+/* Subtle bottom glow strip */
+.post-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.post-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+  background: var(--bg-card-hover);
+}
+
+.post-card:hover::before { left: 100%; }
+.post-card:hover::after { opacity: 1; }
+
+/* Post card header row */
+.post-card .post-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.post-card .post-id {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--purple);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.post-card .post-date {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.post-card .post-category {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 4px 12px;
+  border: 1px solid var(--border-purple);
+  border-radius: 12px;
+  color: var(--purple);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--purple-soft);
+  transition: all 0.3s ease;
+}
+
+.post-card:hover .post-category {
+  border-color: var(--purple);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.15);
+}
+
+.post-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+}
+
+.post-card h3 a {
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--text-primary) 50%, var(--gold) 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  transition: background-position 0.45s ease;
+}
+
+.post-card:hover h3 a {
+  background-position: 100% 0%;
+}
+
+.post-card .post-excerpt {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.post-card .post-footer-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-card .action-link {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid rgba(201, 168, 124, 0.2);
+  border-radius: var(--radius-sm);
+  transition: all 0.35s ease;
+}
+
+.post-card .action-link:hover {
+  background: rgba(201, 168, 124, 0.1);
+  border-color: var(--border-strong);
+  box-shadow: 0 0 14px rgba(201, 168, 124, 0.15);
+  text-shadow: 0 0 10px rgba(201, 168, 124, 0.4);
+}
+
+.post-card .action-link .arrow-symbol {
+  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+}
+
+.post-card .action-link:hover .arrow-symbol { transform: translateX(5px); }
+
+.post-card .data-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+.sidebar .sidebar-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-md);
+  padding: 24px 22px;
+  margin-bottom: 20px;
+  position: relative;
+  box-shadow: var(--shadow-card);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-panel:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.sidebar-panel .panel-title {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* About panel */
+.about-panel .ident {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--purple);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+
+.about-panel p {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.about-panel .quote-line {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--lavender-dim);
+  line-height: 1.6;
+}
+
+/* Tag Cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-cloud a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid var(--border-purple);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  background: rgba(167, 139, 250, 0.04);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tag-cloud a:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+  background: rgba(167, 139, 250, 0.1);
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.18);
+  text-shadow: 0 0 6px rgba(167, 139, 250, 0.25);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.site-footer {
+  border-top: 1px solid var(--border-glow);
+  padding: 44px 0 32px;
+  background: rgba(20, 16, 28, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.footer-left {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+}
+
+.footer-left .footer-brand {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.footer-nav a {
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: all 0.3s ease;
+  padding: 4px 0;
+  position: relative;
+}
+
+.footer-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.footer-nav a:hover {
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(201, 168, 124, 0.3);
+}
+
+.footer-nav a:hover::after { width: 100%; }
+
+/* ============================================
+   HUD CORNER LABELS (Sci-Fi)
+   ============================================ */
+.hud-corner {
+  position: fixed;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: rgba(201, 168, 124, 0.18);
+  letter-spacing: 0.16em;
+  pointer-events: none;
+  z-index: 0;
+  text-transform: uppercase;
+}
+
+.hud-tl { top: 18px; left: 18px; }
+.hud-tr { top: 18px; right: 18px; }
+.hud-bl { bottom: 18px; left: 18px; }
+.hud-br { bottom: 18px; right: 18px; }
+
+/* ============================================
+   FLOATING MAGIC GLYPH (Anime decoration)
+   ============================================ */
+@keyframes float-glyph {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.12; }
+  50% { transform: translateY(-18px) rotate(3deg); opacity: 0.22; }
+}
+
+.floating-glyph {
+  position: fixed;
+  font-size: 6rem;
+  color: var(--gold);
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+  font-family: var(--font-display);
+  animation: float-glyph 8s ease-in-out infinite;
+}
+
+.glyph-1 { top: 12%; right: 3%; animation-delay: 0s; }
+.glyph-2 { top: 60%; left: 2%; animation-delay: -4s; color: var(--purple); }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .content-grid { grid-template-columns: 1fr; }
+  .char-card { grid-template-columns: 1fr; text-align: center; gap: 20px; }
+  .char-card .char-avatar { margin: 0 auto; }
+  .char-card .char-stats { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .char-card::before, .char-card::after { display: none; }
+  .hud-corner { display: none; }
+  .floating-glyph { display: none; }
+  .site-nav { gap: 2px; margin-top: 8px; }
+  .site-nav a { font-size: 0.7rem; padding: 6px 12px; }
+  .hero-text h2 { font-size: 2rem; }
+  .hero { padding: 40px 0 36px; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .site-nav a { padding: 5px 10px; font-size: 0.64rem; letter-spacing: 0.06em; }
+  .hero-text h2 { font-size: 1.6rem; }
+  .post-card { padding: 20px; }
+  .post-card h3 { font-size: 1.05rem; }
+  .footer-inner { flex-direction: column; text-align: center; }
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: rgba(201, 168, 124, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 124, 0.4); }
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background: rgba(201, 168, 124, 0.25);
+  color: var(--text-primary);
+  text-shadow: 0 0 4px rgba(201, 168, 124, 0.3);
+}
+
+/* ============================================
+   LINK GLOW ANIMATION (Shared)
+   ============================================ */
+@keyframes link-glow {
+  0%, 100% { text-shadow: 0 0 6px rgba(201, 168, 124, 0.25); }
+  50% { text-shadow: 0 0 14px rgba(201, 168, 124, 0.5); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     AMBIENT BACKGROUND ORBS (Anime)
+     ============================================ -->
+<div class="ambient-orb orb-gold"></div>
+<div class="ambient-orb orb-purple"></div>
+<div class="ambient-orb orb-lavender"></div>
+
+<!-- ============================================
+     GRID BACKGROUND (Sci-Fi)
+     ============================================ -->
+<div class="bg-grid"></div>
+
+<!-- ============================================
+     STARDUST PARTICLES (Frieren theme — Anime)
+     ============================================ -->
+<div class="stardust-container" id="stardustContainer" aria-hidden="true"></div>
+
+<!-- ============================================
+     FLOATING MAGIC GLYPHS (Anime)
+     ============================================ -->
+<div class="floating-glyph glyph-1" aria-hidden="true">&#x2726;</div>
+<div class="floating-glyph glyph-2" aria-hidden="true">&#x2738;</div>
+
+<!-- ============================================
+     HUD CORNERS (Sci-Fi)
+     ============================================ -->
+<div class="hud-corner hud-tl">SYS.ONLINE // NODE:GRIMOIRE</div>
+<div class="hud-corner hud-tr">MAGIC:LV.99 // ENC:A1</div>
+<div class="hud-corner hud-bl">LAT:35.6762N // LNG:139.6503E</div>
+<div class="hud-corner hud-br">MANA:STABLE // v4.0.1</div>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+     ============================================ -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#" class="site-brand" aria-label="Cola_CaO — 返回首页">
+        <span class="magic-circle brand-icon">
+          <span class="diamond diamond-lg animate"></span>
+        </span>
+        <h1>Cola<span class="accent">_CaO</span></h1>
+        <span class="status-dot" title="Online — Mana Stable"></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="#" class="active">&#x25C8; 首页</a>
+        <a href="#">&#x25C7; 文章</a>
+        <a href="#">&#x25C6; 项目</a>
+        <a href="#">&#x2726; 归档</a>
+        <a href="#">&#x2738; 关于</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================
+     HERO SECTION
+     ============================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Hero Left: Text -->
+      <div class="hero-text">
+        <div class="sys-tag">
+          <span class="line"></span>
+          Grimoire Online &mdash; Mana Flow Stable
+          <span class="line"></span>
+        </div>
+        <h2>
+          <span class="gradient-text">旅はまだ終わらない</span>
+        </h2>
+        <p class="subtitle">
+          千年一瞬，代码永恒。在漫长的技术旅途中，每一段经历都值得铭记。
+          这里是可乐的魔法书&mdash;&mdash;记录时间与记忆。
+        </p>
+      </div>
+
+      <!-- Hero Right: Character Data Panel (Glassmorphism + Sci-Fi HUD) -->
+      <div class="hero-panel corner-brackets">
+        <div class="panel-header">
+          <span class="diamond diamond-sm animate"></span>
+          <span class="label">Character Status // フリーレン</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">IDENT</span>
+          <span class="data-val">Frieren · 芙莉莲</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">CLASS</span>
+          <span class="data-val purple-val">ELF MAGE</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">AGE</span>
+          <span class="data-val">1000+ YEARS</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">CODE NAME</span>
+          <span class="data-val">GRIMOIRE</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">MANA</span>
+          <span class="data-val">∞ // UNREADABLE</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">CURRENT QUEST</span>
+          <span class="data-val purple-val">AUREOLE · 魂の眠る地</span>
+        </div>
+        <div class="hex-grid">
+          <span class="hex" title="Magic">魔</span>
+          <span class="hex" title="Elf">精</span>
+          <span class="hex" title="Time">時</span>
+          <span class="hex" title="Soul">魂</span>
+          <span class="hex" title="Star">星</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CHARACTER SHOWCASE
+     ============================================ -->
+<section class="char-showcase">
+  <div class="container">
+    <div class="char-card corner-brackets purple">
+      <div class="char-avatar magic-circle" aria-hidden="true">
+        <span class="star-icon">&#x2726;</span>
+      </div>
+      <div class="char-info">
+        <div class="char-subtitle">Grimoire System // Active Character</div>
+        <h3>CHARACTER: フリーレン</h3>
+        <p>
+          葬送のフリーレン &mdash; 漫长旅途的魔法使。千年时光，见证了无数相遇与离别。
+          正如代码世界中的每一行 commit，都是时光长河里的一片落叶。
+          在无尽的技术探索中，保持好奇与温柔，便是最强的魔法。
+        </p>
+      </div>
+      <div class="char-stats">
+        <div class="stat-item">
+          <span class="stat-label">Magic</span>
+          <span class="stat-bar-bg"><span class="stat-bar-fill" style="width:95%"></span></span>
+          <span class="stat-val">S</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Wisdom</span>
+          <span class="stat-bar-bg"><span class="stat-bar-fill" style="width:88%"></span></span>
+          <span class="stat-val">S</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Patience</span>
+          <span class="stat-bar-bg"><span class="stat-bar-fill" style="width:92%"></span></span>
+          <span class="stat-val">EX</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Curiosity</span>
+          <span class="stat-bar-bg"><span class="stat-bar-fill" style="width:85%"></span></span>
+          <span class="stat-val">A</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     MAIN CONTENT: Posts + Sidebar
+     ============================================ -->
+<div class="main-content">
+  <div class="container">
+    <div class="content-grid">
+
+      <!-- ========== POSTS AREA ========== -->
+      <main class="posts-area" aria-label="博客文章列表">
+
+        <div class="section-header">
+          <span class="diamond diamond-sm animate"></span>
+          <span class="section-title">Grimoire Entries</span>
+          <span class="section-line"></span>
+        </div>
+
+        <!-- Article 1: Web Dev Trends -->
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-id">// ENTRY_089</span>
+            <span class="diamond diamond-sm"></span>
+            <span class="post-date">2024.12.15</span>
+            <span class="post-category">TECH</span>
+          </div>
+          <h3><a href="#">探索现代 Web 开发的新趋势</a></h3>
+          <p class="post-excerpt">
+            WebAssembly、边缘计算、CSS 容器查询、View Transitions API ——
+            现代 Web 技术栈正在经历前所未有的范式转移。深入分析 2024 年最值得关注的
+            五大技术趋势及其对开发者的影响。
+          </p>
+          <div class="post-footer-row">
+            <a href="#" class="action-link">
+              <span class="diamond diamond-sm"></span> 展开魔法书 <span class="arrow-symbol">&#9654;</span>
+            </a>
+            <span class="data-badge">
+              <span class="diamond diamond-sm"></span> READS: 2,400
+            </span>
+          </div>
+        </article>
+
+        <!-- Article 2: Workflow -->
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-id">// ENTRY_088</span>
+            <span class="diamond diamond-sm"></span>
+            <span class="post-date">2024.11.22</span>
+            <span class="post-category">TOOLS</span>
+          </div>
+          <h3><a href="#">如何打造高效的工作流</a></h3>
+          <p class="post-excerpt">
+            从终端配置到编辑器插件，从自动化脚本到专注力管理。
+            一套经过 365 天实战验证的开发工作流优化方案，让效率翻倍的底层逻辑与方法论。
+          </p>
+          <div class="post-footer-row">
+            <a href="#" class="action-link">
+              <span class="diamond diamond-sm"></span> 展开魔法书 <span class="arrow-symbol">&#9654;</span>
+            </a>
+            <span class="data-badge">
+              <span class="diamond diamond-sm"></span> READS: 3,100
+            </span>
+          </div>
+        </article>
+
+        <!-- Article 3: Open Source -->
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-id">// ENTRY_087</span>
+            <span class="diamond diamond-sm"></span>
+            <span class="post-date">2024.10.08</span>
+            <span class="post-category">OSS</span>
+          </div>
+          <h3><a href="#">我的开源之旅：从零到一</a></h3>
+          <p class="post-excerpt">
+            从一个 README 文件开始，到 2000+ Star 的社区项目。
+            回顾开源之路上的每一个关键决策、技术选型与社区运营的实战经验。
+          </p>
+          <div class="post-footer-row">
+            <a href="#" class="action-link">
+              <span class="diamond diamond-sm"></span> 展开魔法书 <span class="arrow-symbol">&#9654;</span>
+            </a>
+            <span class="data-badge">
+              <span class="diamond diamond-sm"></span> READS: 5,800
+            </span>
+          </div>
+        </article>
+
+        <!-- Article 4: Design Psychology -->
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-id">// ENTRY_086</span>
+            <span class="diamond diamond-sm"></span>
+            <span class="post-date">2024.09.14</span>
+            <span class="post-category">DESIGN</span>
+          </div>
+          <h3><a href="#">读书笔记：《设计心理学》</a></h3>
+          <p class="post-excerpt">
+            唐·诺曼的交互设计经典。从「可视性」到「反馈」，从「约束」到「映射」——
+            将认知心理学的核心原则映射到现代 UI 开发的实践中。
+          </p>
+          <div class="post-footer-row">
+            <a href="#" class="action-link">
+              <span class="diamond diamond-sm"></span> 展开魔法书 <span class="arrow-symbol">&#9654;</span>
+            </a>
+            <span class="data-badge">
+              <span class="diamond diamond-sm"></span> READS: 1,900
+            </span>
+          </div>
+        </article>
+
+        <!-- Article 5: City Cafes -->
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-id">// ENTRY_085</span>
+            <span class="diamond diamond-sm"></span>
+            <span class="post-date">2024.08.30</span>
+            <span class="post-category">LIFE</span>
+          </div>
+          <h3><a href="#">城市漫步：寻找隐藏的咖啡馆</a></h3>
+          <p class="post-excerpt">
+            离开终端，走入城市肌理。五家隐匿于街角巷尾的独立咖啡馆探店报告——
+            每一杯手冲背后都藏着一个关于热爱、坚持与创造的故事。
+          </p>
+          <div class="post-footer-row">
+            <a href="#" class="action-link">
+              <span class="diamond diamond-sm"></span> 展开魔法书 <span class="arrow-symbol">&#9654;</span>
+            </a>
+            <span class="data-badge">
+              <span class="diamond diamond-sm"></span> READS: 4,200
+            </span>
+          </div>
+        </article>
+
+      </main>
+
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="sidebar" aria-label="侧边栏">
+
+        <!-- About Panel -->
+        <div class="sidebar-panel about-panel corner-brackets">
+          <div class="panel-title">
+            <span class="diamond diamond-sm"></span> Operator Profile
+          </div>
+          <div class="ident">
+            <span class="diamond diamond-sm"></span> ID://COLA_CAO
+          </div>
+          <p>
+            全栈开发者 · 开源贡献者 · 数字世界漫游者。
+            在代码的理性与生活的感性之间寻找平衡点。
+            相信技术的力量在于连接，而非隔离。
+          </p>
+          <p class="quote-line">
+            &ldquo;正如フリーレン所说&mdash;&mdash;旅行的意义不在于终点，而在于途中遇见的每一个人。&rdquo;
+          </p>
+        </div>
+
+        <!-- Tag Cloud -->
+        <div class="sidebar-panel">
+          <div class="panel-title">
+            <span class="diamond diamond-sm"></span> Spell Tags
+          </div>
+          <div class="tag-cloud" role="list">
+            <a href="#" role="listitem">前端开发</a>
+            <a href="#" role="listitem">CSS Art</a>
+            <a href="#" role="listitem">WebAssembly</a>
+            <a href="#" role="listitem">开源社区</a>
+            <a href="#" role="listitem">动画设计</a>
+            <a href="#" role="listitem">设计系统</a>
+            <a href="#" role="listitem">TypeScript</a>
+            <a href="#" role="listitem">性能优化</a>
+            <a href="#" role="listitem">读书笔记</a>
+            <a href="#" role="listitem">咖啡地图</a>
+            <a href="#" role="listitem">二次元</a>
+            <a href="#" role="listitem">魔法</a>
+          </div>
+        </div>
+
+        <!-- Archive Panel -->
+        <div class="sidebar-panel">
+          <div class="panel-title">
+            <span class="diamond diamond-sm"></span> Archive Index
+          </div>
+          <div class="tag-cloud" role="list">
+            <a href="#" role="listitem">2024.12</a>
+            <a href="#" role="listitem">2024.11</a>
+            <a href="#" role="listitem">2024.10</a>
+            <a href="#" role="listitem">2024.09</a>
+            <a href="#" role="listitem">2024.08</a>
+            <a href="#" role="listitem">2024.07</a>
+            <a href="#" role="listitem">2024.06</a>
+            <a href="#" role="listitem">...</a>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-brand">&#x2726; COLA_CAO // GRIMOIRE TERMINAL</span>
+        &copy; 2024 Cola_CaO &middot; 可乐的魔法书 &middot; 旅はまだ終わらない
+      </div>
+      <div class="footer-nav">
+        <a href="#">About</a>
+        <a href="#">Archive</a>
+        <a href="#">RSS</a>
+        <a href="#">GitHub</a>
+        <a href="#">&#x2726; Top</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================
+     STARDUST PARTICLES GENERATION SCRIPT
+     ============================================ -->
+<script>
+(function() {
+  const container = document.getElementById('stardustContainer');
+  if (!container) return;
+
+  const particleCount = 45;
+  const colors = ['gold', 'purple', 'lavender'];
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    const colorClass = colors[Math.floor(Math.random() * colors.length)];
+    particle.className = 'star-particle ' + colorClass;
+
+    // Random starting position in percentage
+    const startX = Math.random() * 100;
+    const startY = Math.random() * 100;
+    particle.style.left = startX + '%';
+    particle.style.top = startY + '%';
+
+    // Random drift distance
+    const dx = (Math.random() - 0.5) * 180;
+    const dy = (Math.random() - 0.5) * 180;
+    particle.style.setProperty('--dx', dx + 'px');
+    particle.style.setProperty('--dy', dy + 'px');
+
+    // Random animation duration between 3.5s and 8s
+    const dur = 3.5 + Math.random() * 4.5;
+    particle.style.setProperty('--dur', dur + 's');
+
+    // Random delay so they don't all fire simultaneously
+    const delay = Math.random() * 4;
+    particle.style.setProperty('--delay', delay + 's');
+
+    fragment.appendChild(particle);
+  }
+
+  container.appendChild(fragment);
+})();
+</script>
+
+</body>
+</html>

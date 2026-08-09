@@ -1,0 +1,13 @@
+[
+  {
+    "id": "demo-web-app",
+    "title": "Demo Web App",
+    "description": "A simple PHP web application demonstrating login, session management, and database CRUD operations.",
+    "tags": ["PHP", "Auth", "JSON"],
+    "date": "2026-07",
+    "status": "completed",
+    "featured": true,
+    "files": ["auth.php", "README.md"],
+    "readme": "README.md"
+  }
+]

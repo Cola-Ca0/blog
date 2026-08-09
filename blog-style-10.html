@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO — 孟菲斯设计</title>
+<style>
+/* ============================================================
+   Cola_CaO — Style 10: Memphis Design
+   几何图形、明亮配色、波点条纹装饰、80年代后现代
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --pink:    #ff6b9d;
+  --cyan:    #4ecdc4;
+  --yellow:  #ffe66d;
+  --purple:  #a786df;
+  --coral:   #ff8a5c;
+  --mint:    #7bed9f;
+  --white:   #ffffff;
+  --black:   #2d2d2d;
+  --light-bg:#fefefe;
+  --border-fat: 5px solid;
+  --shadow-memphis: 6px 6px 0 rgba(0,0,0,0.1);
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--light-bg);
+  color: var(--black);
+  font-family: 'Poppins', 'Comic Neue', sans-serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---------- Polka dot background ---------- */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(circle, var(--pink) 1px, transparent 1px),
+    radial-gradient(circle, var(--cyan) 1px, transparent 1px);
+  background-size: 40px 40px, 60px 60px;
+  background-position: 0 0, 20px 30px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Floating geometric shapes ---------- */
+.geo-shape {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+.geo-shape--triangle {
+  top: 12%; right: 5%;
+  width: 0; height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid var(--purple);
+  opacity: 0.08;
+  transform: rotate(15deg);
+}
+.geo-shape--circle {
+  bottom: 10%; left: 3%;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 5px solid var(--pink);
+  opacity: 0.06;
+}
+.geo-shape--squiggle {
+  top: 40%; left: 8%;
+  width: 100px; height: 20px;
+  border: 4px solid var(--cyan);
+  border-radius: 50%;
+  opacity: 0.06;
+  transform: rotate(-20deg);
+}
+.geo-shape--zigzag {
+  bottom: 20%; right: 10%;
+  width: 120px; height: 60px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    var(--yellow) 8px,
+    var(--yellow) 10px
+  );
+  opacity: 0.04;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ---------- Layout ---------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 40px;
+}
+
+/* ---------- Typography ---------- */
+h1 { font-weight: 800; }
+h2 { font-weight: 700; }
+h3 { font-weight: 600; }
+a { color: var(--black); text-decoration: none; transition: all 0.25s; }
+
+/* ---------- Navigation ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: var(--border-fat) var(--black);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+}
+.nav-brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--black);
+  background: var(--yellow);
+  padding: 6px 16px;
+  border: var(--border-fat) var(--black);
+  box-shadow: 4px 4px 0 var(--pink);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.nav-brand:hover {
+  box-shadow: 2px 2px 0 var(--pink);
+  transform: translate(2px, 2px);
+}
+.nav-links { display: flex; gap: 6px; list-style: none; }
+.nav-links a {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--black);
+  padding: 8px 18px;
+  border: var(--border-fat) var(--black);
+  background: var(--white);
+  position: relative;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.nav-links a:hover {
+  color: var(--white);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+}
+.nav-links li:nth-child(1) a:hover { background: var(--pink); }
+.nav-links li:nth-child(2) a:hover { background: var(--cyan); }
+.nav-links li:nth-child(3) a:hover { background: var(--purple); }
+.nav-links li:nth-child(4) a:hover { background: var(--coral); }
+.nav-links li:nth-child(5) a:hover { background: var(--mint); }
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 70px 0 50px;
+  text-align: center;
+  position: relative;
+}
+.hero-scribble {
+  position: absolute;
+  top: 30px; right: 15%;
+  width: 140px; height: 8px;
+  background: var(--pink);
+  border-radius: 4px;
+  transform: rotate(-8deg);
+  opacity: 0.5;
+}
+.hero-dots {
+  position: absolute;
+  bottom: 20px; left: 15%;
+  display: flex; gap: 10px;
+  opacity: 0.5;
+}
+.hero-dots span {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+.hero-dots span:nth-child(1) { background: var(--pink); }
+.hero-dots span:nth-child(2) { background: var(--cyan); }
+.hero-dots span:nth-child(3) { background: var(--yellow); }
+.hero-dots span:nth-child(4) { background: var(--purple); }
+.hero-dots span:nth-child(5) { background: var(--coral); }
+.hero-title {
+  font-size: 3.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  display: inline-block;
+  position: relative;
+}
+.hero-title .accent {
+  display: inline-block;
+  color: var(--pink);
+  position: relative;
+  transform: rotate(-2deg);
+}
+.hero-title .accent::after {
+  content: '';
+  position: absolute;
+  bottom: 4px; left: -4px; right: -4px;
+  height: 10px;
+  background: var(--yellow);
+  z-index: -1;
+  opacity: 0.6;
+}
+.hero-subtitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #666;
+  letter-spacing: 5px;
+  margin-bottom: 30px;
+  display: inline-block;
+  border: var(--border-fat) var(--cyan);
+  padding: 8px 24px;
+  background: var(--white);
+  transform: rotate(1deg);
+}
+.hero-cta {
+  display: block;
+  margin: 0 auto;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--pink);
+  border: var(--border-fat) var(--black);
+  padding: 16px 48px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-memphis);
+  clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+}
+.hero-cta:hover {
+  background: var(--purple);
+  transform: translateY(-3px);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.12);
+}
+
+/* ---------- Section Header ---------- */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+.section-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--yellow);
+  padding: 6px 18px;
+  border: var(--border-fat) var(--black);
+  transform: rotate(-1deg);
+  display: inline-block;
+}
+.section-header::after {
+  content: '';
+  flex: 1;
+  height: 5px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--pink) 0px, var(--pink) 10px,
+    var(--cyan) 10px, var(--cyan) 20px,
+    var(--yellow) 20px, var(--yellow) 30px,
+    var(--purple) 30px, var(--purple) 40px
+  );
+  border-radius: 2px;
+}
+
+/* ---------- Blog Cards — Memphis layout ---------- */
+.blog-card {
+  background: var(--white);
+  border: var(--border-fat) var(--black);
+  padding: 30px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-memphis);
+  overflow: visible;
+}
+.blog-card:nth-child(2) { transform: rotate(-0.3deg); border-color: var(--pink); }
+.blog-card:nth-child(3) { transform: rotate(0.2deg); border-color: var(--cyan); }
+.blog-card:nth-child(4) { transform: rotate(-0.15deg); border-color: var(--purple); }
+.blog-card:nth-child(5) { transform: rotate(0.3deg); border-color: var(--coral); }
+.blog-card:nth-child(6) { transform: rotate(-0.25deg); border-color: var(--mint); }
+
+.blog-card:hover {
+  transform: translate(-3px, -3px) rotate(0deg) !important;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.15);
+}
+.blog-card-geo {
+  position: absolute;
+  top: -12px; right: -12px;
+  width: 28px; height: 28px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: 2;
+}
+.blog-card:nth-child(2) .blog-card-geo { background: var(--pink); }
+.blog-card:nth-child(3) .blog-card-geo { background: var(--cyan); }
+.blog-card:nth-child(4) .blog-card-geo { background: var(--purple); }
+.blog-card:nth-child(5) .blog-card-geo { background: var(--coral); }
+.blog-card:nth-child(6) .blog-card-geo { background: var(--mint); }
+.blog-card-date {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--black);
+  padding: 4px 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.blog-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
+}
+.blog-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0; right: 0;
+  height: 5px;
+  opacity: 0.3;
+  z-index: -1;
+  transition: all 0.3s;
+}
+.blog-card:nth-child(2) h3::after { background: var(--pink); }
+.blog-card:nth-child(3) h3::after { background: var(--cyan); }
+.blog-card:nth-child(4) h3::after { background: var(--purple); }
+.blog-card:nth-child(5) h3::after { background: var(--coral); }
+.blog-card:nth-child(6) h3::after { background: var(--mint); }
+.blog-card:hover h3::after { height: 12px; opacity: 0.4; }
+.blog-card p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+.blog-card-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.blog-card-tags span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  background: var(--yellow);
+  border: 2px solid var(--black);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.blog-card-tags span:hover {
+  background: var(--black);
+  color: var(--yellow);
+}
+.blog-card-readmore {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--black);
+  border-bottom: 3px solid var(--pink);
+  padding-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+}
+.blog-card-readmore:hover { border-bottom-color: var(--black); }
+
+/* ---------- Sidebar ---------- */
+.sidebar { position: sticky; top: 90px; align-self: start; }
+
+.sidebar-widget {
+  background: var(--white);
+  border: var(--border-fat) var(--black);
+  padding: 24px;
+  margin-bottom: 28px;
+  position: relative;
+  box-shadow: var(--shadow-memphis);
+  transition: all 0.25s;
+}
+.sidebar-widget:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.12);
+}
+.sidebar-widget-geo {
+  position: absolute;
+  top: -10px; left: -10px;
+  width: 40px; height: 40px;
+  background: var(--pink);
+  border-radius: 50%;
+  border: var(--border-fat) var(--black);
+  z-index: 2;
+}
+.sidebar-widget:nth-child(2) .sidebar-widget-geo { background: var(--cyan); }
+.sidebar-widget h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 3px dashed var(--yellow);
+}
+
+/* About */
+.about-avatar {
+  width: 80px; height: 80px;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--white);
+  border: var(--border-fat) var(--black);
+  margin: 0 auto 16px;
+  transform: rotate(5deg);
+}
+.about-name {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.about-bio {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.8;
+}
+.about-bio .highlight {
+  background: var(--yellow);
+  padding: 0 4px;
+  font-weight: 700;
+}
+.about-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 3px dotted var(--pink);
+}
+.about-stat { text-align: center; }
+.about-stat-num { font-size: 1.3rem; font-weight: 800; }
+.about-stat:nth-child(1) .about-stat-num { color: var(--pink); }
+.about-stat:nth-child(2) .about-stat-num { color: var(--cyan); }
+.about-stat:nth-child(3) .about-stat-num { color: var(--purple); }
+.about-stat-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: #888; }
+
+/* Tag Cloud */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-cloud a {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 2px solid var(--black);
+  padding: 6px 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  transform: rotate(0deg);
+}
+.tag-cloud a:nth-child(3n+1) { background: var(--pink); color: var(--white); transform: rotate(-2deg); }
+.tag-cloud a:nth-child(3n+2) { background: var(--cyan); color: var(--white); transform: rotate(2deg); }
+.tag-cloud a:nth-child(3n+3) { background: var(--yellow); color: var(--black); transform: rotate(-1deg); }
+.tag-cloud a:hover {
+  background: var(--black) !important;
+  color: var(--white) !important;
+  transform: rotate(0deg) scale(1.05) !important;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  margin-top: 60px;
+  padding: 48px 0;
+  text-align: center;
+  position: relative;
+  background: var(--white);
+  border-top: var(--border-fat) var(--black);
+}
+.footer-stripe {
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--pink) 0px, var(--pink) 40px,
+    var(--cyan) 40px, var(--cyan) 80px,
+    var(--yellow) 80px, var(--yellow) 120px,
+    var(--purple) 120px, var(--purple) 160px
+  );
+  margin-bottom: 30px;
+}
+.footer-brand {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  display: inline-block;
+  background: var(--mint);
+  padding: 4px 20px;
+  border: var(--border-fat) var(--black);
+  transform: rotate(-1deg);
+}
+.footer-tagline {
+  font-size: 0.85rem;
+  color: #666;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.footer-social {
+  display: flex; justify-content: center; gap: 10px;
+  margin-bottom: 20px;
+}
+.footer-social a {
+  width: 44px; height: 44px;
+  border: var(--border-fat) var(--black);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  background: var(--white);
+}
+.footer-social a:nth-child(1):hover { background: var(--pink); color: var(--white); }
+.footer-social a:nth-child(2):hover { background: var(--cyan); color: var(--white); }
+.footer-social a:nth-child(3):hover { background: var(--yellow); }
+.footer-social a:nth-child(4):hover { background: var(--purple); color: var(--white); }
+.footer-copy {
+  font-size: 0.7rem;
+  color: #999;
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .hero-title { font-size: 2.4rem; }
+  .nav-links { gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .nav-links a { font-size: 0.7rem; padding: 6px 10px; }
+  .geo-shape { display: none; }
+  .hero-scribble { right: 5%; width: 80px; }
+  .hero-dots { left: 5%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating geometric decorations -->
+<div class="geo-shape geo-shape--triangle" aria-hidden="true"></div>
+<div class="geo-shape geo-shape--circle" aria-hidden="true"></div>
+<div class="geo-shape geo-shape--squiggle" aria-hidden="true"></div>
+<div class="geo-shape geo-shape--zigzag" aria-hidden="true"></div>
+
+<!-- ============ Navigation ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">Cola_CaO</a>
+    <ul class="nav-links">
+      <li><a href="#">首页</a></li>
+      <li><a href="#">文章</a></li>
+      <li><a href="#">归档</a></li>
+      <li><a href="#">关于</a></li>
+      <li><a href="#">联系</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============ Hero ============ -->
+<header class="hero">
+  <div class="hero-scribble" aria-hidden="true"></div>
+  <div class="container">
+    <h1 class="hero-title">
+      Cola_<span class="accent">CaO</span>
+    </h1>
+    <br>
+    <p class="hero-subtitle">记录生活 · 分享技术 · 品味人生</p>
+    <br>
+    <a href="#" class="hero-cta">开始探索</a>
+  </div>
+  <div class="hero-dots" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- ============ Main Content ============ -->
+<main class="container main-grid">
+
+  <!-- === Posts Column === -->
+  <section>
+    <div class="section-header">
+      <h2>最新文章</h2>
+    </div>
+
+    <!-- Article 1 -->
+    <article class="blog-card">
+      <div class="blog-card-geo"></div>
+      <div class="blog-card-date">2024.12</div>
+      <h3>探索现代 Web 开发的新趋势</h3>
+      <p>2024 年，Web 开发领域迎来了前所未有的变革。从 WebAssembly 的成熟应用到 AI 驱动的开发工具，前端生态正在经历一场深刻的范式转移。本文将深入探讨 Server Components、Islands Architecture 等新兴架构模式如何重塑我们的开发方式。</p>
+      <div class="blog-card-tags">
+        <span>Web</span><span>Frontend</span><span>Trends</span>
+      </div>
+      <a href="#" class="blog-card-readmore">阅读更多</a>
+    </article>
+
+    <!-- Article 2 -->
+    <article class="blog-card">
+      <div class="blog-card-geo"></div>
+      <div class="blog-card-date">2024.11</div>
+      <h3>如何打造高效的工作流</h3>
+      <p>效率不是盲目提速，而是建立一套可持续的系统。从终端配置、快捷键映射到自动化脚本，本文将分享我多年打磨出的开发工作流，帮助你在减少重复劳作的同时保持代码质量。</p>
+      <div class="blog-card-tags">
+        <span>Productivity</span><span>DevTools</span><span>Workflow</span>
+      </div>
+      <a href="#" class="blog-card-readmore">阅读更多</a>
+    </article>
+
+    <!-- Article 3 -->
+    <article class="blog-card">
+      <div class="blog-card-geo"></div>
+      <div class="blog-card-date">2024.10</div>
+      <h3>我的开源之旅：从零到一</h3>
+      <p>一年前，我发布了第一个开源项目。彼时的我无论如何也想不到，这个小小的工具会在 GitHub 上获得 3000+ 星标。回顾这段旅程，我想分享开源社区带给我的成长，以及如何迈出你的第一步。</p>
+      <div class="blog-card-tags">
+        <span>OpenSource</span><span>GitHub</span><span>Community</span>
+      </div>
+      <a href="#" class="blog-card-readmore">阅读更多</a>
+    </article>
+
+    <!-- Article 4 -->
+    <article class="blog-card">
+      <div class="blog-card-geo"></div>
+      <div class="blog-card-date">2024.09</div>
+      <h3>读书笔记：《设计心理学》</h3>
+      <p>Don Norman 的经典之作让我重新审视了"好设计"的定义。设计的核心不是美，而是易用性和可发现性。这篇文章记录了我在阅读过程中的思考与感悟。</p>
+      <div class="blog-card-tags">
+        <span>Reading</span><span>Design</span><span>UX</span>
+      </div>
+      <a href="#" class="blog-card-readmore">阅读更多</a>
+    </article>
+
+    <!-- Article 5 -->
+    <article class="blog-card">
+      <div class="blog-card-geo"></div>
+      <div class="blog-card-date">2024.08</div>
+      <h3>城市漫步：寻找隐藏的咖啡馆</h3>
+      <p>在城市的小巷深处，总有一些不为人知的角落藏着惊喜。这个周末，我带着相机徒步穿越老城区，找到了三家风格各异的独立咖啡馆，每家都有自己独特的故事和风味。</p>
+      <div class="blog-card-tags">
+        <span>Life</span><span>Coffee</span><span>Citywalk</span>
+      </div>
+      <a href="#" class="blog-card-readmore">阅读更多</a>
+    </article>
+  </section>
+
+  <!-- === Sidebar === -->
+  <aside class="sidebar">
+
+    <!-- About Widget -->
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-geo"></div>
+      <h3>关于我</h3>
+      <div class="about-avatar">C</div>
+      <div class="about-name">可乐</div>
+      <p class="about-bio">
+        全栈开发者 &amp; 生活记录者。<br>
+        热爱<span class="highlight">代码</span>、<span class="highlight">咖啡</span>与<span class="highlight">城市探索</span>。<br>
+        用文字捕捉灵感，用技术创造价值。
+      </p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <div class="about-stat-num">128</div>
+          <div class="about-stat-label">文章</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">4.2K</div>
+          <div class="about-stat-label">订阅者</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">15.6K</div>
+          <div class="about-stat-label">星标</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tag Cloud Widget -->
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-geo"></div>
+      <h3>标签云</h3>
+      <div class="tag-cloud">
+        <a href="#">JavaScript</a>
+        <a href="#">CSS</a>
+        <a href="#">React</a>
+        <a href="#">Node.js</a>
+        <a href="#">Python</a>
+        <a href="#">设计</a>
+        <a href="#">生活</a>
+        <a href="#">开源</a>
+        <a href="#">读书</a>
+        <a href="#">咖啡</a>
+        <a href="#">GitHub</a>
+        <a href="#">产品</a>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ============ Footer ============ -->
+<footer class="footer">
+  <div class="footer-stripe"></div>
+  <div class="container">
+    <div class="footer-brand">Cola_CaO</div>
+    <p class="footer-tagline">做有趣的事 · 过好玩的人生</p>
+    <div class="footer-social">
+      <a href="#" title="GitHub">GH</a>
+      <a href="#" title="Twitter">TW</a>
+      <a href="#" title="RSS">RS</a>
+      <a href="#" title="Email">@</a>
+    </div>
+    <p class="footer-copy">&copy; 2024 Cola_CaO — Stay Playful</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cola_CaO — Pixel Retro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BLOG STYLE 20: PIXEL RETRO (像素游戏)
+   8-bit aesthetics, pixel fonts, bright game colors,
+   pixelated borders, stair-step box-shadows, game UI layout
+   ============================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sky-blue: #5bc0eb;
+  --pink: #f7a8b8;
+  --green: #8be04e;
+  --yellow: #ffe74c;
+  --deep-purple: #2b1055;
+  --dark-bg: #1a1a2e;
+  --pixel-white: #f8f8f0;
+  --pixel-red: #e0434f;
+  --pixel-dark: #16213e;
+  --pixel-size: 4px;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  image-rendering: pixelated;
+}
+
+body {
+  font-family: 'VT323', 'Pixelify Sans', 'Courier New', monospace;
+  background: var(--deep-purple);
+  color: var(--pixel-white);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: none;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --- Star field background --- */
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: var(--pixel-white);
+  width: 3px;
+  height: 3px;
+  box-shadow: 0 0 2px var(--pixel-white);
+}
+
+.star.twinkle {
+  animation: starTwinkle 2s steps(2) infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* --- Container --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Pixel border utility --- */
+.pixel-border {
+  border: var(--pixel-size) solid;
+  border-image: repeating-linear-gradient(
+    90deg,
+    var(--sky-blue) 0px,
+    var(--sky-blue) 4px,
+    var(--yellow) 4px,
+    var(--yellow) 8px,
+    var(--pink) 8px,
+    var(--pink) 12px,
+    var(--green) 12px,
+    var(--green) 16px
+  ) 4;
+}
+
+.pixel-border-solid {
+  border: 4px solid var(--sky-blue);
+}
+
+/* --- Pixel box-shadow: stair-step effect --- */
+.pixel-shadow {
+  box-shadow:
+    4px 0 0 0 var(--pixel-dark),
+    0 4px 0 0 var(--pixel-dark),
+    4px 4px 0 0 var(--pixel-dark),
+    8px 0 0 0 var(--pixel-dark),
+    0 8px 0 0 var(--pixel-dark),
+    8px 4px 0 0 var(--pixel-dark),
+    4px 8px 0 0 var(--pixel-dark),
+    8px 8px 0 0 var(--pixel-dark);
+}
+
+.pixel-shadow-sm {
+  box-shadow:
+    3px 0 0 0 var(--pixel-dark),
+    0 3px 0 0 var(--pixel-dark),
+    3px 3px 0 0 var(--pixel-dark);
+}
+
+.pixel-shadow-color {
+  box-shadow:
+    4px 0 0 0 #0f0f23,
+    0 4px 0 0 #0f0f23,
+    4px 4px 0 0 #0f0f23;
+}
+
+/* --- Header --- */
+.site-header {
+  padding: 20px 0;
+  background: var(--pixel-dark);
+  border-bottom: 4px solid var(--sky-blue);
+  position: relative;
+  z-index: 10;
+}
+
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--pink);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-brand .pixel-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0;
+  image-rendering: pixelated;
+}
+
+.site-brand .pixel-icon .px {
+  background: var(--sky-blue);
+}
+
+.site-brand .pixel-icon .px.empty {
+  background: transparent;
+}
+
+.site-brand h1 {
+  font-family: 'Press Start 2P', 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--yellow);
+  text-shadow:
+    3px 3px 0 var(--pixel-dark),
+    -1px -1px 0 var(--pixel-dark),
+    1px -1px 0 var(--pixel-dark),
+    -1px 1px 0 var(--pixel-dark),
+    1px 1px 0 var(--pixel-dark);
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.site-brand h1 .accent {
+  color: var(--pink);
+}
+
+.site-brand .tagline {
+  display: block;
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  color: var(--sky-blue);
+  letter-spacing: 0.04em;
+}
+
+.site-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.site-nav a {
+  text-decoration: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: var(--pixel-white);
+  padding: 8px 12px;
+  background: var(--pixel-dark);
+  border: 3px solid var(--sky-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.1s;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  background: var(--sky-blue);
+  color: var(--pixel-dark);
+  transform: translate(-2px, -2px);
+  box-shadow:
+    2px 0 0 0 var(--pixel-white),
+    0 2px 0 0 var(--pixel-white),
+    2px 2px 0 0 var(--pixel-white);
+}
+
+.site-nav a:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+/* --- Hero / Title Screen --- */
+.hero {
+  padding: 40px 0;
+  text-align: center;
+  position: relative;
+}
+
+.hero .title-screen {
+  display: inline-block;
+  padding: 20px 40px;
+  background: var(--pixel-dark);
+  border: 4px solid var(--yellow);
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.hero .title-screen::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  border: 4px solid var(--pink);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero .title-screen h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  color: var(--yellow);
+  text-shadow:
+    3px 3px 0 var(--pixel-dark),
+    -1px -1px 0 var(--pixel-dark),
+    1px -1px 0 var(--pixel-dark),
+    -1px 1px 0 var(--pixel-dark),
+    1px 1px 0 var(--pixel-dark);
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+}
+
+.hero .title-screen h2 .blink {
+  color: var(--green);
+  animation: blinkText 1s steps(2) infinite;
+}
+
+@keyframes blinkText {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.hero .subtitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: var(--sky-blue);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: blinkText 2s steps(2) infinite;
+}
+
+.hero .press-start {
+  margin-top: 30px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: var(--pixel-white);
+  letter-spacing: 0.06em;
+}
+
+.hero .press-start .arrow {
+  display: inline-block;
+  animation: bounceArrow 1s steps(2) infinite;
+  color: var(--yellow);
+}
+
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* --- Decorative pixel blocks --- */
+.pixel-blocks-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pixel-block {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+  animation: blockFloat 3s steps(4) infinite;
+}
+
+.pixel-block:nth-child(1) { background: var(--pink); animation-delay: 0s; }
+.pixel-block:nth-child(2) { background: var(--sky-blue); animation-delay: -0.5s; }
+.pixel-block:nth-child(3) { background: var(--green); animation-delay: -1s; }
+.pixel-block:nth-child(4) { background: var(--yellow); animation-delay: -1.5s; }
+.pixel-block:nth-child(5) { background: var(--pink); animation-delay: -2s; }
+.pixel-block:nth-child(6) { background: var(--sky-blue); animation-delay: -2.5s; }
+
+@keyframes blockFloat {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-8px); }
+  75% { transform: translateY(0); }
+}
+
+/* --- Main Content --- */
+.main-content {
+  padding: 30px 0 50px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+}
+
+/* --- Post Cards --- */
+.post-card {
+  background: var(--pixel-dark);
+  border: 4px solid var(--sky-blue);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  transition: all 0.1s;
+  image-rendering: pixelated;
+}
+
+.post-card::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  background: var(--pink);
+  image-rendering: pixelated;
+}
+
+.post-card:hover {
+  border-color: var(--yellow);
+  transform: translate(-2px, -2px);
+  box-shadow:
+    2px 0 0 0 var(--yellow),
+    0 2px 0 0 var(--yellow),
+    2px 2px 0 0 var(--yellow);
+}
+
+.post-card .post-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.post-card .post-date {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: var(--green);
+  letter-spacing: 0.06em;
+}
+
+.post-card .post-category {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  padding: 4px 8px;
+  background: var(--deep-purple);
+  border: 2px solid var(--pink);
+  color: var(--pink);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.post-card h3 {
+  font-family: 'Pixelify Sans', 'VT323', monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.post-card h3 a {
+  text-decoration: none;
+  color: var(--yellow);
+  transition: color 0.1s;
+}
+
+.post-card h3 a:hover { color: var(--pink); }
+
+.post-card .post-excerpt {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--sky-blue);
+  line-height: 1.4;
+}
+
+.post-card .post-footer-row {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-card .read-more {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: var(--green);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  border: 2px solid var(--green);
+  transition: all 0.1s;
+}
+
+.post-card .read-more:hover {
+  background: var(--green);
+  color: var(--pixel-dark);
+}
+
+.post-card .post-stats {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.35rem;
+  color: var(--pixel-white);
+  opacity: 0.6;
+}
+
+.post-card .post-stats .heart {
+  color: var(--pink);
+}
+
+/* --- Sidebar --- */
+.sidebar-panel {
+  background: var(--pixel-dark);
+  border: 4px solid var(--pink);
+  padding: 18px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.sidebar-panel .panel-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: var(--yellow);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 3px dotted var(--sky-blue);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-panel .panel-title .icon-pixel {
+  width: 12px;
+  height: 12px;
+  background: var(--green);
+  image-rendering: pixelated;
+}
+
+.about-panel .avatar-pixel {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.avatar-pixel .apx {
+  background: var(--sky-blue);
+}
+
+.avatar-pixel .apx.light {
+  background: var(--pixel-white);
+}
+
+.avatar-pixel .apx.dark {
+  background: var(--pixel-dark);
+}
+
+.about-panel p {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--pixel-white);
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Tag Cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag-cloud a {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.35rem;
+  padding: 5px 8px;
+  border: 2px solid var(--sky-blue);
+  text-decoration: none;
+  color: var(--sky-blue);
+  letter-spacing: 0.04em;
+  background: var(--pixel-dark);
+  transition: all 0.1s;
+  text-transform: uppercase;
+}
+
+.tag-cloud a:hover {
+  background: var(--sky-blue);
+  color: var(--pixel-dark);
+  transform: translate(-1px, -1px);
+  box-shadow:
+    1px 0 0 0 var(--pixel-white),
+    0 1px 0 0 var(--pixel-white),
+    1px 1px 0 0 var(--pixel-white);
+}
+
+/* --- Footer --- */
+.site-footer {
+  background: var(--pixel-dark);
+  border-top: 4px solid var(--yellow);
+  padding: 30px 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.site-footer::before {
+  content: '========== GAME OVER ==========';
+  display: block;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: var(--pink);
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  opacity: 0.5;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-left {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  color: var(--sky-blue);
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+}
+
+.footer-left .credits {
+  color: var(--pink);
+}
+
+.footer-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-nav a {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  text-decoration: none;
+  color: var(--green);
+  letter-spacing: 0.06em;
+  transition: color 0.1s;
+}
+
+.footer-nav a:hover { color: var(--yellow); }
+
+/* --- Coin / Item decorations --- */
+.floating-coins {
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.15;
+}
+
+.floating-coin {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: var(--yellow);
+  animation: coinSpin 4s steps(8) infinite;
+}
+
+.floating-coin:nth-child(1) { animation-delay: 0s; }
+.floating-coin:nth-child(2) { animation-delay: -1s; }
+.floating-coin:nth-child(3) { animation-delay: -2s; }
+
+@keyframes coinSpin {
+  0%, 100% { transform: rotateY(0deg); opacity: 0.15; }
+  50% { transform: rotateY(180deg); opacity: 0.3; }
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .site-brand h1 { font-size: 0.65rem; }
+  .site-nav a { font-size: 0.4rem; padding: 6px 8px; }
+  .hero .title-screen h2 { font-size: 0.6rem; }
+  .floating-coins { display: none; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- Star field -->
+<div class="starfield" id="starfield"></div>
+
+<!-- Floating coins -->
+<div class="floating-coins">
+  <span class="floating-coin">&#9679; COIN x1</span>
+  <span class="floating-coin">&#9670; GEM x5</span>
+  <span class="floating-coin">&#9733; STAR x3</span>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <div class="site-brand">
+        <div class="pixel-icon">
+          <span class="px"></span><span class="px empty"></span><span class="px"></span>
+          <span class="px empty"></span><span class="px"></span><span class="px empty"></span>
+          <span class="px"></span><span class="px empty"></span><span class="px"></span>
+        </div>
+        <div>
+          <h1>Cola<span class="accent">_CaO</span></h1>
+          <span class="tagline">记录生活 · 分享技术 · 品味人生</span>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="#" class="active">HOME</a>
+        <a href="#">POSTS</a>
+        <a href="#">QUEST</a>
+        <a href="#">STATS</a>
+        <a href="#">CHAT</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="title-screen">
+      <h2>WELCOME TO<br>COLA_CAO<span class="blink">_</span></h2>
+    </div>
+    <p class="subtitle">Level 42 Developer · Open Source Adventurer</p>
+    <p class="press-start">
+      <span class="arrow">&#9650; &#9650; &#9650;</span><br>
+      PRESS START TO CONTINUE
+    </p>
+    <div class="pixel-blocks-row">
+      <span class="pixel-block"></span>
+      <span class="pixel-block"></span>
+      <span class="pixel-block"></span>
+      <span class="pixel-block"></span>
+      <span class="pixel-block"></span>
+      <span class="pixel-block"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MAIN ============ -->
+<div class="main-content">
+  <div class="container">
+    <div class="content-grid">
+
+      <!-- Posts -->
+      <main class="posts-area">
+
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-date">[ 2024-12-15 ]</span>
+            <span class="post-category">TECH</span>
+          </div>
+          <h3><a href="#">探索现代 Web 开发的新趋势</a></h3>
+          <p class="post-excerpt">WebAssembly、边缘计算、CSS Container Queries、View Transitions API —— 2024 年的 Web 技术栈正在经历一场史诗级的版本更新！</p>
+          <div class="post-footer-row">
+            <a href="#" class="read-more">[ READ MORE ]</a>
+            <span class="post-stats"><span class="heart">&#9829;</span> 128 LIKES</span>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-date">[ 2024-11-22 ]</span>
+            <span class="post-category">GUIDE</span>
+          </div>
+          <h3><a href="#">如何打造高效的工作流</a></h3>
+          <p class="post-excerpt">终端配置、编辑器插件、自动化脚本 —— 一套经过 365 天实战打磨的开发工作流，让你的编码效率像开了加速道具一样飙升！</p>
+          <div class="post-footer-row">
+            <a href="#" class="read-more">[ READ MORE ]</a>
+            <span class="post-stats"><span class="heart">&#9829;</span> 203 LIKES</span>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-date">[ 2024-10-08 ]</span>
+            <span class="post-category">OPEN SOURCE</span>
+          </div>
+          <h3><a href="#">我的开源之旅：从零到一</a></h3>
+          <p class="post-excerpt">从第一个 README.md 到 2000+ GitHub Stars —— 这是一段充满挑战与惊喜的开源冒险，每一个 Pull Request 都是一次升级！</p>
+          <div class="post-footer-row">
+            <a href="#" class="read-more">[ READ MORE ]</a>
+            <span class="post-stats"><span class="heart">&#9829;</span> 311 LIKES</span>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-date">[ 2024-09-14 ]</span>
+            <span class="post-category">BOOK</span>
+          </div>
+          <h3><a href="#">读书笔记：《设计心理学》</a></h3>
+          <p class="post-excerpt">唐·诺曼的交互设计经典！可视性、反馈、约束、映射 —— 将认知心理学的核心原则转化为现代 UI 开发的通关秘籍。</p>
+          <div class="post-footer-row">
+            <a href="#" class="read-more">[ READ MORE ]</a>
+            <span class="post-stats"><span class="heart">&#9829;</span> 97 LIKES</span>
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-header-row">
+            <span class="post-date">[ 2024-08-30 ]</span>
+            <span class="post-category">LIFE</span>
+          </div>
+          <h3><a href="#">城市漫步：寻找隐藏的咖啡馆</a></h3>
+          <p class="post-excerpt">放下键盘，走出安全区！城市深处隐藏着五家独立咖啡馆 —— 就像游戏中的隐藏关卡，每一杯手冲都是一个等待被发现的彩蛋。</p>
+          <div class="post-footer-row">
+            <a href="#" class="read-more">[ READ MORE ]</a>
+            <span class="post-stats"><span class="heart">&#9829;</span> 256 LIKES</span>
+          </div>
+        </article>
+
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+
+        <div class="sidebar-panel about-panel">
+          <div class="panel-title">
+            <span class="icon-pixel"></span> PLAYER STATS
+          </div>
+          <div class="avatar-pixel">
+            <span class="apx light"></span><span class="apx"></span><span class="apx"></span><span class="apx light"></span>
+            <span class="apx"></span><span class="apx dark"></span><span class="apx dark"></span><span class="apx"></span>
+            <span class="apx light"></span><span class="apx"></span><span class="apx"></span><span class="apx light"></span>
+            <span class="apx"></span><span class="apx light"></span><span class="apx light"></span><span class="apx"></span>
+          </div>
+          <p>NAME: 可乐<br>
+          CLASS: Full-Stack Dev<br>
+          LVL: 42 · EXP: 8642/9999<br>
+          热爱像素、代码与咖啡。</p>
+        </div>
+
+        <div class="sidebar-panel">
+          <div class="panel-title">
+            <span class="icon-pixel"></span> TAG CLOUD
+          </div>
+          <div class="tag-cloud">
+            <a href="#">FRONTEND</a>
+            <a href="#">CSS PIXEL</a>
+            <a href="#">GAME DEV</a>
+            <a href="#">OPEN SOURCE</a>
+            <a href="#">DEV OPS</a>
+            <a href="#">DESIGN</a>
+            <a href="#">TYPESCRIPT</a>
+            <a href="#">RETRO</a>
+            <a href="#">COFFEE</a>
+            <a href="#">8BIT</a>
+            <a href="#">PIXEL ART</a>
+            <a href="#">TOOLS</a>
+          </div>
+        </div>
+
+        <div class="sidebar-panel">
+          <div class="panel-title">
+            <span class="icon-pixel"></span> LEVEL SELECT
+          </div>
+          <div class="tag-cloud">
+            <a href="#">WORLD 12</a>
+            <a href="#">WORLD 11</a>
+            <a href="#">WORLD 10</a>
+            <a href="#">WORLD 09</a>
+            <a href="#">WORLD 08</a>
+            <a href="#">WORLD 07</a>
+            <a href="#">WORLD 06</a>
+            <a href="#">???</a>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="credits">[ CREDITS ]</span><br>
+        &copy; 2024 Cola_CaO<br>
+        可乐的像素博客<br>
+        Made with &hearts; + Pixels
+      </div>
+      <div class="footer-nav">
+        <a href="#">ABOUT</a>
+        <a href="#">ARCHIVE</a>
+        <a href="#">RSS</a>
+        <a href="#">GITHUB</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Generate star field -->
+<script>
+(function() {
+  var container = document.getElementById('starfield');
+  if (!container) return;
+  var frag = document.createDocumentFragment();
+  var colors = ['#5bc0eb','#f7a8b8','#8be04e','#ffe74c','#f8f8f0'];
+  for (var i = 0; i < 80; i++) {
+    var star = document.createElement('span');
+    star.className = 'star' + (Math.random() > 0.6 ? ' twinkle' : '');
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.width = (Math.random() * 3 + 1) + 'px';
+    star.style.height = star.style.width;
+    star.style.background = colors[Math.floor(Math.random() * colors.length)];
+    star.style.animationDelay = (Math.random() * 3) + 's';
+    frag.appendChild(star);
+  }
+  container.appendChild(frag);
+})();
+</script>
+
+</body>
+</html>

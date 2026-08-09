@@ -1,0 +1,73 @@
+{
+    "name": "Cola_CaO / 可乐",
+    "title": "CS @ 杭师大 · 网络安全方向 · CTF & SRC",
+    "avatar": "assets/images/my-avatar.jpg",
+    "bio": "杭州师范大学计算机科学与技术专业 2026 级新生。\n\n方向明确：网络空间安全。计划本科期间走 CTF + SRC 漏洞挖掘路线，在实战中积累攻防经验。\n\n当前正在学习：Java、PHP、Web 安全、Kali Linux、Burp Suite。已了解 XSS、SQL 注入、JWT、Cookie/Session/Token 等基础安全概念，正尝试抓包分析。\n\n工具栈：Laragon + VS Code + Continue (DeepSeek API)，Obsidian 做知识库。天选 4 游戏本跑主力开发，计划添置轻薄本跑 Kali。\n\n性格上喜欢系统性拆解问题（'调试思维'），对底层原理有好奇心，不满足于表面答案。\n\n这个博客是深海研究站——安静、专注、记录每一段探索的航迹。",
+    "skills": [
+        {
+            "name": "Python",
+            "level": 71,
+            "icon": "🐍"
+        },
+        {
+            "name": "C/C++",
+            "level": 10,
+            "icon": "⚙️"
+        },
+        {
+            "name": "Java",
+            "level": 14,
+            "icon": "☕"
+        },
+        {
+            "name": "PHP",
+            "level": 23,
+            "icon": "🐘"
+        },
+        {
+            "name": "Web Security",
+            "level": 22,
+            "icon": "🛡️"
+        },
+        {
+            "name": "Kali Linux",
+            "level": 15,
+            "icon": "🐉"
+        }
+    ],
+    "timeline": [
+        {
+            "year": "2026.09",
+            "title": "大学入学",
+            "desc": "杭州师范大学 CS 专业，正式开启计算机学习之旅"
+        },
+        {
+            "year": "2026.07",
+            "title": "暑假安全学习",
+            "desc": "开始系统学习 Web 安全、Kali Linux、Burp Suite"
+        },
+        {
+            "year": "2026.06",
+            "title": "高考结束",
+            "desc": "确定网络空间安全方向，搭建个人开发环境 (Laragon + VS Code)"
+        }
+    ],
+    "social": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/Cola-Ca0",
+            "icon": "💻"
+        },
+        {
+            "name": "Bilibili",
+            "url": "https://space.bilibili.com/629007860",
+            "icon": "📺"
+        },
+        {
+            "name": "Email",
+            "url": "mailto:458756060@qq.com",
+            "icon": "📧"
+        }
+    ],
+    "footer": "深海之下，别有洞天 — Cola_CaO"
+}

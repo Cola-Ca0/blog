@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cola_CaO — 新拟态</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           05. 新拟态 Neumorphism — 柔和阴影，单色调，圆润立体感
+           ============================================================ */
+
+        :root {
+            --bg: #e8ecf1;
+            --bg-alt: #dde1e7;
+            --surface: #e8ecf1;
+            --text-primary: #2d3748;
+            --text-secondary: #5a6c7d;
+            --text-muted: #94a3b8;
+            --shadow-dark: #c8ccd3;
+            --shadow-light: #ffffff;
+            --neumorph-radius: 20px;
+            --neumorph-radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 17px;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* ---------- Neumorphic mixins (used throughout) ---------- */
+
+        /* Raised (convex) */
+        .neu-raised {
+            background: var(--surface);
+            border-radius: var(--neumorph-radius);
+            box-shadow:
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+        }
+
+        .neu-raised-sm {
+            background: var(--surface);
+            border-radius: var(--neumorph-radius-sm);
+            box-shadow:
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        /* Inset (concave) */
+        .neu-inset {
+            background: var(--surface);
+            border-radius: var(--neumorph-radius);
+            box-shadow:
+                inset 6px 6px 12px var(--shadow-dark),
+                inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .neu-inset-sm {
+            background: var(--surface);
+            border-radius: var(--neumorph-radius-sm);
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* Flat (same as bg) */
+        .neu-flat {
+            background: var(--surface);
+            border-radius: var(--neumorph-radius);
+            box-shadow:
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        /* Button / interactive */
+        .neu-btn {
+            display: inline-block;
+            padding: 0.7rem 2rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--text-primary);
+            text-decoration: none;
+            background: var(--surface);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow:
+                6px 6px 14px var(--shadow-dark),
+                -6px -6px 14px var(--shadow-light);
+            transition: all 0.3s;
+        }
+
+        .neu-btn:hover {
+            box-shadow:
+                4px 4px 10px var(--shadow-dark),
+                -4px -4px 10px var(--shadow-light);
+            transform: translateY(-1px);
+        }
+
+        .neu-btn:active,
+        .neu-btn.pressed {
+            box-shadow:
+                inset 4px 4px 10px var(--shadow-dark),
+                inset -4px -4px 10px var(--shadow-light);
+            color: var(--text-secondary);
+        }
+
+        /* ---------- Container ---------- */
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ---------- Top Navigation ---------- */
+        .site-nav {
+            margin-top: 1.8rem;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border-radius: 60px;
+            box-shadow:
+                10px 10px 20px var(--shadow-dark),
+                -10px -10px 20px var(--shadow-light);
+        }
+
+        .nav-brand {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .nav-brand:hover {
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.6rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 0.45rem 1.2rem;
+            border-radius: 30px;
+            background: var(--surface);
+            box-shadow:
+                3px 3px 8px var(--shadow-dark),
+                -3px -3px 8px var(--shadow-light);
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .nav-links a:active {
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+            color: var(--text-muted);
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding: 3.5rem 3rem;
+            background: var(--surface);
+            border-radius: 40px;
+            box-shadow:
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+            position: relative;
+        }
+
+        /* Decorative inset circle */
+        .hero-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: var(--surface);
+            box-shadow:
+                inset 6px 6px 14px var(--shadow-dark),
+                inset -6px -6px 14px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            user-select: none;
+        }
+
+        .hero-title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .hero-tagline {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-divider-neu {
+            width: 60px;
+            height: 6px;
+            margin: 0 auto 1.5rem;
+            border-radius: 10px;
+            background: var(--surface);
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .hero-desc {
+            max-width: 480px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        /* ---------- Section title ---------- */
+        .section-head {
+            margin: 3rem 0 1.8rem;
+            text-align: center;
+        }
+
+        .section-head h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: var(--text-primary);
+        }
+
+        /* ---------- Posts Grid ---------- */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+        }
+
+        .post-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: var(--neumorph-radius);
+            box-shadow:
+                8px 8px 18px var(--shadow-dark),
+                -8px -8px 18px var(--shadow-light);
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        /* Feature card spans full width */
+        .post-card.feature {
+            grid-column: 1 / -1;
+            padding: 2.2rem 2.5rem;
+        }
+
+        .post-card:hover {
+            box-shadow:
+                5px 5px 12px var(--shadow-dark),
+                -5px -5px 12px var(--shadow-light);
+            transform: translateY(-2px);
+        }
+
+        .post-card:active {
+            box-shadow:
+                inset 6px 6px 14px var(--shadow-dark),
+                inset -6px -6px 14px var(--shadow-light);
+        }
+
+        .post-card-date {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            background: var(--surface);
+            box-shadow:
+                inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+            margin-bottom: 1rem;
+        }
+
+        .post-card-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+            transition: color 0.3s;
+        }
+        .post-card:hover .post-card-title {
+            color: var(--text-secondary);
+        }
+
+        .post-card-excerpt {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        .post-card-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.2rem;
+        }
+
+        .post-card-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            background: var(--surface);
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+        }
+
+        .post-card-arrow {
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            box-shadow:
+                4px 4px 9px var(--shadow-dark),
+                -4px -4px 9px var(--shadow-light);
+            transition: all 0.3s;
+        }
+        .post-card:hover .post-card-arrow {
+            box-shadow:
+                inset 3px 3px 7px var(--shadow-dark),
+                inset -3px -3px 7px var(--shadow-light);
+            color: var(--text-primary);
+        }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar-row {
+            margin-top: 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+        }
+
+        .sidebar-card {
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: var(--neumorph-radius);
+            box-shadow:
+                8px 8px 18px var(--shadow-dark),
+                -8px -8px 18px var(--shadow-light);
+        }
+
+        .sidebar-card h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sidebar-card h4 .neu-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--surface);
+            box-shadow:
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .about-text {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.85;
+        }
+        .about-text strong {
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.4rem 1rem;
+            border-radius: 25px;
+            background: var(--surface);
+            box-shadow:
+                3px 3px 7px var(--shadow-dark),
+                -3px -3px 7px var(--shadow-light);
+            transition: all 0.3s;
+        }
+        .tag:hover {
+            box-shadow:
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        .tag:active {
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* ---------- Subscribe CTA ---------- */
+        .cta-section {
+            margin-top: 3rem;
+            padding: 2.5rem 3rem;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 40px;
+            box-shadow:
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+        }
+
+        .cta-section h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-section p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-input-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-input {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.85rem;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: var(--surface);
+            border: none;
+            border-radius: 50px;
+            min-width: 260px;
+            box-shadow:
+                inset 4px 4px 10px var(--shadow-dark),
+                inset -4px -4px 10px var(--shadow-light);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .cta-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .cta-input:focus {
+            box-shadow:
+                inset 3px 3px 8px var(--shadow-dark),
+                inset -3px -3px 8px var(--shadow-light);
+        }
+
+        /* ---------- Footer ---------- */
+        .site-footer {
+            margin-top: 3rem;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 40px;
+            box-shadow:
+                10px 10px 20px var(--shadow-dark),
+                -10px -10px 20px var(--shadow-light);
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 25px;
+            background: var(--surface);
+            box-shadow:
+                3px 3px 7px var(--shadow-dark),
+                -3px -3px 7px var(--shadow-light);
+            transition: all 0.3s;
+        }
+        .footer-nav a:hover {
+            box-shadow:
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 800px) {
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-row {
+                grid-template-columns: 1fr;
+            }
+            .site-nav {
+                flex-direction: column;
+                gap: 1rem;
+                border-radius: 30px;
+            }
+            .hero-title { font-size: 2rem; }
+            .hero { padding: 2.5rem 1.5rem; }
+        }
+
+        @media (max-width: 500px) {
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .cta-input { min-width: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Navigation -->
+        <nav class="site-nav">
+            <a href="#" class="nav-brand">Cola_CaO</a>
+            <ul class="nav-links">
+                <li><a href="#">文章</a></li>
+                <li><a href="#">归档</a></li>
+                <li><a href="#">项目</a></li>
+                <li><a href="#">关于</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero -->
+        <header class="hero">
+            <div class="hero-icon">&#9749;</div>
+            <h1 class="hero-title">可乐的博客</h1>
+            <p class="hero-tagline">记录生活，分享技术，品味人生</p>
+            <div class="hero-divider-neu"></div>
+            <p class="hero-desc">
+                在柔和的光影之间，探索代码的边界与生活之美。
+                这里是可乐的数字空间，一个用新拟态风格精心打造的博客。
+            </p>
+        </header>
+
+        <!-- Posts -->
+        <main>
+            <div class="section-head">
+                <h2>最新文章</h2>
+            </div>
+
+            <div class="posts-grid">
+
+                <!-- Feature post (full width) -->
+                <a href="#" class="post-card feature">
+                    <span class="post-card-date">2024年12月</span>
+                    <h2 class="post-card-title">探索现代 Web 开发的新趋势</h2>
+                    <p class="post-card-excerpt">
+                        从服务器组件到边缘计算，从 AI 驱动的开发工具到 WebAssembly 的崛起，
+                        现代 Web 开发正经历着前所未有的变革。本文将带你一览 2024 年最值得关注的技术方向，
+                        以及它们将如何重塑我们构建数字产品的方式。
+                    </p>
+                    <div class="post-card-footer">
+                        <span class="post-card-tag">Web 开发</span>
+                        <span class="post-card-tag">前端</span>
+                        <span class="post-card-tag">趋势</span>
+                        <span class="post-card-arrow">&rarr;</span>
+                    </div>
+                </a>
+
+                <!-- Post 2 -->
+                <a href="#" class="post-card">
+                    <span class="post-card-date">2024年11月</span>
+                    <h2 class="post-card-title">如何打造高效的工作流</h2>
+                    <p class="post-card-excerpt">
+                        工欲善其事，必先利其器。从编辑器的选择到自动化脚本的编写，
+                        分享我在日常开发中不断打磨出来的高效工作流实践。
+                    </p>
+                    <div class="post-card-footer">
+                        <span class="post-card-tag">工作流</span>
+                        <span class="post-card-tag">效率</span>
+                        <span class="post-card-tag">工具</span>
+                        <span class="post-card-arrow">&rarr;</span>
+                    </div>
+                </a>
+
+                <!-- Post 3 -->
+                <a href="#" class="post-card">
+                    <span class="post-card-date">2024年10月</span>
+                    <h2 class="post-card-title">我的开源之旅：从零到一</h2>
+                    <p class="post-card-excerpt">
+                        从提交第一个 Pull Request 到维护自己的开源项目，
+                        这段旅程让我深刻理解了协作的力量和社区的温暖。
+                    </p>
+                    <div class="post-card-footer">
+                        <span class="post-card-tag">开源</span>
+                        <span class="post-card-tag">GitHub</span>
+                        <span class="post-card-tag">社区</span>
+                        <span class="post-card-arrow">&rarr;</span>
+                    </div>
+                </a>
+
+                <!-- Post 4 -->
+                <a href="#" class="post-card">
+                    <span class="post-card-date">2024年9月</span>
+                    <h2 class="post-card-title">读书笔记：《设计心理学》</h2>
+                    <p class="post-card-excerpt">
+                        唐纳德·诺曼的经典之作让我重新审视了"好的设计"的定义 ——
+                        它不仅仅是美观，更是一种无声的沟通。
+                    </p>
+                    <div class="post-card-footer">
+                        <span class="post-card-tag">读书</span>
+                        <span class="post-card-tag">设计</span>
+                        <span class="post-card-tag">心理学</span>
+                        <span class="post-card-arrow">&rarr;</span>
+                    </div>
+                </a>
+
+                <!-- Post 5 -->
+                <a href="#" class="post-card">
+                    <span class="post-card-date">2024年8月</span>
+                    <h2 class="post-card-title">城市漫步：寻找隐藏的咖啡馆</h2>
+                    <p class="post-card-excerpt">
+                        在一个慵懒的周末午后，我穿梭于城市的小巷之间，
+                        发现了那些不为人知的独立咖啡馆——每一家都有自己独特的故事与风格。
+                    </p>
+                    <div class="post-card-footer">
+                        <span class="post-card-tag">生活</span>
+                        <span class="post-card-tag">咖啡</span>
+                        <span class="post-card-tag">城市漫步</span>
+                        <span class="post-card-arrow">&rarr;</span>
+                    </div>
+                </a>
+
+            </div>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar-row">
+            <div class="sidebar-card">
+                <h4><span class="neu-dot"></span> 关于我</h4>
+                <p class="about-text">
+                    我是 <strong>可乐</strong>，一名热爱技术与生活的全栈开发者。
+                    白天写代码，晚上看书、喝咖啡、在城市中漫步。
+                    这个博客记录了我的技术探索与生活感悟，希望你能在这里找到共鸣。
+                </p>
+            </div>
+            <div class="sidebar-card">
+                <h4><span class="neu-dot"></span> 标签云</h4>
+                <div class="tag-cloud">
+                    <a href="#" class="tag">Web 开发</a>
+                    <a href="#" class="tag">JavaScript</a>
+                    <a href="#" class="tag">TypeScript</a>
+                    <a href="#" class="tag">React</a>
+                    <a href="#" class="tag">Node.js</a>
+                    <a href="#" class="tag">Python</a>
+                    <a href="#" class="tag">开源</a>
+                    <a href="#" class="tag">CSS</a>
+                    <a href="#" class="tag">设计</a>
+                    <a href="#" class="tag">读书</a>
+                    <a href="#" class="tag">咖啡</a>
+                    <a href="#" class="tag">生活</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <h3>订阅更新</h3>
+            <p>不想错过任何一篇文章？留下你的邮箱，第一时间收到更新通知。</p>
+            <div class="cta-input-group">
+                <input type="email" class="cta-input" placeholder="your@email.com">
+                <button class="neu-btn" type="button">订阅</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-nav">
+                <a href="#">GitHub</a>
+                <a href="#">Twitter</a>
+                <a href="#">RSS</a>
+                <a href="#">Email</a>
+                <a href="#">友链</a>
+            </div>
+            <p class="footer-copy">
+                &copy; 2024 Cola_CaO &mdash; Designed with Neumorphism
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

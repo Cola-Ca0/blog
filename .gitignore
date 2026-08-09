@@ -1,0 +1,32 @@
+# Laragon
+/laragon/
+
+# Music files (large)
+blog/assets/music/*.mp3
+blog/assets/music/*.lrc
+
+# User images (personal)
+blog/assets/images/wallpaper.jpg
+blog/assets/images/my-avatar.jpg
+blog/assets/images/gura-avatar.jpg
+
+# User content (personal data)
+blog/users.json
+blog/data/comments/*.json
+
+# System
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Claude / AI
+.claude/
+.claude/
+.impeccable/
+.scratch/
+docs/superpowers/
+
+# IDE
+.vscode/
+.idea/

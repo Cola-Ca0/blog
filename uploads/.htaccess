@@ -1,0 +1,8 @@
+# 禁止直接执行上传的文件
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|sh)$">
+    Deny from all
+</FilesMatch>
+# 允许图片访问
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Allow from all
+</FilesMatch>

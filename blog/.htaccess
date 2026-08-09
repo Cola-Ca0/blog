@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# RSS Feed
+RewriteRule ^feed\.xml$ rss.php [L]
+
+# Article detail: /blog/post/hello-world → post.php?slug=hello-world
+RewriteRule ^post/([a-zA-Z0-9\-]+)$ post.php?slug=$1 [L,QSA]
+
+# Pagination: /blog/page/2 → index.php?page=2
+RewriteRule ^page/([0-9]+)$ index.php?page=$1 [L,QSA]
