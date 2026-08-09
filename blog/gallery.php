@@ -25,9 +25,6 @@ sort($slides);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:16px}
-body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-primary);line-height:1.7;min-height:100vh}
 .page-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:100px 28px 60px}
 .page-header{text-align:center;margin-bottom:40px}
 .page-header h1{font-family:var(--font-display);font-size:2.4rem;font-weight:700;letter-spacing:0.04em}
