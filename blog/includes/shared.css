@@ -4,10 +4,10 @@
    Single source for the structural chrome that never changes
    ============================================================ */
 
-html { transition:background-color 0.35s,color 0.35s; }
-body { transition:background-color 0.35s,color 0.35s; }
+html { transition:background-color var(--transition-smooth),color var(--transition-smooth); }
+body { transition:background-color var(--transition-smooth),color var(--transition-smooth); }
 .bg-layers,.navbar,.hero-wallpaper,.article-card,.article-page,.hero-panel,
-.sidebar-widget,.music-hero,.posts-header,.site-footer,.about-card,.editor-page { transition:background-color 0.35s,border-color 0.35s,color 0.35s,box-shadow 0.35s; }
+.sidebar-widget,.music-hero,.posts-header,.site-footer,.about-card,.editor-page { transition:background-color var(--transition-smooth),border-color var(--transition-smooth),color var(--transition-smooth),box-shadow var(--transition-smooth); }
 
 /* --- Background Layers --- */
 .bg-layers { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
