@@ -111,6 +111,22 @@ $pageTitle = $mode === 'project' ? ($isEditProject ? 'Edit Project' : 'New Proje
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: rgba(91,160,224,0.28); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(91,160,224,0.45); }
+::selection { background: rgba(91,160,224,0.35); color: #fff; }
+
 .editor-page { max-width: 900px; margin: 0 auto; padding: 100px 24px 60px; }
 
 .editor-header { display:flex; align-items:center; gap:14px; margin-bottom:32px; }

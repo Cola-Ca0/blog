@@ -1,23 +1,9 @@
 /* ============================================================
-   Shared CSS — Reset, Navbar, Background, Footer, Chrome
-   Single source for structural styles that never change.
-   Every page loads this file — do NOT duplicate these rules.
+   Shared CSS — Navbar, Background, Footer
+   Included by: index.php, login.php, projects/index.php
+   Single source for the structural chrome that never changes
    ============================================================ */
 
-/* --- Reset & Base --- */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
-body {
-  font-family: var(--font-body);
-  background-color: var(--bg-deep);
-  color: var(--text-primary);
-  line-height: 1.7;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Smooth theme transitions */
 html { transition:background-color 0.35s,color 0.35s; }
 body { transition:background-color 0.35s,color 0.35s; }
 .bg-layers,.navbar,.hero-wallpaper,.article-card,.article-page,.hero-panel,
