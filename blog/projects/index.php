@@ -49,6 +49,7 @@ if (isset($_GET['download']) && $isLoggedIn && $viewProject) {
 <meta property="og:title" content="Projects · Cola_CaO">
 <meta property="og:description" content="可乐的项目展示，安全工具与代码作品。">
 <meta property="og:type" content="website">
+<?php require __DIR__ . '/../includes/theme-init.php'; ?>
 <link rel="stylesheet" href="../includes/tokens.css">
 <link rel="stylesheet" href="../includes/shared.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -12,6 +12,7 @@ if (!$isLoggedIn || !$isAdmin) { header('Location: /blog/login.php'); exit; }
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/../includes/theme-init.php'; ?>
 <title>Editor · Admin</title>
 <link rel="stylesheet" href="/blog/includes/tokens.css">
 <link rel="stylesheet" href="/blog/includes/shared.css">

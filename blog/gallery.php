@@ -18,6 +18,7 @@ sort($slides);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/includes/theme-init.php'; ?>
 <title>Gallery / 图库 · Cola_CaO</title>
 <link rel="stylesheet" href="includes/tokens.css">
 <link rel="stylesheet" href="includes/shared.css">

@@ -5,10 +5,11 @@
  */
 
 /**
- * Parse a .md post file into its metadata + body HTML.
+ * Parse front matter + raw body only — NO Markdown rendering.
+ * Use for list/search/tags where body_html is discarded.
  * Returns null if file missing or front matter invalid.
  */
-function parsePost(string $filePath): ?array {
+function parsePostMeta(string $filePath): ?array {
     if (!file_exists($filePath)) return null;
 
     $content = file_get_contents($filePath);
@@ -25,79 +26,92 @@ function parsePost(string $filePath): ?array {
         'cover'    => null,
         'slug'     => '',
         'body'     => '',
-        'body_html'=> '',
     ];
 
-    // Check for front matter delimiters
+    // Parse front matter (shared logic — see _parseFrontMatter)
     if (str_starts_with(ltrim($content), '---')) {
         $content = ltrim($content);
-        $content = substr($content, 3); // strip opening ---
+        $content = substr($content, 3);
         $endPos = strpos($content, "\n---");
         if ($endPos === false) $endPos = strpos($content, "\r\n---");
         if ($endPos !== false) {
             $fmRaw = substr($content, 0, $endPos);
             $content = ltrim(substr($content, $endPos));
-            // Strip the closing ---
             if (str_starts_with($content, '---')) {
                 $content = ltrim(substr($content, 3));
             }
-
-            // Parse each front matter line
-            foreach (explode("\n", $fmRaw) as $line) {
-                $line = trim($line);
-                if ($line === '') continue;
-
-                $colon = strpos($line, ':');
-                if ($colon === false) continue;
-
-                $key = trim(substr($line, 0, $colon));
-                $val = trim(substr($line, $colon + 1));
-
-                switch ($key) {
-                    case 'title':
-                        $post['title'] = trim($val, '"\'');
-                        break;
-                    case 'date':
-                        $post['date'] = trim($val, '"\'');
-                        break;
-                    case 'updated':
-                        $post['updated'] = trim($val, '"\'');
-                        break;
-                    case 'category':
-                        $post['category'] = trim($val, '"\'');
-                        break;
-                    case 'summary':
-                        $post['summary'] = trim($val, '"\'');
-                        break;
-                    case 'cover':
-                        $post['cover'] = trim($val, '"\'');
-                        if ($post['cover'] === '') $post['cover'] = null;
-                        break;
-                    case 'draft':
-                        $post['draft'] = ($val === 'true' || $val === '1');
-                        break;
-                    case 'tags':
-                        // Support [tag1, tag2] JSON array format
-                        if (str_starts_with($val, '[') && str_ends_with($val, ']')) {
-                            $decoded = json_decode($val, true);
-                            $post['tags'] = is_array($decoded) ? $decoded : [];
-                        } else {
-                            $post['tags'] = array_map('trim', explode(',', $val));
-                        }
-                        break;
-                }
-            }
+            _parseFrontMatter($fmRaw, $post);
         }
     }
 
     $post['body'] = trim($content);
     $post['slug'] = pathinfo($filePath, PATHINFO_FILENAME);
-    $post['body_html'] = renderMarkdown($post['body']);
 
-    // Validate required fields
     if (empty($post['title']) || empty($post['date'])) return null;
 
     return $post;
+}
+
+/**
+ * Parse a .md post file into its metadata + body HTML.
+ * Use for detail page, editor, RSS — anywhere body_html is needed.
+ * Returns null if file missing or front matter invalid.
+ */
+function parsePost(string $filePath): ?array {
+    $post = parsePostMeta($filePath);
+    if ($post === null) return null;
+
+    $post['body_html'] = renderMarkdown($post['body']);
+    return $post;
+}
+
+/**
+ * Internal: parse YAML-style front matter lines into $post array.
+ */
+function _parseFrontMatter(string $fmRaw, array &$post): void {
+    foreach (explode("\n", $fmRaw) as $line) {
+        $line = trim($line);
+        if ($line === '') continue;
+
+        $colon = strpos($line, ':');
+        if ($colon === false) continue;
+
+        $key = trim(substr($line, 0, $colon));
+        $val = trim(substr($line, $colon + 1));
+
+        switch ($key) {
+            case 'title':
+                $post['title'] = trim($val, '"\'');
+                break;
+            case 'date':
+                $post['date'] = trim($val, '"\'');
+                break;
+            case 'updated':
+                $post['updated'] = trim($val, '"\'');
+                break;
+            case 'category':
+                $post['category'] = trim($val, '"\'');
+                break;
+            case 'summary':
+                $post['summary'] = trim($val, '"\'');
+                break;
+            case 'cover':
+                $post['cover'] = trim($val, '"\'');
+                if ($post['cover'] === '') $post['cover'] = null;
+                break;
+            case 'draft':
+                $post['draft'] = ($val === 'true' || $val === '1');
+                break;
+            case 'tags':
+                if (str_starts_with($val, '[') && str_ends_with($val, ']')) {
+                    $decoded = json_decode($val, true);
+                    $post['tags'] = is_array($decoded) ? $decoded : [];
+                } else {
+                    $post['tags'] = array_map('trim', explode(',', $val));
+                }
+                break;
+        }
+    }
 }
 
 /**

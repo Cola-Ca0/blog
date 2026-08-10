@@ -65,3 +65,74 @@ if (!isset($navActive)) $navActive = 'home';
   <a href="/blog/admin/editor.php">EDITOR</a>
   <?php endif; ?>
 </div>
+
+<!-- Mobile Nav Toggle -->
+<script>
+window.toggleMobileNav = function() {
+  var btn = document.querySelector('.nav-hamburger');
+  var panel = document.getElementById('mobileNavPanel');
+  if (!btn || !panel) return;
+  btn.classList.toggle('open');
+  panel.classList.toggle('open');
+};
+</script>
+
+<!-- Inline Search -->
+<script>
+(function() {
+  var input = document.getElementById('searchInput');
+  var results = document.getElementById('searchResults');
+  if (!input || !results) return;
+  var timer = null;
+
+  function performSearch(q) {
+    results.innerHTML = '<p class="search-empty">Searching... / 搜索中...</p>';
+    results.classList.add('has-results');
+    fetch('/blog/posts-api.php?action=search&q=' + encodeURIComponent(q))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.results || !data.results.length) {
+          results.innerHTML = '<p class="search-empty">No signals found / 未找到信号</p>';
+          return;
+        }
+        results.innerHTML = data.results.map(function(p) {
+          return '<a href="/blog/post/' + p.slug + '" class="sr-item">' +
+            '<div class="sr-title">' + p.title + '</div>' +
+            '<div class="sr-meta">' + p.category + ' · ' + p.date + '</div>' +
+            '<div class="sr-summary">' + p.summary + '</div>' +
+          '</a>';
+        }).join('');
+      })
+      .catch(function() {
+        results.innerHTML = '<p class="search-empty">Search failed / 搜索失败</p>';
+      });
+  }
+
+  input.addEventListener('input', function() {
+    clearTimeout(timer);
+    var q = input.value.trim();
+    if (!q) { results.innerHTML = ''; results.classList.remove('has-results'); return; }
+    timer = setTimeout(function() { performSearch(q); }, 250);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-search-wrap')) {
+      results.innerHTML = '';
+      results.classList.remove('has-results');
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      input.value = '';
+      results.innerHTML = '';
+      results.classList.remove('has-results');
+      input.blur();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+})();
+</script>

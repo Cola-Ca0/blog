@@ -13,6 +13,7 @@ $about = json_decode(file_get_contents($aboutFile), true) ?: [];
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/includes/theme-init.php'; ?>
 <title>About · Cola_CaO</title>
 <meta name="description" content="关于可乐 — 杭师大 CS 2026 级新生，网络安全方向，CTF + SRC。了解我的技术栈、学习路线和联系方式。">
 <meta property="og:title" content="About · Cola_CaO">

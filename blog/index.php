@@ -13,6 +13,7 @@ $radarSkills = $aboutJson['skills'] ?? [];
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/includes/theme-init.php'; ?>
 <title>Cola_CaO · 深海之下，别有洞天</title>
 <meta name="description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹，分享安全探索与代码思考。">
 <meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">

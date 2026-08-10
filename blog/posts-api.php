@@ -14,7 +14,7 @@ if ($action === 'tags') {
     $tagCounts = [];
     if (is_dir($postsDir)) {
         foreach (glob($postsDir . '*.md') as $file) {
-            $post = parsePost($file);
+            $post = parsePostMeta($file);
             if ($post === null || $post['draft']) continue;
             foreach ($post['tags'] as $tag) {
                 $tagCounts[$tag] = ($tagCounts[$tag] ?? 0) + 1;
@@ -37,7 +37,7 @@ if ($action === 'search') {
     $results = [];
     if (is_dir($postsDir)) {
         foreach (glob($postsDir . '*.md') as $file) {
-            $post = parsePost($file);
+            $post = parsePostMeta($file);
             if ($post === null || $post['draft']) continue;
 
             // Search in title, summary, and body
@@ -76,7 +76,7 @@ $filterCat = $_GET['category'] ?? null;
 $allPosts = [];
 if (is_dir($postsDir)) {
     foreach (glob($postsDir . '*.md') as $file) {
-        $post = parsePost($file);
+        $post = parsePostMeta($file);
         if ($post === null) continue;
         if ($post['draft']) continue;
 

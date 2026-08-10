@@ -25,6 +25,7 @@ if ($post === null || $post['draft']) {
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/includes/theme-init.php'; ?>
     <title>Signal Lost · Cola_CaO</title>
     <link rel="stylesheet" href="/blog/includes/tokens.css">
     <link rel="stylesheet" href="/blog/includes/shared.css">
@@ -60,6 +61,7 @@ $pageTitle = htmlspecialchars($post['title']) . ' · Cola_CaO';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php require __DIR__ . '/includes/theme-init.php'; ?>
 <title><?= $pageTitle ?></title>
 <meta name="description" content="<?= htmlspecialchars($post['summary']) ?>">
 <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
