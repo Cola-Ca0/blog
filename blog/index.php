@@ -26,13 +26,6 @@ $radarSkills = $aboutJson['skills'] ?? [];
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   Reset & Base
-   ============================================================ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; font-size: 16px; }
-
 body {
   font-family: var(--font-body);
   background-color: var(--bg-deep);
@@ -773,23 +766,6 @@ body {
 .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.03em; transition: color var(--transition-smooth); }
 .footer-links a:hover { color: var(--accent); }
 .footer-hud { font-family: var(--font-display); font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.08em; }
-
-/* ============================================================
-   Scrollbar
-   ============================================================ */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-deep); }
-::-webkit-scrollbar-thumb { background: rgba(91,160,224,0.28); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(91,160,224,0.45); }
-::selection { background: rgba(91,160,224,0.35); color: var(--text-primary); }
 
 /* ============================================================
    Responsive
