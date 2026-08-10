@@ -915,7 +915,20 @@ body {
     </div>
   </section>
 
-  <!-- Quick Stats (§4.9: mock data placeholder) -->
+  <!-- Quick Stats — real metrics -->
+  <?php
+    $postCount = count(glob(__DIR__ . '/posts/*.md'));
+    $projectsData = json_decode(file_exists(__DIR__ . '/projects.json') ? file_get_contents(__DIR__ . '/projects.json') : '[]', true) ?: [];
+    $projectCount = count($projectsData);
+    $commentCount = 0;
+    $commentDir = __DIR__ . '/data/comments/';
+    if (is_dir($commentDir)) {
+      foreach (glob($commentDir . '*.json') as $cf) {
+        $c = json_decode(file_get_contents($cf), true);
+        if (is_array($c)) $commentCount += count($c);
+      }
+    }
+  ?>
   <section class="char-showcase">
     <div class="section-label">
       <span class="diamond-dec"></span>
@@ -925,17 +938,17 @@ body {
       <div class="char-card">
         <span class="char-card-icon">&#9998;</span>
         <div class="char-card-title">ARTICLES</div>
-        <div class="char-card-value">42</div>
+        <div class="char-card-value"><?= $postCount ?></div>
       </div>
       <div class="char-card">
         <span class="char-card-icon">&#9881;</span>
         <div class="char-card-title">PROJECTS</div>
-        <div class="char-card-value">12</div>
+        <div class="char-card-value"><?= $projectCount ?></div>
       </div>
       <div class="char-card">
-        <span class="char-card-icon">&#9733;</span>
-        <div class="char-card-title">STARS</div>
-        <div class="char-card-value">1.2k</div>
+        <span class="char-card-icon">&#9993;</span>
+        <div class="char-card-title">SIGNALS</div>
+        <div class="char-card-value"><?= $commentCount ?></div>
       </div>
     </div>
   </section>
