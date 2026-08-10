@@ -39,12 +39,12 @@ if (!isset($commentSlug)) $commentSlug = 'about';
 </section>
 
 <script>
+var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
 (function() {
   var slug = <?= json_encode($commentSlug) ?>;
   var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
   var isAdmin = <?= json_encode($isAdmin) ?>;
   var username = <?= json_encode($username) ?>;
-  var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
   var container = document.getElementById('commentsContainer');
   if (!container) return;
 
