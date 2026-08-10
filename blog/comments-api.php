@@ -40,6 +40,14 @@ if ($action === 'create') {
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
+
+    // CSRF check
+    $token = $input['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
     $slug = $input['slug'] ?? '';
     $content = trim($input['content'] ?? '');
     $replyTo = $input['reply_to'] ?? null;
@@ -102,6 +110,14 @@ if ($action === 'delete') {
     }
 
     $input = json_decode(file_get_contents('php://input'), true);
+
+    // CSRF check
+    $token = $input['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
     $commentId = $input['id'] ?? '';
 
     if ($commentId === '') {

@@ -190,35 +190,18 @@ body {
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
+<script src="/blog/includes/editor-shared.js"></script>
+
 <?php if ($isEdit && $existingPost): ?>
 <script>
 function deleteItem() {
-  if (!confirm('Permanently delete "<?= htmlspecialchars(addslashes($existingPost['title'] ?? $editSlug)) ?>"?\n\nThis cannot be undone.')) return;
-  if (!confirm('Are you sure?')) return;
-  fetch('/blog/admin/editor-article.php?slug=<?= htmlspecialchars($editSlug) ?>&_delete=1', { method: 'POST' })
-    .then(function() { window.location.href = '/blog/'; })
-    .catch(function() { alert('Delete failed.'); });
+  editorDelete('/blog/admin/editor-article.php?slug=<?= htmlspecialchars($editSlug) ?>&_delete=1', '<?= htmlspecialchars(addslashes($existingPost['title'] ?? $editSlug)) ?>', '/blog/');
 }
 </script>
 <?php endif; ?>
 
 <?php if (!$isEdit): ?>
-<script>
-// Auto slug from title (new article only)
-(function() {
-  var titleInput = document.getElementById('titleField');
-  var slugInput = document.getElementById('slugField');
-  if (!titleInput || !slugInput) return;
-  var slugTouched = false;
-  slugInput.addEventListener('input', function() { slugTouched = true; });
-  titleInput.addEventListener('input', function() {
-    if (slugTouched) return;
-    var slug = titleInput.value.replace(/[^a-zA-Z0-9\s-]/g, '').trim().toLowerCase().replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-    if (!slug) slug = 'post-' + new Date().toISOString().slice(0,10);
-    slugInput.value = slug;
-  });
-})();
-</script>
+<script>autoSlug('titleField', 'slugField', 'post');</script>
 <?php endif; ?>
 </body>
 </html>

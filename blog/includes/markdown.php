@@ -115,19 +115,30 @@ function _parseFrontMatter(string $fmRaw, array &$post): void {
 }
 
 /**
- * Convert Markdown text to HTML.
+ * Convert Markdown text to HTML with proper escaping.
  * Order matters: code blocks first (protect), then block elements, then inline.
  */
 function renderMarkdown(string $text): string {
     $text = str_replace("\r\n", "\n", $text);
     $placeholders = [];
 
+    // Helper: escape text content (not attributes)
+    $esc = function(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); };
+
+    // Helper: sanitize URL — block javascript: and data: schemes
+    $safeUrl = function(string $url): string {
+        $url = trim($url);
+        $lower = strtolower($url);
+        if (str_starts_with($lower, 'javascript:') || str_starts_with($lower, 'data:')) return '';
+        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    };
+
     // 1. Fenced code blocks (protect from later processing)
     $text = preg_replace_callback(
         '/```(\w*)\n(.*?)```/s',
-        function ($m) use (&$placeholders) {
-            $lang = $m[1] ? ' class="language-' . htmlspecialchars($m[1]) . '"' : '';
-            $code = htmlspecialchars($m[2]);
+        function ($m) use (&$placeholders, $esc) {
+            $lang = $m[1] ? ' class="language-' . $esc($m[1]) . '"' : '';
+            $code = $esc($m[2]);
             $key = '%%CODE' . count($placeholders) . '%%';
             $placeholders[$key] = "<pre><code{$lang}>{$code}</code></pre>";
             return $key;
@@ -136,43 +147,46 @@ function renderMarkdown(string $text): string {
     );
 
     // 2. Headings (must run before horizontal rule ---)
-    $text = preg_replace('/^######\s+(.+)$/m', '<h6>$1</h6>', $text);
-    $text = preg_replace('/^#####\s+(.+)$/m', '<h5>$1</h5>', $text);
-    $text = preg_replace('/^####\s+(.+)$/m', '<h4>$1</h4>', $text);
-    $text = preg_replace('/^###\s+(.+)$/m', '<h3>$1</h3>', $text);
-    $text = preg_replace('/^##\s+(.+)$/m', '<h2>$1</h2>', $text);
-    $text = preg_replace('/^#\s+(.+)$/m', '<h1>$1</h1>', $text);
+    $text = preg_replace_callback('/^######\s+(.+)$/m', fn($m) => '<h6>' . $esc($m[1]) . '</h6>', $text);
+    $text = preg_replace_callback('/^#####\s+(.+)$/m',  fn($m) => '<h5>' . $esc($m[1]) . '</h5>', $text);
+    $text = preg_replace_callback('/^####\s+(.+)$/m',   fn($m) => '<h4>' . $esc($m[1]) . '</h4>', $text);
+    $text = preg_replace_callback('/^###\s+(.+)$/m',    fn($m) => '<h3>' . $esc($m[1]) . '</h3>', $text);
+    $text = preg_replace_callback('/^##\s+(.+)$/m',     fn($m) => '<h2>' . $esc($m[1]) . '</h2>', $text);
+    $text = preg_replace_callback('/^#\s+(.+)$/m',      fn($m) => '<h1>' . $esc($m[1]) . '</h1>', $text);
 
     // 3. Horizontal rule (only standalone ---, not in front matter)
     $text = preg_replace('/^---$/m', '<hr>', $text);
 
     // 4. Blockquote
-    $text = preg_replace('/^>\s+(.+)$/m', '<blockquote>$1</blockquote>', $text);
+    $text = preg_replace_callback('/^>\s+(.+)$/m', fn($m) => '<blockquote>' . $esc($m[1]) . '</blockquote>', $text);
 
     // 5. Images (before links — same bracket syntax)
-    $text = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1">', $text);
+    $text = preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {
+        return '<img src="' . $safeUrl($m[2]) . '" alt="' . $esc($m[1]) . '">';
+    }, $text);
 
     // 6. Links
-    $text = preg_replace('/\[([^\]]*)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
+    $text = preg_replace_callback('/\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {
+        return '<a href="' . $safeUrl($m[2]) . '">' . $esc($m[1]) . '</a>';
+    }, $text);
 
     // 7. Bold + Italic + Strikethrough
-    $text = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text);
-    $text = preg_replace('/\*(.+?)\*/', '<em>$1</em>', $text);
-    $text = preg_replace('/~~(.+?)~~/', '<del>$1</del>', $text);
+    $text = preg_replace_callback('/\*\*(.+?)\*\*/', fn($m) => '<strong>' . $esc($m[1]) . '</strong>', $text);
+    $text = preg_replace_callback('/\*(.+?)\*/',     fn($m) => '<em>' . $esc($m[1]) . '</em>', $text);
+    $text = preg_replace_callback('/~~(.+?)~~/',      fn($m) => '<del>' . $esc($m[1]) . '</del>', $text);
 
     // 8. Inline code (after bold/italic so ** inside code isn't affected)
-    $text = preg_replace('/`([^`]+)`/', '<code>$1</code>', $text);
+    $text = preg_replace_callback('/`([^`]+)`/', fn($m) => '<code>' . $esc($m[1]) . '</code>', $text);
 
     // 9. Unordered lists — group consecutive <li> into <ul>
-    $text = preg_replace('/^- (.+)$/m', '<li>$1</li>', $text);
+    $text = preg_replace_callback('/^- (.+)$/m', fn($m) => '<li>' . $esc($m[1]) . '</li>', $text);
     $text = preg_replace('/((?:<li>.*<\/li>\n?)+)/', '<ul>$1</ul>', $text);
 
     // 10. Paragraphs — wrap remaining text blocks in <p>
     $blocks = explode("\n\n", $text);
-    $blocks = array_map(function ($block) {
+    $blocks = array_map(function ($block) use ($esc) {
         $block = trim($block);
         if ($block === '') return '';
-        // Skip if already wrapped in a block tag
         if (preg_match('/^<(h[1-6]|ul|ol|pre|blockquote|hr|li)/', $block)) return $block;
         return '<p>' . str_replace("\n", "<br>", $block) . '</p>';
     }, $blocks);
@@ -184,4 +198,21 @@ function renderMarkdown(string $text): string {
     }
 
     return $text;
+}
+
+/**
+ * Scan posts directory, return all published posts sorted by date desc.
+ * Uses parsePostMeta — no wasted Markdown rendering.
+ */
+function getPublishedPosts(string $postsDir): array {
+    $posts = [];
+    if (is_dir($postsDir)) {
+        foreach (glob($postsDir . '*.md') as $file) {
+            $post = parsePostMeta($file);
+            if ($post === null || $post['draft']) continue;
+            $posts[] = $post;
+        }
+    }
+    usort($posts, function ($a, $b) { return strcmp($b['date'], $a['date']); });
+    return $posts;
 }

@@ -186,35 +186,18 @@ body {
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
+<script src="/blog/includes/editor-shared.js"></script>
+
 <?php if ($isEdit && $existingProject): ?>
 <script>
 function deleteItem() {
-  if (!confirm('Delete project "<?= htmlspecialchars(addslashes($existingProject['title'])) ?>"?\n\nThis removes the entry from projects.json but does not delete project files.')) return;
-  if (!confirm('Are you sure?')) return;
-  fetch('/blog/admin/editor-project.php?_delete_project=1&id=<?= htmlspecialchars($editProjectId) ?>', { method: 'POST' })
-    .then(function() { window.location.href = '/blog/projects/'; })
-    .catch(function() { alert('Delete failed.'); });
+  editorDelete('/blog/admin/editor-project.php?_delete_project=1&id=<?= htmlspecialchars($editProjectId) ?>', '<?= htmlspecialchars(addslashes($existingProject['title'])) ?>', '/blog/projects/');
 }
 </script>
 <?php endif; ?>
 
 <?php if (!$isEdit): ?>
-<script>
-// Auto ID from title (new project only)
-(function() {
-  var titleInput = document.getElementById('titleField');
-  var idInput = document.getElementById('projIdField');
-  if (!titleInput || !idInput) return;
-  var idTouched = false;
-  idInput.addEventListener('input', function() { idTouched = true; });
-  titleInput.addEventListener('input', function() {
-    if (idTouched) return;
-    var id = titleInput.value.replace(/[^a-zA-Z0-9\s-]/g, '').trim().toLowerCase().replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-    if (!id) id = 'project-' + new Date().toISOString().slice(0,7);
-    idInput.value = id;
-  });
-})();
-</script>
+<script>autoSlug('titleField', 'projIdField', 'project');</script>
 <?php endif; ?>
 </body>
 </html>

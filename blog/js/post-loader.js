@@ -11,6 +11,13 @@
   var currentPage = parseInt(urlParams.get('page')) || 1;
   var activeTag = urlParams.get('tag') || '';
 
+  // Escape HTML entities to prevent XSS in tag/user-content injection
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
   function loadPosts(page, tag) {
     if (typeof tag === 'undefined') tag = activeTag;
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Loading transmissions... / 加载信号中...</p>';
@@ -35,7 +42,8 @@
 
         var cardsHtml = data.posts.map(function(p) {
           var tagsHtml = (p.tags || []).map(function(t) {
-            return '<span onclick="event.stopPropagation();filterByTag(\'' + t.replace(/'/g, "\\'") + '\')" style="cursor:pointer" title="Filter by ' + t + '">' + t + '</span>';
+            var safe = escapeHtml(t);
+            return '<span onclick="event.stopPropagation();filterByTag(\'' + safe.replace(/'/g, "\\'") + '\')" style="cursor:pointer" title="Filter by ' + safe + '">' + safe + '</span>';
           }).join('');
           var coverAttr = p.cover ? ' style="--card-cover:url(' + p.cover + ')"' : '';
 
@@ -122,7 +130,8 @@
       var entries = Object.entries(data.tags);
       if (!entries.length) { cloud.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted)">No tags yet / 暂无标签</span>'; return; }
       cloud.innerHTML = entries.map(function(e) {
-        return '<a href="/blog/?tag=' + encodeURIComponent(e[0]) + '" onclick="event.preventDefault();filterByTag(\'' + e[0].replace(/'/g, "\\'") + '\')">' + e[0] + '</a>';
+        var safe = escapeHtml(e[0]);
+        return '<a href="/blog/?tag=' + encodeURIComponent(e[0]) + '" onclick="event.preventDefault();filterByTag(\'' + safe.replace(/'/g, "\\'") + '\')">' + safe + '</a>';
       }).join('');
     })
     .catch(function() {

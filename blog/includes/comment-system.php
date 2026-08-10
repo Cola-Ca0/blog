@@ -44,6 +44,7 @@ if (!isset($commentSlug)) $commentSlug = 'about';
   var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
   var isAdmin = <?= json_encode($isAdmin) ?>;
   var username = <?= json_encode($username) ?>;
+  var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
   var container = document.getElementById('commentsContainer');
   if (!container) return;
 
@@ -102,13 +103,13 @@ if (!isset($commentSlug)) $commentSlug = 'about';
     if (!c) return;
     var d = document.getElementById('replyForm-' + pid);
     d.innerHTML = '<span style="font-size:0.72rem;color:var(--text-muted)">Transmitting...</span>';
-    fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,reply_to:pid}) })
+    fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,reply_to:pid,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); else d.innerHTML = '<span style="font-size:0.72rem;color:var(--secondary)">Error</span>'; })
       .catch(function(){ d.innerHTML = '<span style="font-size:0.72rem;color:var(--secondary)">Failed</span>'; });
   };
   window.deleteComment = function(id) {
     if (!confirm('Delete this comment?')) return;
-    fetch('/blog/comments-api.php?action=delete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id}) })
+    fetch('/blog/comments-api.php?action=delete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); });
   };
   loadComments();
@@ -119,7 +120,7 @@ function submitComment() {
   if (!c) return;
   var m = document.getElementById('commentMsg');
   m.style.color = 'var(--text-muted)'; m.textContent = 'Transmitting...';
-  fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:<?= json_encode($commentSlug) ?>,content:c,reply_to:null}) })
+  fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:<?= json_encode($commentSlug) ?>,content:c,reply_to:null,csrf_token:csrfToken}) })
     .then(function(r){return r.json()}).then(function(data){
       if(data.success){ t.value=''; m.textContent=''; loadComments(); }
       else { m.style.color='var(--secondary)'; m.textContent='Error: '+(data.error||'Unknown'); }
