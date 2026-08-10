@@ -10,7 +10,6 @@
   if (!ctx) return;
 
   var sparkles = [];
-  var animId = null;
   var SPARKLE_COUNT = 25;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -132,7 +131,7 @@
     }
 
     ctx.globalAlpha = 1;
-    animId = requestAnimationFrame(loop);
+    requestAnimationFrame(loop);
   }
 
   function init() {

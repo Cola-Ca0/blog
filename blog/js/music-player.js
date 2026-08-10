@@ -21,7 +21,7 @@
   var modeLabels = {'loop':'ALL','single':'ONE','shuffle':'RND'};
   var modeTitles = {'loop':'List loop / 列表循环','single':'Single repeat / 单曲循环','shuffle':'Shuffle / 随机播放'};
   var shuffleOrder = [];
-  var dragging = false;
+  var DEFAULT_VOLUME = 0.4;
 
   function fmtTime(s) { var m=Math.floor(s/60), sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
 
@@ -143,7 +143,7 @@
   document.getElementById('musicVolume').addEventListener('input', function() {
     audio.volume = this.value / 100;
   });
-  audio.volume = 0.4;
+  audio.volume = DEFAULT_VOLUME;
 
   window.togglePlay = function() {
     if (!audio.src) return;
@@ -162,7 +162,7 @@
     currentIdx = idx;
     window.currentIdx = idx;
     audio.src = song.url;
-    audio.volume = 0.4;
+    audio.volume = DEFAULT_VOLUME;
     lrcData = null;
     progressFill.style.width = '0%'; progressThumb.style.left = '0%';
     curTimeEl.textContent = '0:00'; durTimeEl.textContent = '0:00';

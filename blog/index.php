@@ -737,15 +737,16 @@ body {
 
   <?php
   $galleryDir = __DIR__ . '/assets/images/gallery/';
-  $slides = [];
+  $allImages = $slides = [];
   if (is_dir($galleryDir)) {
-    for ($i = 1; $i <= 20; $i++) {
-      foreach (['jpg', 'jpeg', 'png', 'webp'] as $ext) {
-        $f = $galleryDir . "slide-" . str_pad($i, 2, '0', STR_PAD_LEFT) . '.' . $ext;
-        if (file_exists($f)) { $slides[] = 'assets/images/gallery/' . basename($f); break; }
-      }
+    $files = glob($galleryDir . '*.{jpg,jpeg,png,webp}', GLOB_BRACE);
+    foreach ($files as $f) {
+      $name = basename($f);
+      $allImages[] = 'assets/images/gallery/' . $name;
+      if (preg_match('/^slide-\d{2}\./', $name)) $slides[] = 'assets/images/gallery/' . $name;
     }
   }
+  sort($slides);
   ?>
 
   <!-- Blog Hero -->
@@ -854,7 +855,7 @@ body {
       <!-- Social links row -->
       <div class="social-links-row">
         <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
-        <a href="mailto:458756060@qq.com" class="social-icon-link" title="Email">Email</a>
+        <a href="mailto:cola_ca0@qq.com" class="social-icon-link" title="Email">Email</a>
         <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener" class="social-icon-link" title="Bilibili">Bilibili</a>
         <a href="/blog/feed.xml" class="social-icon-link" title="RSS">RSS</a>
       </div>
@@ -991,14 +992,7 @@ body {
       <!-- Mini Gallery Preview -->
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Gallery / 图库</h3>
-        <?php
-        $allImages = [];
-        if (is_dir($galleryDir)) {
-          $files = glob($galleryDir . '*.{jpg,jpeg,png,webp}', GLOB_BRACE);
-          foreach ($files as $f) { $allImages[] = 'assets/images/gallery/' . basename($f); }
-        }
-        $preview = array_slice($slides, 0, 4);
-        ?>
+        <?php $preview = array_slice($slides, 0, 4); ?>
         <?php if (count($allImages) > 0): ?>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
           <?php foreach (array_slice($allImages, 0, 4) as $img): ?>

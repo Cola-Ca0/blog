@@ -146,13 +146,8 @@ function renderMarkdown(string $text): string {
         $text
     );
 
-    // 2. Headings (must run before horizontal rule ---)
-    $text = preg_replace_callback('/^######\s+(.+)$/m', fn($m) => '<h6>' . $esc($m[1]) . '</h6>', $text);
-    $text = preg_replace_callback('/^#####\s+(.+)$/m',  fn($m) => '<h5>' . $esc($m[1]) . '</h5>', $text);
-    $text = preg_replace_callback('/^####\s+(.+)$/m',   fn($m) => '<h4>' . $esc($m[1]) . '</h4>', $text);
-    $text = preg_replace_callback('/^###\s+(.+)$/m',    fn($m) => '<h3>' . $esc($m[1]) . '</h3>', $text);
-    $text = preg_replace_callback('/^##\s+(.+)$/m',     fn($m) => '<h2>' . $esc($m[1]) . '</h2>', $text);
-    $text = preg_replace_callback('/^#\s+(.+)$/m',      fn($m) => '<h1>' . $esc($m[1]) . '</h1>', $text);
+    // 2. Headings — single pass
+    $text = preg_replace_callback('/^(#{1,6})\s+(.+)$/m', fn($m) => '<h' . strlen($m[1]) . '>' . $esc($m[2]) . '</h' . strlen($m[1]) . '>', $text);
 
     // 3. Horizontal rule (only standalone ---, not in front matter)
     $text = preg_replace('/^---$/m', '<hr>', $text);
@@ -215,4 +210,20 @@ function getPublishedPosts(string $postsDir): array {
     }
     usort($posts, function ($a, $b) { return strcmp($b['date'], $a['date']); });
     return $posts;
+}
+
+/**
+ * Validate slug/id format: only a-z, 0-9, hyphens.
+ */
+function isValidSlug(string $slug): bool {
+    return (bool) preg_match('/^[a-zA-Z0-9\-]+$/', $slug);
+}
+
+/**
+ * Read a JSON file safely, returning an empty array on failure.
+ */
+function jsonFileRead(string $path): array {
+    if (!file_exists($path)) return [];
+    $data = json_decode(file_get_contents($path), true);
+    return is_array($data) ? $data : [];
 }

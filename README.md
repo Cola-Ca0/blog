@@ -38,4 +38,4 @@ git clone https://github.com/Cola-Ca0/blog.git
 
 - 💻 GitHub：[github.com/Cola-Ca0](https://github.com/Cola-Ca0)
 - 📺 Bilibili：[space.bilibili.com/629007860](https://space.bilibili.com/629007860)
-- 📧 Email：458756060@qq.com
+- 📧 Email：cola_ca0@qq.com

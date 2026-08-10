@@ -93,6 +93,10 @@
       });
   }
 
+  function scrollToGrid() {
+    window.scrollTo({ top: document.getElementById('postsGrid').offsetTop - 100, behavior: 'smooth' });
+  }
+
   loadPosts(currentPage, activeTag);
 
   pagination.addEventListener('click', function(e) {
@@ -107,7 +111,7 @@
       var newUrl = '/blog/page/' + page;
       if (tagFromUrl) newUrl += '?tag=' + encodeURIComponent(tagFromUrl);
       window.history.pushState({}, '', newUrl);
-      window.scrollTo({ top: document.getElementById('postsGrid').offsetTop - 100, behavior: 'smooth' });
+      scrollToGrid();
     }
   });
 
@@ -118,7 +122,7 @@
     var newUrl = '/blog/';
     if (tag) newUrl += '?tag=' + encodeURIComponent(tag);
     window.history.pushState({}, '', newUrl);
-    window.scrollTo({ top: document.getElementById('postsGrid').offsetTop - 100, behavior: 'smooth' });
+    scrollToGrid();
   };
 
   // Load dynamic tag cloud

@@ -39,12 +39,12 @@ if (!isset($commentSlug)) $commentSlug = 'about';
 </section>
 
 <script>
-var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
 (function() {
   var slug = <?= json_encode($commentSlug) ?>;
   var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
   var isAdmin = <?= json_encode($isAdmin) ?>;
   var username = <?= json_encode($username) ?>;
+  var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
   var container = document.getElementById('commentsContainer');
   if (!container) return;
 
@@ -72,11 +72,11 @@ var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
           '<span style="font-family:var(--font-display);font-size:0.8rem;font-weight:600;color:var(--accent)">' + c.username + '</span>' + badge +
           '<span style="font-size:0.66rem;color:var(--text-haze)">' + c.created_at + '</span>' +
-          (canDel ? ' <button onclick="deleteComment(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-haze);cursor:pointer;font-size:0.62rem;margin-left:auto;transition:color 0.2s" onmouseover="this.style.color=\'var(--secondary)\'" onmouseout="this.style.color=\'var(--text-haze)\'">Delete</button>' : '') +
+          (canDel ? ' <button onclick="deleteComment(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-haze);cursor:pointer;font-size:0.62rem;margin-left:auto;transition:color 0.2s">Delete</button>' : '') +
         '</div>' +
         '<div style="font-size:0.85rem;color:var(--text-primary);line-height:1.65">' + c.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '</div>';
       if (isLoggedIn && level < 2) {
-        h += '<button onclick="showReplyForm(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.66rem;margin-top:4px;padding:2px 8px;border-radius:var(--radius-pill);transition:all 0.2s" onmouseover="this.style.background=\'rgba(91,160,224,0.08)\';this.style.color=\'var(--accent)\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--text-muted)\'">Reply / 回复</button>' +
+        h += '<button onclick="showReplyForm(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.66rem;margin-top:4px;padding:2px 8px;border-radius:var(--radius-pill);transition:all 0.2s">Reply / 回复</button>' +
           '<div id="replyForm-' + c.id + '" style="display:none;margin-top:8px"></div>';
       }
       h += '</div>';
@@ -112,18 +112,17 @@ var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
     fetch('/blog/comments-api.php?action=delete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); });
   };
+  window.submitComment = function() {
+    var t = document.getElementById('commentText'), c = t.value.trim();
+    if (!c) return;
+    var m = document.getElementById('commentMsg');
+    m.style.color = 'var(--text-muted)'; m.textContent = 'Transmitting...';
+    fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,reply_to:null,csrf_token:csrfToken}) })
+      .then(function(r){return r.json()}).then(function(data){
+        if(data.success){ t.value=''; m.textContent=''; loadComments(); }
+        else { m.style.color='var(--secondary)'; m.textContent='Error: '+(data.error||'Unknown'); }
+      }).catch(function(){ m.style.color='var(--secondary)'; m.textContent='Failed'; });
+  };
   loadComments();
 })();
-
-function submitComment() {
-  var t = document.getElementById('commentText'), c = t.value.trim();
-  if (!c) return;
-  var m = document.getElementById('commentMsg');
-  m.style.color = 'var(--text-muted)'; m.textContent = 'Transmitting...';
-  fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:<?= json_encode($commentSlug) ?>,content:c,reply_to:null,csrf_token:csrfToken}) })
-    .then(function(r){return r.json()}).then(function(data){
-      if(data.success){ t.value=''; m.textContent=''; loadComments(); }
-      else { m.style.color='var(--secondary)'; m.textContent='Error: '+(data.error||'Unknown'); }
-    }).catch(function(){ m.style.color='var(--secondary)'; m.textContent='Failed'; });
-}
 </script>
