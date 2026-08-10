@@ -19,8 +19,11 @@
     var apiUrl = 'posts-api.php?action=list&page=' + page;
     if (tag) apiUrl += '&tag=' + encodeURIComponent(tag);
 
-    fetch(apiUrl)
-      .then(function(r) { return r.json(); })
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 10000);
+
+    fetch(apiUrl, { signal: controller.signal })
+      .then(function(r) { clearTimeout(timeoutId); return r.json(); })
       .then(function(data) {
         if (!data.posts || data.posts.length === 0) {
           grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:60px">No transmissions received yet / 暂无信号</p>';
@@ -75,7 +78,8 @@
         activeTag = tag;
       })
       .catch(function() {
-        grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Signal interference... / 信号干扰...</p>';
+        clearTimeout(timeoutId);
+        grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Signal interference / 信号干扰 — <a href="javascript:void(0)" onclick="location.reload()" style="color:var(--accent);text-decoration:underline;cursor:pointer">Retry / 重试</a></p>';
       });
   }
 
@@ -108,8 +112,10 @@
   };
 
   // Load dynamic tag cloud
-  fetch('posts-api.php?action=tags')
-    .then(function(r) { return r.json(); })
+  var tagCtrl = new AbortController();
+  var tagTimeout = setTimeout(function() { tagCtrl.abort(); }, 8000);
+  fetch('posts-api.php?action=tags', { signal: tagCtrl.signal })
+    .then(function(r) { clearTimeout(tagTimeout); return r.json(); })
     .then(function(data) {
       var cloud = document.getElementById('tagCloud');
       if (!cloud || !data.tags) return;
@@ -120,7 +126,8 @@
       }).join('');
     })
     .catch(function() {
+      clearTimeout(tagTimeout);
       var cloud = document.getElementById('tagCloud');
-      if (cloud) cloud.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted)">Tags unavailable / 标签不可用</span>';
+      if (cloud) cloud.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted)">Tags unavailable / 标签不可用 — <a href="javascript:void(0)" onclick="location.reload()" style="color:var(--accent);text-decoration:underline;cursor:pointer">Retry</a></span>';
     });
 })();

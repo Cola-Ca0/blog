@@ -6,7 +6,6 @@
 ?>
 <div class="bg-layers">
   <div class="bg-grid"></div>
-  <div class="bg-wave-lines"></div>
   <div class="bg-orbs">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>

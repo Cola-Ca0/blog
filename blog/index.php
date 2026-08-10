@@ -152,95 +152,6 @@ body {
 }
 
 /* ============================================================
-   Background Layers (below blog content)
-   ============================================================ */
-.bg-layers {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Grid — classic sci-fi */
-.bg-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(91,160,224,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91,160,224,0.07) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
-/* Subtle ocean wave lines — extra richness <15% */
-.bg-wave-lines {
-  position: absolute;
-  inset: 0;
-  opacity: 0.06;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 80px,
-      rgba(142,208,232,0.4) 80px,
-      rgba(142,208,232,0.1) 81px,
-      transparent 81px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 200px,
-      rgba(91,160,224,0.3) 200px,
-      rgba(91,160,224,0.05) 201px,
-      transparent 201px
-    );
-  animation: wave-drift 20s linear infinite;
-}
-
-@keyframes wave-drift {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(80px); }
-}
-
-/* Gradient orbs — anime glassmorphism */
-.bg-orbs { position: absolute; inset: 0; overflow: hidden; }
-.orb {
-  position: absolute; border-radius: 50%; filter: blur(130px); opacity: 0.1;
-  animation: orb-drift 22s ease-in-out infinite;
-}
-.orb-1 {
-  width: 650px; height: 650px;
-  background: radial-gradient(circle, var(--primary), transparent 70%);
-  top: -250px; left: -180px; animation-delay: 0s;
-}
-.orb-2 {
-  width: 520px; height: 520px;
-  background: radial-gradient(circle, var(--accent), transparent 70%);
-  top: 35%; right: -220px; animation-delay: -8s; animation-duration: 26s;
-}
-.orb-3 {
-  width: 480px; height: 480px;
-  background: radial-gradient(circle, var(--secondary), transparent 70%);
-  bottom: -180px; left: 28%; animation-delay: -15s; animation-duration: 30s; opacity: 0.06;
-}
-
-@keyframes orb-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(50px, -35px) scale(1.07); }
-  50% { transform: translate(-25px, 25px) scale(0.93); }
-  75% { transform: translate(-40px, -18px) scale(1.04); }
-}
-
-/* Scanline overlay */
-.scanlines {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px
-  );
-  z-index: 10;
-}
-
-/* ============================================================
    Navbar — Glass + Blur
    ============================================================ */
 .navbar {
@@ -280,29 +191,6 @@ body {
   font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.04em;
 }
 
-
-.btn-login, .btn-register, .btn-logout {
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 600;
-  letter-spacing: 0.06em; text-decoration: none; padding: 8px 20px;
-  border-radius: 50px; transition: var(--transition-smooth); cursor: pointer;
-  border: none;
-}
-
-.btn-login {
-  background: transparent; color: var(--accent); border: 1px solid rgba(142,208,232,0.35);
-}
-.btn-login:hover { background: rgba(142,208,232,0.1); border-color: var(--accent); box-shadow: 0 0 16px rgba(142,208,232,0.2); }
-
-.btn-register {
-  background: linear-gradient(135deg, var(--primary), var(--accent)); color: var(--text-primary);
-  box-shadow: 0 0 16px rgba(91,160,224,0.3);
-}
-.btn-register:hover { transform: translateY(-2px); box-shadow: 0 0 28px rgba(91,160,224,0.5); }
-
-.btn-logout {
-  background: transparent; color: var(--secondary); border: 1px solid rgba(240,128,96,0.3); font-size: 0.78rem;
-}
-.btn-logout:hover { background: rgba(240,128,96,0.08); border-color: var(--secondary); }
 
 /* User greeting when logged in */
 .user-greeting {
@@ -726,8 +614,11 @@ body {
 
 /* Social icon links */
 .social-links-row { display:flex;gap:10px;margin-top:16px;justify-content:center }
-.social-icon-link { color:var(--text-muted);text-decoration:none;font-size:1.1rem;transition:color 0.3s }
-.social-icon-link:hover { color: var(--accent); text-shadow: 0 0 10px rgba(142,208,232,0.4); }
+.social-icon-link { color:var(--text-secondary);text-decoration:none;font-size:0.7rem;
+  padding:3px 10px;border:1px solid var(--border-glow);border-radius:var(--radius-pill);
+  font-family:var(--font-display);letter-spacing:0.04em;transition:var(--transition-smooth); }
+.social-icon-link:hover { color:var(--accent);border-color:var(--accent);
+  background:rgba(91,160,224,0.08); }
 
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag-cloud a { display: inline-block; padding: 5px 14px; background: rgba(91,160,224,0.06); border: 1px solid rgba(91,160,224,0.13); border-radius: 50px; font-size: 0.73rem; color: var(--text-secondary); text-decoration: none; letter-spacing: 0.03em; transition: var(--transition-smooth); }
@@ -750,22 +641,6 @@ body {
 .tag-filter-clear:hover { text-decoration:underline; }
 .card-tags span { cursor:pointer; transition:var(--transition-smooth); }
 .card-tags span:hover { color:var(--accent); }
-
-/* ============================================================
-   Footer
-   ============================================================ */
-.site-footer {
-  position: relative; z-index: 2; margin-top: 60px; padding: 40px 0;
-  border-top: 1px solid var(--border-glow);
-}
-.site-footer::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
-.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-.footer-brand { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 0.85rem; }
-.footer-brand .shark-fin-icon { width: 22px; height: 22px; opacity: 0.55; }
-.footer-links { display: flex; gap: 20px; }
-.footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.03em; transition: color var(--transition-smooth); }
-.footer-links a:hover { color: var(--accent); }
-.footer-hud { font-family: var(--font-display); font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.08em; }
 
 /* ============================================================
    Responsive
@@ -879,7 +754,7 @@ body {
           </div>
           <!-- Cover + Lyrics row -->
           <div class="music-cover-row">
-            <div class="music-cover-wrap" onclick="togglePlay()" title="Play/Pause">
+            <div class="music-cover-wrap" onclick="togglePlay()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); togglePlay(); }" role="button" tabindex="0" title="Play/Pause" aria-label="Play or pause music">
               <div class="music-cover-disc" id="musicCoverDisc">
                 <div class="music-cover-inner"></div>
               </div>
@@ -893,7 +768,7 @@ body {
           <!-- Progress + Volume row -->
           <div class="music-progress-wrap" id="musicProgressWrap">
             <span class="music-time" id="musicCurTime">0:00</span>
-            <div class="music-progress-bar" id="musicProgressBar">
+            <div class="music-progress-bar" id="musicProgressBar" role="slider" tabindex="0" aria-label="Music progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div class="music-progress-fill" id="musicProgressFill"></div>
               <div class="music-progress-thumb" id="musicProgressThumb"></div>
             </div>
@@ -902,7 +777,7 @@ body {
           <!-- Controls row: prev | play/pause | next | mode | volume -->
           <div class="music-ctrls">
             <button class="music-ctrl-btn" onclick="playLocal(currentIdx-1)" title="Previous">&#9664;&#9664;</button>
-            <button class="music-ctrl-btn music-ctrl-play" id="musicCtrlPlay" onclick="togglePlay()">&#9654;</button>
+            <button class="music-ctrl-btn music-ctrl-play" id="musicCtrlPlay" onclick="togglePlay()" aria-label="Play music">&#9654;</button>
             <button class="music-ctrl-btn" onclick="playLocal(currentIdx+1)" title="Next">&#9654;&#9654;</button>
             <button class="music-ctrl-btn music-ctrl-mode" id="musicModeBtn" onclick="cycleMode()" title="List loop">ALL</button>
             <span style="font-size:0.6rem;color:var(--text-muted);margin-left:4px">Vol</span>
@@ -964,10 +839,10 @@ body {
       </div>
       <!-- Social links row -->
       <div class="social-links-row">
-        <a href="#" class="social-icon-link" title="GitHub">&#9906;</a>
-        <a href="#" class="social-icon-link" title="Email">&#9993;</a>
-        <a href="#" class="social-icon-link" title="Blog">&#9998;</a>
-        <a href="#" class="social-icon-link" title="RSS">&#9856;</a>
+        <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
+        <a href="mailto:458756060@qq.com" class="social-icon-link" title="Email">Email</a>
+        <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener" class="social-icon-link" title="Bilibili">Bilibili</a>
+        <a href="/blog/feed.xml" class="social-icon-link" title="RSS">RSS</a>
       </div>
 
       <!-- Skill Radar Chart (dynamic from about-content.json) -->
@@ -1130,10 +1005,10 @@ body {
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Links / 友链</h3>
         <div class="friend-links">
-          <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener">Bilibili</a>
+          <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.bilibili.com" target="_blank" rel="noopener">Bilibili</a>
           <a href="https://moejue.cn" target="_blank" rel="noopener">Moejue</a>
-          <a href="https://www.ctfiot.com" target="_blank" rel="noopener">CTF IoT</a>
+          <a href="https://xz.aliyun.com" target="_blank" rel="noopener">先知社区</a>
         </div>
       </div>
 
@@ -1147,29 +1022,6 @@ body {
      Scripts
      ============================================================ -->
 <script>
-// Bubble generation
-(function() {
-  var container = document.getElementById('bubblesContainer');
-  if (!container) return;
-  var count = 18;
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < count; i++) {
-    var bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    var size = Math.floor(Math.random() * 40) + 10;
-    var left = Math.random() * 100;
-    var duration = Math.random() * 8 + 5;
-    var delay = Math.random() * 12;
-    bubble.style.width = size + 'px';
-    bubble.style.height = size + 'px';
-    bubble.style.left = left + '%';
-    bubble.style.animationDuration = duration + 's';
-    bubble.style.animationDelay = delay + 's';
-    fragment.appendChild(bubble);
-  }
-  container.appendChild(fragment);
-})();
-
 // Navbar visibility via IntersectionObserver (§5.D: no scroll listeners)
 (function() {
   var navbar = document.getElementById('navbar');

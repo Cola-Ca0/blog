@@ -6,6 +6,7 @@
  */
 if (!isset($navActive)) $navActive = 'home';
 ?>
+<a href="#blog-start" class="skip-link">Skip to content / 跳到内容</a>
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
     <a href="<?= ($navActive === 'home') ? '#top' : '/blog/index.php' ?>" class="nav-brand">

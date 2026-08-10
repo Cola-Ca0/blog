@@ -26,7 +26,9 @@
   function fmtTime(s) { var m=Math.floor(s/60), sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
 
   // Load playlist
-  fetch('music-api.php?action=list').then(function(r){return r.json()}).then(function(data){
+  var listCtrl = new AbortController();
+  var listTimeout = setTimeout(function(){ listCtrl.abort(); }, 10000);
+  fetch('music-api.php?action=list', { signal: listCtrl.signal }).then(function(r){ clearTimeout(listTimeout); return r.json() }).then(function(data){
     songs = data;
     if (songs.length === 0) {
       resultsDiv.innerHTML = '<p style="font-size:0.68rem;color:var(--text-muted);text-align:center;padding:16px">Drop .mp3 + .lrc into assets/music/</p>';
@@ -34,7 +36,8 @@
     }
     renderPlaylist();
   }).catch(function(){
-    resultsDiv.innerHTML = '<p style="font-size:0.68rem;color:var(--text-muted);text-align:center;padding:16px">Failed to load</p>';
+    clearTimeout(listTimeout);
+    resultsDiv.innerHTML = '<p style="font-size:0.68rem;color:var(--text-muted);text-align:center;padding:16px">Failed to load / 加载失败 — <a href="javascript:void(0)" onclick="location.reload()" style="color:var(--accent);text-decoration:underline;cursor:pointer">Retry</a></p>';
   });
 
   function renderPlaylist() {
@@ -79,11 +82,18 @@
     audio.currentTime = (e.offsetX / progressBar.offsetWidth) * audio.duration;
   });
 
+  progressBar.addEventListener('keydown', function(e) {
+    if (!audio.duration) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); audio.currentTime = Math.max(0, audio.currentTime - 5); }
+  });
+
   audio.addEventListener('timeupdate', function() {
     if (!audio.duration) return;
     var pct = (audio.currentTime/audio.duration)*100;
     progressFill.style.width = pct + '%';
     progressThumb.style.left = pct + '%';
+    progressBar.setAttribute('aria-valuenow', Math.round(pct));
     curTimeEl.textContent = fmtTime(audio.currentTime);
     if (lrcData) renderLyrics(audio.currentTime);
   });
