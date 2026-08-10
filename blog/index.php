@@ -543,8 +543,10 @@ body {
 .article-card:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-lg), 0 0 32px rgba(91,160,224,0.2), inset 0 1px 0 rgba(255,255,255,0.04); transform: translateY(-4px); background: var(--bg-card-hover); }
 /* Cover image cards — transition to show cover on hover */
 .article-card[style*="--card-cover"] { transition: background 0.45s ease, transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth); }
-.card-cover-badge { position:absolute;top:10px;right:10px;font-size:0.75rem;opacity:0.35;z-index:1;transition:opacity 0.3s;pointer-events:none; }
-.article-card:hover .card-cover-badge { opacity:0; }
+.article-card:has(.card-cover-thumb) { padding-top:0; }
+.card-cover-thumb { height:140px;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin:-1px -1px 16px -1px; }
+.card-cover-thumb img { width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease; }
+.article-card:hover .card-cover-thumb img { transform:scale(1.06); }
 .article-card[style*="--card-cover"]:hover { background: linear-gradient(var(--bg-card-hover), var(--bg-card-hover)), var(--card-cover) center/cover; }
 .article-card[style*="--card-cover"]:hover::before,
 .article-card[style*="--card-cover"]:hover::after { border-color: var(--border-glow-strong); }
@@ -557,6 +559,7 @@ body {
 .card-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 0.76rem; color: var(--text-muted); letter-spacing: 0.04em; }
 .card-meta .meta-cat { background: rgba(91,160,224,0.08); color: var(--primary); padding: 3px 10px; border-radius: 50px; font-weight: 600; font-size: 0.7rem; letter-spacing: 0.05em; border: 1px solid rgba(91,160,224,0.18); }
 .card-meta .meta-date { display: flex; align-items: center; gap: 4px; }
+.meta-comments { font-size:0.7rem;color:var(--text-haze);margin-left:auto; }
 .card-meta .meta-date::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); }
 
 .card-title-link { text-decoration: none; }

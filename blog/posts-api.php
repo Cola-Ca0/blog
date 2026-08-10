@@ -8,6 +8,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $action = $_GET['action'] ?? 'list';
 $postsDir = __DIR__ . '/posts/';
+$commentsDir = __DIR__ . '/data/comments/';
 
 // --- TAGS ---
 if ($action === 'tags') {
@@ -77,15 +78,22 @@ $page = min($page, $totalPages);
 
 $pagePosts = array_slice($allPosts, ($page - 1) * $perPage, $perPage);
 
-$result = array_map(function($p) {
+$result = array_map(function($p) use ($commentsDir) {
+    $commentFile = $commentsDir . $p['slug'] . '.json';
+    $commentCount = 0;
+    if (file_exists($commentFile)) {
+        $comms = json_decode(file_get_contents($commentFile), true);
+        $commentCount = is_array($comms) ? count($comms) : 0;
+    }
     return [
-        'slug'     => $p['slug'],
-        'title'    => $p['title'],
-        'date'     => $p['date'],
-        'category' => $p['category'],
-        'tags'     => $p['tags'],
-        'summary'  => $p['summary'],
-        'cover'    => $p['cover'],
+        'slug'          => $p['slug'],
+        'title'         => $p['title'],
+        'date'          => $p['date'],
+        'category'      => $p['category'],
+        'tags'          => $p['tags'],
+        'summary'       => $p['summary'],
+        'cover'         => $p['cover'],
+        'comment_count' => $commentCount,
     ];
 }, $pagePosts);
 

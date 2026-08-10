@@ -162,7 +162,7 @@ function renderMarkdown(string $text): string {
 
     // 5. Images (before links — same bracket syntax)
     $text = preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {
-        return '<img src="' . $safeUrl($m[2]) . '" alt="' . $esc($m[1]) . '">';
+        return '<img src="' . $safeUrl($m[2]) . '" alt="' . $esc($m[1]) . '" loading="lazy">';
     }, $text);
 
     // 6. Links

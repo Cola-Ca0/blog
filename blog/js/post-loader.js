@@ -48,11 +48,12 @@
           var coverAttr = p.cover ? ' style="--card-cover:url(' + p.cover + ')"' : '';
 
           return '<article class="article-card"' + coverAttr + '>' +
-            (p.cover ? '<span class="card-cover-badge" title="Hover to preview cover / 悬停查看封面">&#x1F4F7;</span>' : '') +
+            (p.cover ? '<div class="card-cover-thumb"><img src="' + p.cover + '" alt="" loading="lazy"></div>' : '') +
             '<div class="card-glow-line"></div>' +
             '<div class="card-meta">' +
               '<span class="meta-cat">' + p.category + '</span>' +
               '<span class="meta-date">' + p.date + '</span>' +
+              '<span class="meta-comments">' + (p.comment_count || 0) + ' signals</span>' +
             '</div>' +
             '<a href="/blog/post/' + p.slug + '" class="card-title-link"><h3>' + p.title + '</h3></a>' +
             '<p>' + p.summary + '</p>' +

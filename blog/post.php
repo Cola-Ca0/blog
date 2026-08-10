@@ -215,7 +215,7 @@ body {
 
   <header class="article-header">
     <?php if ($post['cover']): ?>
-      <img class="article-cover" src="<?= htmlspecialchars($post['cover']) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
+      <img class="article-cover" src="<?= htmlspecialchars($post['cover']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" loading="lazy">
     <?php endif; ?>
 
     <div class="article-meta">
