@@ -538,10 +538,17 @@ body {
 .article-card .card-glow-line { position: absolute; top:0;left:0;right:0;height:2px; background: linear-gradient(90deg,transparent,var(--accent),var(--primary),transparent); opacity:0; transition: opacity var(--transition-smooth); }
 .article-card:hover .card-glow-line { opacity: 1; }
 .article-card:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-lg), 0 0 32px rgba(91,160,224,0.2), inset 0 1px 0 rgba(255,255,255,0.04); transform: translateY(-4px); background: var(--bg-card-hover); }
+/* Cover image cards — transition to show cover on hover */
+.article-card[style*="--card-cover"] { transition: background 0.45s ease, transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth); }
+.card-cover-badge { position:absolute;top:10px;right:10px;font-size:0.75rem;opacity:0.35;z-index:1;transition:opacity 0.3s;pointer-events:none; }
+.article-card:hover .card-cover-badge { opacity:0; }
 .article-card[style*="--card-cover"]:hover { background: linear-gradient(var(--bg-card-hover), var(--bg-card-hover)), var(--card-cover) center/cover; }
 .article-card[style*="--card-cover"]:hover::before,
 .article-card[style*="--card-cover"]:hover::after { border-color: var(--border-glow-strong); }
 .article-card[style*="--card-cover"]:hover .card-title-link h3 { text-shadow: 0 1px 8px rgba(8,24,40,0.8); }
+.article-card[style*="--card-cover"]:hover .card-meta,
+.article-card[style*="--card-cover"]:hover .card-tags span,
+.article-card[style*="--card-cover"]:hover p { color: rgba(220,240,255,0.85); }
 .article-card:hover::before, .article-card:hover::after { border-color: var(--border-glow-strong); opacity: 1; }
 
 .card-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 0.76rem; color: var(--text-muted); letter-spacing: 0.04em; }
@@ -1001,6 +1008,13 @@ body {
         <?php endif; ?>
       </div>
 
+      <!-- Hitokoto 一言 -->
+      <div class="sidebar-widget" id="hitokotoWidget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Hitokoto / 一言</h3>
+        <p id="hitokotoText" style="font-size:0.82rem;color:var(--text-secondary);line-height:1.8;margin-bottom:6px;font-style:italic;min-height:2.5em">Loading...</p>
+        <p id="hitokotoFrom" style="font-size:0.68rem;color:var(--text-haze);text-align:right"></p>
+      </div>
+
       <!-- Friend Links -->
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Links / 友链</h3>
@@ -1053,6 +1067,37 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   reveals.forEach(function(el) { observer.observe(el); });
+})();
+
+// Hitokoto 一言
+(function() {
+  var textEl = document.getElementById('hitokotoText');
+  var fromEl = document.getElementById('hitokotoFrom');
+  if (!textEl) return;
+
+  function fetchHitokoto() {
+    textEl.textContent = 'Loading...';
+    fromEl.textContent = '';
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, 8000);
+    fetch('https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=i&c=k', { signal: ctrl.signal })
+      .then(function(r){ clearTimeout(t); return r.json(); })
+      .then(function(d){
+        textEl.textContent = d.hitokoto;
+        var from = d.from_who ? d.from_who + ' · ' + d.from : d.from;
+        fromEl.textContent = '—— ' + (from || '佚名');
+      })
+      .catch(function(){
+        clearTimeout(t);
+        textEl.textContent = '深海之下，别有洞天';
+        fromEl.textContent = '—— Cola_CaO';
+      });
+  }
+
+  fetchHitokoto();
+  textEl.style.cursor = 'pointer';
+  textEl.title = 'Click to refresh / 点击刷新一言';
+  textEl.addEventListener('click', fetchHitokoto);
 })();
 
 </script>

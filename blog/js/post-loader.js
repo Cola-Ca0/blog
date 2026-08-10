@@ -48,6 +48,7 @@
           var coverAttr = p.cover ? ' style="--card-cover:url(' + p.cover + ')"' : '';
 
           return '<article class="article-card"' + coverAttr + '>' +
+            (p.cover ? '<span class="card-cover-badge" title="Hover to preview cover / 悬停查看封面">&#x1F4F7;</span>' : '') +
             '<div class="card-glow-line"></div>' +
             '<div class="card-meta">' +
               '<span class="meta-cat">' + p.category + '</span>' +
