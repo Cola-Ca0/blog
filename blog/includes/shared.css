@@ -37,6 +37,7 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
 .orb-1 { width:650px; height:650px; background:radial-gradient(circle, var(--primary), transparent 70%); top:-250px; left:-180px; animation-delay:0s; }
 .orb-2 { width:520px; height:520px; background:radial-gradient(circle, var(--accent), transparent 70%); top:35%; right:-220px; animation-delay:-8s; animation-duration:26s; }
 .orb-3 { width:480px; height:480px; background:radial-gradient(circle, var(--secondary), transparent 70%); bottom:-180px; left:28%; animation-delay:-15s; animation-duration:30s; opacity:0.06; }
+.orb-4 { width:400px; height:400px; background:radial-gradient(circle, rgba(200,155,225,0.8), transparent 70%); top:-80px; right:8%; animation-delay:-5s; animation-duration:28s; opacity:0.18; filter:blur(100px); }
 @keyframes orb-drift { 0%,100%{transform:translate(0,0) scale(1)} 25%{transform:translate(50px,-35px) scale(1.07)} 50%{transform:translate(-25px,25px) scale(0.93)} 75%{transform:translate(-40px,-18px) scale(1.04)} }
 .scanlines { position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px); z-index:10; }
 

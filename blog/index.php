@@ -298,6 +298,10 @@ body {
   mask-image: linear-gradient(to bottom, transparent 60%, black 85%, black 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 60%, black 85%, black 100%);
 }
+.sparkle-layer {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1;
+}
 /* --- Progress Bar --- */
 .music-progress-wrap { display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0 }
 .music-time { font-family:var(--font-mono,monospace);font-size:0.6rem;color:var(--text-muted);min-width:32px;text-align:center }
@@ -678,6 +682,7 @@ body {
 
 <!-- Particle Ocean — Deep Sea Bioluminescent Visualization -->
 <canvas class="particle-ocean" id="particleOcean"></canvas>
+<canvas class="sparkle-layer" id="sparkleCanvas"></canvas>
 
 
 <!-- ============================================================
@@ -1008,6 +1013,12 @@ body {
         <?php endif; ?>
       </div>
 
+      <!-- Site running time -->
+      <div class="sidebar-widget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Uptime / 运行时间</h3>
+        <p id="siteUptime" style="font-family:var(--font-display);font-size:0.85rem;color:var(--accent);letter-spacing:0.03em;text-align:center">--</p>
+      </div>
+
       <!-- Hitokoto 一言 -->
       <div class="sidebar-widget" id="hitokotoWidget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Hitokoto / 一言</h3>
@@ -1069,6 +1080,23 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   reveals.forEach(function(el) { observer.observe(el); });
 })();
 
+// Site uptime counter
+(function() {
+  var el = document.getElementById('siteUptime');
+  if (!el) return;
+  var start = new Date('2026-08-06');
+  function tick() {
+    var now = new Date();
+    var diff = now - start;
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+    el.textContent = days + 'd ' + hours + 'h ' + mins + 'm';
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+
 // Hitokoto 一言
 (function() {
   var textEl = document.getElementById('hitokotoText');
@@ -1103,6 +1131,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 </script>
 
 <script src="js/particle-ocean.js"></script>
+<script src="js/sparkles.js?v=3"></script>
 <script src="js/music-player.js"></script>
 <script src="js/post-loader.js"></script>
 </body>
