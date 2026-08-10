@@ -16,11 +16,14 @@ window.autoSlug = function(titleInputId, targetInputId, defaultPrefix) {
   });
 };
 
-// Confirm-and-delete with fetch
+// Confirm-and-delete with fetch + CSRF
 window.editorDelete = function(url, itemName, redirectUrl) {
   if (!confirm('Delete "' + itemName + '"?\n\nThis cannot be undone.')) return;
   if (!confirm('Are you sure?')) return;
-  fetch(url, { method: 'POST' })
+  var token = document.querySelector('input[name="csrf_token"]');
+  var body = new URLSearchParams();
+  if (token) body.append('csrf_token', token.value);
+  fetch(url, { method: 'POST', body: body })
     .then(function() { window.location.href = redirectUrl; })
     .catch(function() { alert('Delete failed.'); });
 };

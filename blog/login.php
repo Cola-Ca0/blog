@@ -51,6 +51,7 @@ function generateCaptcha() {
     }
     $question = "$a $op $b = ?";
     $hash = password_hash((string)$answer, PASSWORD_BCRYPT);
+    $_SESSION['captcha_hash'] = $hash; // bind to session
     return ['question' => $question, 'hash' => $hash];
 }
 
@@ -64,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $captchaInput = trim($_POST['captcha'] ?? '');
-    $captchaHash = $_POST['captcha_hash'] ?? '';
+    $captchaHash = $_SESSION['captcha_hash'] ?? '';
+    unset($_SESSION['captcha_hash']); // one-time use
 
     if (!password_verify($captchaInput, $captchaHash)) {
         $error = '人机验证答案错误，请重试！';
@@ -112,7 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $password = trim($_POST['reg_password'] ?? '');
     $password2 = trim($_POST['reg_password2'] ?? '');
     $captchaInput = trim($_POST['reg_captcha'] ?? '');
-    $captchaHash = $_POST['reg_captcha_hash'] ?? '';
+    $captchaHash = $_SESSION['captcha_hash'] ?? '';
+    unset($_SESSION['captcha_hash']);
 
     if (!password_verify($captchaInput, $captchaHash)) {
         $error = '人机验证答案错误，请重试！';

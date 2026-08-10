@@ -18,6 +18,7 @@ $viewProject = $_GET['project'] ?? null;
 $fileContent = '';
 $fileLang = '';
 if ($viewFile && $viewProject && $isLoggedIn) {
+    $viewProject = basename($viewProject); // prevent path traversal
     $filePath = __DIR__ . '/' . $viewProject . '/' . basename($viewFile);
     if (file_exists($filePath) && str_starts_with(realpath($filePath), realpath(__DIR__ . '/' . $viewProject))) {
         $fileContent = htmlspecialchars(file_get_contents($filePath));

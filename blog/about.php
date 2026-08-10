@@ -169,6 +169,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
   <script>
   var editorOpen = false;
   var aboutData = <?= json_encode($about, JSON_UNESCAPED_UNICODE) ?>;
+  var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
   function toggleEditor() {
     editorOpen = !editorOpen;
     var panel = document.getElementById('editorPanel');
@@ -184,7 +185,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
     aboutData.title = document.getElementById('editTitle').value;
     aboutData.bio = document.getElementById('editBio').value;
     var body = JSON.stringify(aboutData, null, 2);
-    fetch('admin/save-about.php', {method:'POST',body:body,headers:{'Content-Type':'application/json'}}).then(function(r){
+    fetch('admin/save-about.php', {method:'POST',body:body,headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken}}).then(function(r){
       return r.json().then(function(d){ document.getElementById('editorMsg').textContent = d.ok ? 'Saved! Refreshing...' : (d.error||'Failed'); if(d.ok) setTimeout(function(){location.reload()},800); });
     }).catch(function(){ document.getElementById('editorMsg').textContent='Network error'; });
   }
@@ -233,7 +234,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
 
   window.saveSkills = function() {
     var body = JSON.stringify({skills: skillsData.map(function(s){return {name:s.name,level:s.level,icon:s.icon}})}, null, 2);
-    fetch('admin/save-skills.php', {method:'POST',body:body,headers:{'Content-Type':'application/json'}}).then(function(r){
+    fetch('admin/save-skills.php', {method:'POST',body:body,headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken}}).then(function(r){
       return r.json().then(function(d){
         document.getElementById('saveSkillsMsg').textContent = d.ok ? 'Saved! / 已保存!' : (d.error||'Failed');
       });

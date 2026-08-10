@@ -36,6 +36,10 @@ if ($isEdit) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF check
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        header('Location: /blog/'); exit;
+    }
     $title = trim($_POST['title'] ?? ''); $slug = trim($_POST['slug'] ?? '');
     $date = trim($_POST['date'] ?? date('Y-m-d')); $category = trim($_POST['category'] ?? '');
     $tagsRaw = trim($_POST['tags'] ?? ''); $summary = trim($_POST['summary'] ?? '');
@@ -120,6 +124,7 @@ body {
 
   <!-- ARTICLE FORM -->
   <form class="editor-form" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
     <div class="editor-meta-grid">
       <div class="editor-field full-width">
         <label>Title / 标题 <span class="hint">required</span></label>

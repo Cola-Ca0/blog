@@ -33,6 +33,10 @@ if ($isEdit) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF check
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        header('Location: /blog/'); exit;
+    }
     $pTitle = trim($_POST['title'] ?? ''); $pId = trim($_POST['id'] ?? '');
     $pDesc = trim($_POST['description'] ?? ''); $pTags = trim($_POST['tags'] ?? '');
     $pDate = trim($_POST['date'] ?? date('Y-m')); $pStatus = $_POST['status'] ?? 'completed';
@@ -121,6 +125,7 @@ body {
 
   <!-- PROJECT FORM -->
   <form class="editor-form" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
     <div class="editor-meta-grid">
       <div class="editor-field full-width">
         <label>Project Title / 项目名 <span class="hint">required</span></label>
