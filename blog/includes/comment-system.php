@@ -68,15 +68,15 @@ if (!isset($commentSlug)) $commentSlug = 'about';
       var pl = level > 0 ? 'padding-left:16px;' : '';
       var badge = c.is_admin ? ' <span style="font-size:0.6rem;color:var(--secondary);font-family:var(--font-display);letter-spacing:0.06em">[ADMIN]</span>' : '';
       var canDel = isLoggedIn && (c.username === username || isAdmin);
-      var h = '<div class="comment-item" style="margin-bottom:14px;margin-left:' + ml + 'px;' + bl + pl + '">' +
+      var h = '<div class="comment-item" style="margin-bottom:12px;margin-left:' + ml + 'px;padding:10px 14px;background:rgba(91,160,224,0.03);border-radius:var(--radius-sm);border:1px solid rgba(91,160,224,0.06);' + bl + pl + '">' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
-          '<span style="font-family:var(--font-display);font-size:0.82rem;font-weight:600;color:var(--accent)">' + c.username + '</span>' + badge +
-          '<span style="font-size:0.68rem;color:var(--text-haze)">' + c.created_at + '</span>' +
-          (canDel ? ' <button onclick="deleteComment(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-haze);cursor:pointer;font-size:0.64rem;margin-left:auto">Delete</button>' : '') +
+          '<span style="font-family:var(--font-display);font-size:0.8rem;font-weight:600;color:var(--accent)">' + c.username + '</span>' + badge +
+          '<span style="font-size:0.66rem;color:var(--text-haze)">' + c.created_at + '</span>' +
+          (canDel ? ' <button onclick="deleteComment(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-haze);cursor:pointer;font-size:0.62rem;margin-left:auto;transition:color 0.2s" onmouseover="this.style.color=\'var(--secondary)\'" onmouseout="this.style.color=\'var(--text-haze)\'">Delete</button>' : '') +
         '</div>' +
         '<div style="font-size:0.85rem;color:var(--text-primary);line-height:1.65">' + c.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '</div>';
       if (isLoggedIn && level < 2) {
-        h += '<button onclick="showReplyForm(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.68rem;margin-top:4px">Reply / 回复</button>' +
+        h += '<button onclick="showReplyForm(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.66rem;margin-top:4px;padding:2px 8px;border-radius:var(--radius-pill);transition:all 0.2s" onmouseover="this.style.background=\'rgba(91,160,224,0.08)\';this.style.color=\'var(--accent)\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--text-muted)\'">Reply / 回复</button>' +
           '<div id="replyForm-' + c.id + '" style="display:none;margin-top:8px"></div>';
       }
       h += '</div>';

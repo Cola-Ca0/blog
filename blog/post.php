@@ -29,9 +29,8 @@ if ($post === null || $post['draft']) {
     <title>Signal Lost · Cola_CaO</title>
     <link rel="stylesheet" href="/blog/includes/tokens.css">
     <link rel="stylesheet" href="/blog/includes/shared.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.loli.net">
+    <link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       .not-found { display:flex; flex-direction:column; align-items:center; justify-content:center;
         min-height:80vh; text-align:center; padding:40px 20px; }
@@ -70,9 +69,8 @@ $pageTitle = htmlspecialchars($post['title']) . ' · Cola_CaO';
 <meta property="og:url" content="http://localhost/blog/post/<?= htmlspecialchars($slug) ?>">
 <link rel="stylesheet" href="/blog/includes/tokens.css">
 <link rel="stylesheet" href="/blog/includes/shared.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.loli.net">
+<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 body {
   font-family: var(--font-body);
@@ -121,17 +119,35 @@ body {
 .article-body p { margin-bottom:18px; }
 .article-body a { color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(142,208,232,0.3); }
 .article-body a:hover { border-bottom-color:var(--accent); }
-.article-body blockquote { border-left:3px solid var(--border-glow); padding:10px 18px;
-  margin:20px 0; color:var(--text-secondary); font-style:italic; background:rgba(91,160,224,0.04);
-  border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+.article-body blockquote {
+  border-left:3px solid var(--accent); padding:14px 20px;
+  margin:24px 0; color:var(--text-secondary); font-style:italic;
+  background:rgba(91,160,224,0.04);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  position:relative;
+}
+.article-body blockquote::before {
+  content:'\25C6'; color:var(--accent); font-size:0.55rem; font-style:normal;
+  position:absolute; top:14px; left:-10px;
+  text-shadow:0 0 6px var(--accent);
+}
 .article-body code { font-family:var(--font-mono,monospace); font-size:0.82rem;
   background:rgba(91,160,224,0.08); padding:2px 6px; border-radius:3px; color:var(--accent); }
-.article-body pre { background:rgba(0,0,0,0.35); padding:18px 44px 18px 20px; border-radius:var(--radius-md);
-  overflow-x:auto; margin:20px 0; border:1px solid var(--border-glow); position:relative; }
-.code-copy-btn { position:absolute; top:8px; right:8px; background:rgba(91,160,224,0.1);
-  border:1px solid var(--border-glow); color:var(--text-muted); font-size:0.65rem;
+.article-body pre {
+  background:rgba(0,0,0,0.4); padding:32px 44px 18px 20px;
+  border-radius:var(--radius-md); overflow-x:auto; margin:24px 0;
+  border:1px solid var(--border-glow); position:relative;
+}
+.article-body pre::before {
+  content:'TERMINAL'; position:absolute; top:8px; left:14px;
+  font-family:var(--font-display); font-size:0.58rem; font-weight:600;
+  color:var(--text-haze); letter-spacing:0.1em;
+}
+.article-body pre:hover { border-color:var(--border-glow-strong); box-shadow:0 0 18px rgba(91,160,224,0.1); }
+.code-copy-btn { position:absolute; top:6px; right:6px; background:rgba(91,160,224,0.08);
+  border:1px solid var(--border-glow); color:var(--text-muted); font-size:0.62rem;
   font-family:var(--font-display); letter-spacing:0.05em; cursor:pointer;
-  padding:3px 8px; border-radius:var(--radius-sm); transition:var(--transition-smooth);
+  padding:2px 8px; border-radius:var(--radius-sm); transition:var(--transition-smooth);
   opacity:0; }
 .article-body pre:hover .code-copy-btn { opacity:1; }
 .code-copy-btn:hover { background:var(--primary); color:var(--text-primary); border-color:var(--primary); }

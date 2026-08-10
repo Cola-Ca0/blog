@@ -10,9 +10,15 @@
       <span>Cola_CaO · 深海之下，别有洞天</span>
     </div>
     <div class="footer-links">
-      <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a><a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener">Bilibili</a><a href="/blog/feed.xml">RSS</a>
+      <a href="/blog/">Home</a>
+      <a href="/blog/projects/">Projects</a>
+      <a href="/blog/about.php">About</a>
+      <a href="/blog/feed.xml">RSS</a>
+      <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <div class="footer-hud">Cola_CaO // Blog since 2026</div>
+    <div class="footer-hud">
+      Cola_CaO // PHP · Vanilla JS · Deep Sea Station
+    </div>
   </div>
 </footer>
 
