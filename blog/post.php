@@ -220,7 +220,7 @@ body {
     <h1 class="article-title">
       <?= htmlspecialchars($post['title']) ?>
       <?php if ($isAdmin): ?>
-      <a href="/blog/admin/editor.php?slug=<?= htmlspecialchars($slug) ?>" class="admin-edit-link" title="Edit this article">[EDIT]</a>
+      <a href="/blog/admin/editor-article.php?slug=<?= htmlspecialchars($slug) ?>" class="admin-edit-link" title="Edit this article">[EDIT]</a>
       <?php endif; ?>
     </h1>
 

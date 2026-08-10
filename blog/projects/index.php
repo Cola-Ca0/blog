@@ -169,7 +169,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
       <h3>
         <?= htmlspecialchars($proj['title']) ?>
         <?php if ($isAdmin): ?>
-        <a href="/blog/admin/editor.php?type=project&id=<?= urlencode($proj['id']) ?>" class="admin-edit-link" title="Edit project">[EDIT]</a>
+        <a href="/blog/admin/editor-project.php?id=<?= urlencode($proj['id']) ?>" class="admin-edit-link" title="Edit project">[EDIT]</a>
         <?php endif; ?>
       </h3>
       <p><?= htmlspecialchars($proj['description']) ?></p>
