@@ -14,6 +14,9 @@ blog/assets/images/gura-avatar.jpg
 blog/users.json
 blog/data/comments/*.json
 
+# Dependencies
+node_modules/
+
 # System
 .DS_Store
 Thumbs.db
