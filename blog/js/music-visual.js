@@ -1,6 +1,8 @@
 /**
  * Music Visualizer — 深海声波条 (Web Audio + Canvas, 2026-08-16)
  * 监听 music:play / music:pause (music-player.js 分发)
+ * 分析器共享自 particle-ocean.js (同一 audio 元素只能连一个 MediaElementSource):
+ *   particle-ocean 创建 AudioContext 后发布 window.__oceanAnalyser + 'ocean:audio-ready' 事件
  * 美学: Signal Blue 光晕频谱条; 静止时一条淡基线。安静, 不喧闹 (宪法 1.2);
  * prefers-reduced-motion → 静态基线 (宪法 2.4)。
  */
@@ -12,7 +14,7 @@
   audio.insertAdjacentElement('afterend', canvas);
 
   var ctx = canvas.getContext('2d');
-  var audioCtx = null, analyser = null, freqData = null, rafId = 0;
+  var analyser = null, freqData = null, rafId = 0;
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var H = 56; // 与 CSS height 一致
 
@@ -44,7 +46,7 @@
     ctx.clearRect(0, 0, w, H);
     if (!analyser || !freqData) { drawIdle(); return; }
     analyser.getByteFrequencyData(freqData);
-    if (!window.__musicVis?.frames) { // 首帧诊断: 频谱峰值 (0=数据全零)
+    if (!window.__musicVis?.frames) { // 首帧诊断
       var peak = 0; for (var k = 0; k < freqData.length; k++) if (freqData[k] > peak) peak = freqData[k]
       console.log('[music-vis] 首帧频谱峰值:', peak, '| canvas宽:', w)
       window.__musicVis.frames = 0; window.__musicVis.peak = peak
@@ -69,30 +71,29 @@
     rafId = requestAnimationFrame(loop);
   }
 
+  function adopt(a) {
+    if (!a) return
+    analyser = a
+    freqData = new Uint8Array(a.frequencyBinCount)
+    cancelAnimationFrame(rafId)
+    rafId = requestAnimationFrame(loop)
+  }
+
   function start() {
-    window.__musicVis = { reduced: REDUCED, state: 'start', hasCtx: !!audioCtx, ctxState: audioCtx ? audioCtx.state : null }
-    console.log('[music-vis] music:play 收到 | reduced:', REDUCED, '| hasCtx:', !!audioCtx)
+    window.__musicVis = { reduced: REDUCED, state: 'start' }
+    console.log('[music-vis] music:play 收到 | reduced:', REDUCED)
     if (REDUCED) { drawIdle(); return; }
-    try {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        var src = audioCtx.createMediaElementSource(audio);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        analyser.smoothingTimeConstant = 0.8;
-        src.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        freqData = new Uint8Array(analyser.frequencyBinCount);
-        console.log('[music-vis] AudioContext 已创建 | state:', audioCtx.state)
-      }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(loop);
-    } catch (e) {
-      console.log('[music-vis] 异常:', e.message)
-      window.__musicVis.error = e.message
+    // 优先直接共享 (particle-ocean 已建); 否则等它发布 (脚本顺序: 本文件先于 particle-ocean 注册监听)
+    if (window.__oceanAnalyser) { adopt(window.__oceanAnalyser); return }
+    var done = false
+    var onReady = function(e) { done = true; adopt(e.detail?.analyser || window.__oceanAnalyser) }
+    document.addEventListener('ocean:audio-ready', onReady)
+    setTimeout(function() {
+      if (done) return
+      document.removeEventListener('ocean:audio-ready', onReady)
+      console.log('[music-vis] 等待 ocean 分析器超时 (particle-ocean 未建 AudioContext)')
       drawIdle()
-    }
+    }, 2000)
   }
 
   function stop() {

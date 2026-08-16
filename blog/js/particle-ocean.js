@@ -187,6 +187,10 @@
       source = audioCtx.createMediaElementSource(audio);
       source.connect(analyser);
       analyser.connect(audioCtx.destination);
+      // 共享分析器给声波条 (2026-08-16): 同一 audio 元素只能连一个 MediaElementSource,
+      // music-visual.js 不再自建 AudioContext, 改由本文件发布
+      window.__oceanAnalyser = analyser;
+      document.dispatchEvent(new CustomEvent('ocean:audio-ready', { detail: { analyser } }));
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
     musicActive = true;
