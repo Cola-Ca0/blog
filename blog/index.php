@@ -56,6 +56,15 @@ body {
   100% { opacity: 0; transform: scale(30); }
 }
 
+/* 生物荧光呼吸 (2026-08-16 用户选定) — 侧栏一言卡片缓慢明暗 */
+#hitokotoWidget { position: relative; overflow: hidden; }
+#hitokotoWidget::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgba(91,160,224,0.12), transparent 70%);
+  animation: bio-breathe 5.5s ease-in-out infinite;
+}
+@keyframes bio-breathe { 0%,100%{opacity:0.15} 50%{opacity:0.6} }
+
 .hero-wallpaper {
   position: relative;
   width: 100%;
@@ -130,7 +139,7 @@ body {
   letter-spacing: 0.02em;
   color: #8ed0e8;
   text-shadow: 0 2px 30px rgba(0,0,0,0.5), 0 0 80px rgba(142,208,232,0.35), 0 0 120px rgba(142,208,232,0.15);
-  margin-bottom: 12px;
+  margin-bottom: 22px;
   animation: hero-text-in 1.2s ease-out;
   line-height: 1.3;
 }
@@ -152,16 +161,17 @@ body {
 
 .hero-text-center .hero-line2 {
   font-family: 'Noto Serif SC', 'Georgia', serif;
-  font-size: clamp(0.85rem, 1.4vw, 1rem);
+  font-size: clamp(0.78rem, 1.2vw, 0.9rem);   /* 2026-08-16 用户选定: 小一号, 与 Hello 拉开节奏 */
   font-weight: 300;
   font-style: italic;
   letter-spacing: 0.03em;
   line-height: 1.5;            /* §4.1: italic descender clearance for y/p/g/j/q */
   padding-bottom: 4px;         /* reserve space so descenders don't clip */
-  color: rgba(180,210,235,0.7);
+  color: rgba(180,210,235,0.58);  /* 2026-08-16: 透明度降一档 */
   text-shadow: 0 1px 12px rgba(0,0,0,0.4);
   animation: hero-text-in 1.4s ease-out;
 }
+[data-theme="light"] .hero-text-center .hero-line2 { color: rgba(26,48,64,0.62); }
 
 @keyframes hero-text-in {
   from { opacity: 0; transform: translateY(50px); filter: blur(6px); }
