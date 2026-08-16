@@ -13,6 +13,7 @@
   var mouseX = -500, mouseY = -500;
   var time = 0;
   var DOT_COUNT = 80, ORB_COUNT = 20;
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; // 宪法 2.4
 
   function isLightTheme() {
     return document.documentElement.getAttribute('data-theme') === 'light';
@@ -93,6 +94,7 @@
     if (!canvas) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    if (REDUCED && particles.length) loop(); // 静态模式: 尺寸变化后重画一帧
   }
 
   function loop() {
@@ -174,7 +176,7 @@
       ctx.restore();
     }
 
-    animId = requestAnimationFrame(loop);
+    if (!REDUCED) animId = requestAnimationFrame(loop); // reduced-motion: 静态单帧
   }
 
   function start(audio) {
