@@ -38,6 +38,24 @@ body {
 /* ============================================================
    Wallpaper Hero — Full Screen
    ============================================================ */
+/* Hero sonar pulse (2026-08-16 用户选定) — 低频声呐涟漪; reduced-motion 由 shared.css 全局规则自动降级 */
+.hero-sonar {
+  position: absolute;
+  left: 50%; top: 74%;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(91, 160, 224, 0.5);
+  box-shadow: 0 0 14px rgba(91, 160, 224, 0.3), inset 0 0 8px rgba(91, 160, 224, 0.25);
+  pointer-events: none;
+  opacity: 0;
+  animation: sonar-ping 7s ease-out infinite;
+}
+@keyframes sonar-ping {
+  0%   { opacity: 0; transform: scale(0.15); }
+  5%   { opacity: 0.65; }
+  100% { opacity: 0; transform: scale(30); }
+}
+
 .hero-wallpaper {
   position: relative;
   width: 100%;
@@ -152,6 +170,8 @@ body {
 
 /* ============================================================
    Navbar — Glass + Blur
+   2026-08-16 去重: 公共 navbar 规则统一走 shared.css;
+   本页仅保留首页专属的「滚过 Hero 才现身」行为。
    ============================================================ */
 .navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 66px;
@@ -163,32 +183,6 @@ body {
   transform: translateY(-100%);
 }
 .navbar.visible { transform: translateY(0); }
-.navbar:hover { border-bottom-color: var(--border-glow-strong); box-shadow: 0 2px 24px rgba(91,160,224,0.12); }
-
-.nav-inner {
-  max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 28px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-
-/* Brand */
-.nav-brand {
-  display: flex; align-items: center; gap: 10px;
-  text-decoration: none; color: var(--text-primary); transition: var(--transition-smooth);
-}
-.nav-brand:hover { color: var(--accent); text-shadow: 0 0 20px rgba(142,208,232,0.4); }
-
-.shark-fin-icon {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transition: var(--transition-bounce);
-  box-shadow: 0 0 12px rgba(91,160,224,0.35);
-}
-.nav-brand:hover .shark-fin-icon { transform: translateY(-3px) rotate(-5deg); box-shadow: 0 0 20px rgba(142,208,232,0.55); }
-
-.brand-text {
-  font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.04em;
-}
 
 
 /* User greeting when logged in */
@@ -601,7 +595,7 @@ body {
 .sidebar-widget {
   background: var(--bg-card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-glow); border-radius: var(--radius-lg); padding: 24px;
-  margin-bottom: 24px; box-shadow: var(--shadow-sm); transition: var(--transition-smooth); position: relative;
+  margin-bottom: 28px; box-shadow: var(--shadow-sm); transition: var(--transition-smooth); position: relative;
 }
 .sidebar-widget:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.04); }
 
@@ -695,6 +689,7 @@ body {
   <div class="wallpaper-fallback"></div>
   <div class="wallpaper-shimmer"></div>
   <div class="caustic-overlay"></div>
+  <div class="hero-sonar" aria-hidden="true"></div>
 
   <div class="hero-text-center">
     <h1 class="hero-line1"><span class="en">Hello</span><br><span class="en-sub">Welcome to Cola's blog</span></h1>
