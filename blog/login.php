@@ -55,7 +55,9 @@ function generateCaptcha() {
     return ['question' => $question, 'hash' => $hash];
 }
 
-$captcha = generateCaptcha();
+// 2026-08-16 修复: POST 时不得在校验前重新生成算式 — 那会把 session 里的 hash 覆盖成新题,
+// 用户回答的是页面上显示的旧题, 正确答案永远对不上 (人机验证 100% 误拒)。
+$captcha = ($_SERVER['REQUEST_METHOD'] === 'POST') ? ['question' => '', 'hash' => ''] : generateCaptcha();
 $error = '';
 $success = '';
 $activeTab = isset($_GET['tab']) && $_GET['tab'] === 'register' ? 'register' : 'login';
@@ -174,6 +176,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 }
+
+// 兜底: 畸形 POST (无 action) 走到渲染时补一个算式, 避免空题
+if ($captcha['question'] === '') $captcha = generateCaptcha();
 
 // 已登录直接跳转
 if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
