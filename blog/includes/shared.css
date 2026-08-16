@@ -114,6 +114,12 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
 .nav-search-wrap input:-webkit-autofill,
 .nav-search-wrap input:-webkit-autofill:focus { transition:background-color 9999s ease-in-out 0s;
   -webkit-text-fill-color:var(--text-primary); -webkit-box-shadow:0 0 0 1000px #081828 inset; }
+/* 搜索声呐 (2026-08-16 用户选定): 聚焦时一圈涟漪, 与 hero 声呐脉冲呼应 */
+.nav-search-wrap::after { content:''; position:absolute; right:16px; top:50%; width:8px; height:8px;
+  margin-top:-4px; border-radius:50%; border:1px solid rgba(91,160,224,0.45);
+  opacity:0; pointer-events:none; }
+.nav-search-wrap:focus-within::after { animation:sonar-echo 0.9s ease-out; }
+@keyframes sonar-echo { 0%{opacity:0.55; transform:scale(0.3)} 100%{opacity:0; transform:scale(14)} }
 
 /* Search results dropdown */
 .search-results-dropdown { position:absolute; top:100%; right:0; margin-top:8px;
@@ -160,7 +166,10 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
 
 /* --- Footer --- */
 .site-footer { position:relative; z-index:2; margin-top:60px; padding:40px 0; border-top:1px solid var(--border-glow); }
-.site-footer::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:200px; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.site-footer::before { content:''; position:absolute; top:0; left:50%; width:200px; height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation:undercurrent 9s ease-in-out infinite; }  /* 2026-08-16 用户选定: 页脚暗流 */
+@keyframes undercurrent { 0%,100%{transform:translateX(-50%) translateX(-140px)} 50%{transform:translateX(-50%) translateX(140px)} }
 .footer-inner { max-width:1200px; margin:0 auto; padding:0 28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
 .footer-brand { display:flex; align-items:center; gap:10px; color:var(--text-secondary); font-size:0.85rem; }
 .footer-brand .shark-fin-icon { width:22px; height:22px; opacity:0.55; }
