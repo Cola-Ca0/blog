@@ -103,6 +103,8 @@ This is a tech blog dressed as a HUD — not the aggressive neon of cyberpunk, b
 - Sci-fi instrumentation vocabulary (diamond decorators, corner brackets, scanlines, data rows) applied with restraint
 - Glassmorphism reserved for cards and panels only; never on text or interactive elements
 
+**Hero Wallpaper (2026-08-16, user's call).** The hero wallpaper (`assets/images/wallpaper.jpg`) is an intentional personal choice — an anime ocean illustration (Gura). It overrides the "abstract deep-sea" description above: the hero may carry bright sky tones that would otherwise violate the Pure White Ban. The wallpaper is exempt from the ban; all other chrome and content areas still follow it. The wave shimmer overlay bridges the illustration with the station metaphor.
+
 ## Colors
 
 The palette reads like a submarine instrument panel: cool blues for structure and depth, a single warm accent for alerts and highlights. Every color has a technical codename that fits the station metaphor.
