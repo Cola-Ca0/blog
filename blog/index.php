@@ -1142,6 +1142,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 <script src="js/particle-ocean.js"></script>
 <script src="js/sparkles.js?v=3"></script>
 <script src="js/music-player.js"></script>
+<script src="js/music-visual.js"></script>
 <script src="js/post-loader.js"></script>
 </body>
 </html>
