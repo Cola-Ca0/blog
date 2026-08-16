@@ -54,7 +54,7 @@
     window.__musicVis.frames++
     var n = 32;
     var slot = w / n;
-    var barW = slot * 0.6;
+    var barW = slot * 0.35; // 2026-08-16 用户选「细」: 0.6 → 0.35
     ctx.fillStyle = 'rgba(91,160,224,0.9)';
     ctx.shadowColor = 'rgba(91,160,224,0.7)';
     ctx.shadowBlur = 6;
