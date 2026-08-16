@@ -44,6 +44,12 @@
     ctx.clearRect(0, 0, w, H);
     if (!analyser || !freqData) { drawIdle(); return; }
     analyser.getByteFrequencyData(freqData);
+    if (!window.__musicVis?.frames) { // 首帧诊断: 频谱峰值 (0=数据全零)
+      var peak = 0; for (var k = 0; k < freqData.length; k++) if (freqData[k] > peak) peak = freqData[k]
+      console.log('[music-vis] 首帧频谱峰值:', peak, '| canvas宽:', w)
+      window.__musicVis.frames = 0; window.__musicVis.peak = peak
+    }
+    window.__musicVis.frames++
     var n = 32;
     var slot = w / n;
     var barW = slot * 0.6;
@@ -64,6 +70,8 @@
   }
 
   function start() {
+    window.__musicVis = { reduced: REDUCED, state: 'start', hasCtx: !!audioCtx, ctxState: audioCtx ? audioCtx.state : null }
+    console.log('[music-vis] music:play 收到 | reduced:', REDUCED, '| hasCtx:', !!audioCtx)
     if (REDUCED) { drawIdle(); return; }
     try {
       if (!audioCtx) {
@@ -75,11 +83,16 @@
         src.connect(analyser);
         analyser.connect(audioCtx.destination);
         freqData = new Uint8Array(analyser.frequencyBinCount);
+        console.log('[music-vis] AudioContext 已创建 | state:', audioCtx.state)
       }
       if (audioCtx.state === 'suspended') audioCtx.resume();
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(loop);
-    } catch (e) { drawIdle(); }
+    } catch (e) {
+      console.log('[music-vis] 异常:', e.message)
+      window.__musicVis.error = e.message
+      drawIdle()
+    }
   }
 
   function stop() {
