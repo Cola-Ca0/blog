@@ -61,7 +61,13 @@ if (!isset($commentSlug)) $commentSlug = 'about';
 
   function renderComments(comments) {
     function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function findReplies(pid) { return comments.filter(function(c) { return c.reply_to === pid; }); }
+    // 2026-08-16: 预建 reply_to 索引, 渲染复杂度 O(N²) → O(N)
+    var byParent = {};
+    for (var i = 0; i < comments.length; i++) {
+      var key = comments[i].reply_to || 'root';
+      (byParent[key] = byParent[key] || []).push(comments[i]);
+    }
+    function findReplies(pid) { return byParent[pid] || []; }
     function renderComment(c, level) {
       var ml = level * 28;
       var bl = level > 0 ? 'border-left:2px solid var(--border-glow);' : '';
@@ -87,7 +93,7 @@ if (!isset($commentSlug)) $commentSlug = 'about';
       if (level < 2) for (var i = 0; i < kids.length; i++) h += renderComment(kids[i], level + 1);
       return h;
     }
-    var roots = comments.filter(function(c) { return !c.reply_to; });
+    var roots = byParent['root'] || [];
     var html = '';
     for (var i = 0; i < roots.length; i++) html += renderComment(roots[i], 0);
     container.innerHTML = html;
