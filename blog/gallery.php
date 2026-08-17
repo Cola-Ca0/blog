@@ -16,14 +16,10 @@ sort($slides);
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php require __DIR__ . '/includes/theme-init.php'; ?>
-<title>Gallery / 图库 · Cola_CaO</title>
-<link rel="stylesheet" href="includes/tokens.css">
-<link rel="stylesheet" href="includes/shared.css">
-<link rel="preconnect" href="https://fonts.loli.net">
-<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<?php
+$pageTitle = 'Gallery / 图库 · Cola_CaO';
+require __DIR__ . '/includes/head.php';
+?>
 <style>
 body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-primary);line-height:1.7;min-height:100vh}
 .page-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:100px 28px 60px}

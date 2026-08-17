@@ -11,18 +11,14 @@ $about = json_decode(file_get_contents($aboutFile), true) ?: [];
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php require __DIR__ . '/includes/theme-init.php'; ?>
-<title>About · Cola_CaO</title>
-<meta name="description" content="关于可乐 — 杭师大 CS 2026 级新生，网络安全方向，CTF + SRC。了解我的技术栈、学习路线和联系方式。">
-<meta property="og:title" content="About · Cola_CaO">
+<?php
+$pageTitle = 'About · Cola_CaO';
+$pageDesc = '关于可乐 — 杭师大 CS 2026 级新生，网络安全方向，CTF + SRC。了解我的技术栈、学习路线和联系方式。';
+$extraHead = '<meta property="og:title" content="About · Cola_CaO">
 <meta property="og:description" content="杭师大 CS 2026 级，网络安全方向，CTF + SRC。">
-<meta property="og:type" content="website">
-<link rel="stylesheet" href="includes/tokens.css">
-<link rel="stylesheet" href="includes/shared.css">
-<link rel="preconnect" href="https://fonts.loli.net">
-<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta property="og:type" content="website">';
+require __DIR__ . '/includes/head.php';
+?>
 <style>
 body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-primary);line-height:1.7;min-height:100vh;overflow-x:hidden}
 

@@ -23,14 +23,11 @@ if ($post === null || $post['draft']) {
     <!DOCTYPE html>
     <html lang="zh-CN">
     <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php require __DIR__ . '/includes/theme-init.php'; ?>
-    <title>Signal Lost · Cola_CaO</title>
-    <link rel="stylesheet" href="/blog/includes/tokens.css">
-    <link rel="stylesheet" href="/blog/includes/shared.css">
-    <link rel="preconnect" href="https://fonts.loli.net">
-    <link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php
+    $pageTitle = 'Signal Lost · Cola_CaO';
+    $fonts = 'basic';
+    require __DIR__ . '/includes/head.php';
+    ?>
     <style>
       .not-found { display:flex; flex-direction:column; align-items:center; justify-content:center;
         min-height:80vh; text-align:center; padding:40px 20px; }
@@ -53,24 +50,20 @@ if ($post === null || $post['draft']) {
     exit;
 }
 
-$pageTitle = htmlspecialchars($post['title']) . ' · Cola_CaO';
+// $pageTitle 在 head 块内由 head.php 统一转义 (2026-08-17 提取)
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php require __DIR__ . '/includes/theme-init.php'; ?>
-<title><?= $pageTitle ?></title>
-<meta name="description" content="<?= htmlspecialchars($post['summary']) ?>">
-<meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
-<meta property="og:description" content="<?= htmlspecialchars($post['summary']) ?>">
+<?php
+$pageTitle = $post['title'] . ' · Cola_CaO';
+$pageDesc = $post['summary'];
+$extraHead = '<meta property="og:title" content="' . htmlspecialchars($post['title']) . '">
+<meta property="og:description" content="' . htmlspecialchars($post['summary']) . '">
 <meta property="og:type" content="article">
-<meta property="og:url" content="http://localhost/blog/post/<?= htmlspecialchars($slug) ?>">
-<link rel="stylesheet" href="/blog/includes/tokens.css">
-<link rel="stylesheet" href="/blog/includes/shared.css">
-<link rel="preconnect" href="https://fonts.loli.net">
-<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta property="og:url" content="http://localhost/blog/post/' . htmlspecialchars($slug) . '">';
+require __DIR__ . '/includes/head.php';
+?>
 <style>
 body {
   font-family: var(--font-body);

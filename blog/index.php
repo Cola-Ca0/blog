@@ -11,19 +11,15 @@ $radarSkills = $aboutJson['skills'] ?? [];
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php require __DIR__ . '/includes/theme-init.php'; ?>
-<title>Cola_CaO · 深海之下，别有洞天</title>
-<meta name="description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹，分享安全探索与代码思考。">
-<meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">
+<?php
+$pageTitle = 'Cola_CaO · 深海之下，别有洞天';
+$pageDesc = '可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹，分享安全探索与代码思考。';
+$extraHead = '<meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">
 <meta property="og:description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://localhost/blog/">
-<link rel="stylesheet" href="includes/tokens.css">
-<link rel="stylesheet" href="includes/shared.css">
-<link rel="preconnect" href="https://fonts.loli.net">
-<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta property="og:url" content="http://localhost/blog/">';
+require __DIR__ . '/includes/head.php';
+?>
 <style>
 body {
   font-family: var(--font-body);

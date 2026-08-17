@@ -43,18 +43,15 @@ if (isset($_GET['download']) && $isLoggedIn && $viewProject) {
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projects · Cola_CaO</title>
-<meta name="description" content="可乐的项目展示 — PHP、安全工具、CTF payload 速查。查看源码和下载。">
-<meta property="og:title" content="Projects · Cola_CaO">
+<?php
+$pageTitle = 'Projects · Cola_CaO';
+$pageDesc = '可乐的项目展示 — PHP、安全工具、CTF payload 速查。查看源码和下载。';
+$extraHead = '<meta property="og:title" content="Projects · Cola_CaO">
 <meta property="og:description" content="可乐的项目展示，安全工具与代码作品。">
-<meta property="og:type" content="website">
-<?php require __DIR__ . '/../includes/theme-init.php'; ?>
-<link rel="stylesheet" href="../includes/tokens.css">
-<link rel="stylesheet" href="../includes/shared.css">
-<link rel="preconnect" href="https://fonts.loli.net">
-<link href="https://fonts.loli.net/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<meta property="og:type" content="website">';
+$fonts = 'code';
+require __DIR__ . '/../includes/head.php';
+?>
 <style>
 body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-primary);line-height:1.7;min-height:100vh;overflow-x:hidden;position:relative}
 
