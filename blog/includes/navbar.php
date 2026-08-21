@@ -85,8 +85,10 @@ window.toggleMobileNav = function() {
   var results = document.getElementById('searchResults');
   if (!input || !results) return;
   var timer = null;
+  var activeIndex = -1;
 
   function performSearch(q) {
+    activeIndex = -1;
     results.innerHTML = '<p class="search-empty">Searching... / 搜索中...</p>';
     results.classList.add('has-results');
     fetch('/blog/posts-api.php?action=search&q=' + encodeURIComponent(q))
@@ -109,8 +111,19 @@ window.toggleMobileNav = function() {
       });
   }
 
+  function updateActive() {
+    var items = results.querySelectorAll('.sr-item');
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.toggle('sr-active', i === activeIndex);
+    }
+    if (activeIndex >= 0 && items[activeIndex]) {
+      items[activeIndex].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
   input.addEventListener('input', function() {
     clearTimeout(timer);
+    activeIndex = -1;
     var q = input.value.trim();
     if (!q) { results.innerHTML = ''; results.classList.remove('has-results'); return; }
     timer = setTimeout(function() { performSearch(q); }, 250);
@@ -120,20 +133,29 @@ window.toggleMobileNav = function() {
     if (!e.target.closest('.nav-search-wrap')) {
       results.innerHTML = '';
       results.classList.remove('has-results');
+      activeIndex = -1;
     }
   });
 
   document.addEventListener('keydown', function(e) {
+    var items;
     if (e.key === 'Escape') {
       input.value = '';
       results.innerHTML = '';
       results.classList.remove('has-results');
+      activeIndex = -1;
       input.blur();
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       input.focus();
     }
+    if (input !== document.activeElement) return;
+    items = results.querySelectorAll('.sr-item');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(activeIndex + 1, items.length - 1); updateActive(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = Math.max(activeIndex - 1, 0); updateActive(); }
+    else if (e.key === 'Enter' && activeIndex >= 0) { e.preventDefault(); window.location.href = items[activeIndex].getAttribute('href'); }
   });
 })();
 </script>

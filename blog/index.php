@@ -163,11 +163,11 @@ body {
   letter-spacing: 0.03em;
   line-height: 1.5;            /* §4.1: italic descender clearance for y/p/g/j/q */
   padding-bottom: 4px;         /* reserve space so descenders don't clip */
-  color: rgba(180,210,235,0.58);  /* 2026-08-16: 透明度降一档 */
+  color: rgba(180,210,235,0.68);  /* 2026-08-21 审查: 0.58→0.68 可读性 (对比 ~2.5→3.4:1) */
   text-shadow: 0 1px 12px rgba(0,0,0,0.4);
   animation: hero-text-in 1.4s ease-out;
 }
-[data-theme="light"] .hero-text-center .hero-line2 { color: rgba(26,48,64,0.62); }
+[data-theme="light"] .hero-text-center .hero-line2 { color: rgba(26,48,64,0.72); }
 
 @keyframes hero-text-in {
   from { opacity: 0; transform: translateY(50px); filter: blur(6px); }
@@ -327,8 +327,11 @@ body {
 .music-ctrl-btn {
   background:transparent;border:1px solid var(--border-glow);color:var(--text-secondary);
   border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:0.6rem;transition:var(--transition-smooth)
+  cursor:pointer;font-size:0.6rem;transition:var(--transition-smooth);
+  position:relative;
 }
+/* 触控热区扩展至 44px (ui-ux-pro-max §2 touch-target-size; 视觉尺寸不变) */
+.music-ctrl-btn::before { content:''; position:absolute; inset:-8px; }
 .music-ctrl-btn:hover { border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(142,208,232,0.2) }
 .music-ctrl-play { width:34px;height:34px;font-size:0.75rem;border-color:var(--accent);color:var(--accent) }
 .music-ctrl-mode { font-size:0.52rem;font-weight:700;letter-spacing:0.04em;font-family:var(--font-display);width:auto;padding:0 6px;border-radius:var(--radius-pill) }
@@ -792,12 +795,12 @@ body {
           </div>
           <!-- Controls row: prev | play/pause | next | mode | volume -->
           <div class="music-ctrls">
-            <button class="music-ctrl-btn" onclick="playLocal(currentIdx-1)" title="Previous">&#9664;&#9664;</button>
+            <button class="music-ctrl-btn" onclick="playLocal(currentIdx-1)" title="Previous" aria-label="上一首">&#9664;&#9664;</button>
             <button class="music-ctrl-btn music-ctrl-play" id="musicCtrlPlay" onclick="togglePlay()" aria-label="Play music">&#9654;</button>
-            <button class="music-ctrl-btn" onclick="playLocal(currentIdx+1)" title="Next">&#9654;&#9654;</button>
-            <button class="music-ctrl-btn music-ctrl-mode" id="musicModeBtn" onclick="cycleMode()" title="List loop">ALL</button>
+            <button class="music-ctrl-btn" onclick="playLocal(currentIdx+1)" title="Next" aria-label="下一首">&#9654;&#9654;</button>
+            <button class="music-ctrl-btn music-ctrl-mode" id="musicModeBtn" onclick="cycleMode()" title="List loop" aria-label="播放模式">ALL</button>
             <span style="font-size:0.6rem;color:var(--text-muted);margin-left:4px">Vol</span>
-            <input type="range" id="musicVolume" min="0" max="100" value="40" style="width:56px;flex-shrink:0">
+            <input type="range" id="musicVolume" min="0" max="100" value="40" style="width:56px;flex-shrink:0" aria-label="音量">
           </div>
           <audio id="musicAudio" style="display:none"></audio>
           <!-- Song list (scrollable) -->

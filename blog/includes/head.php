@@ -12,6 +12,7 @@ if ($fontSet === 'code') { $fontUrl = str_replace('&display=swap', '&family=Fira
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php require __DIR__ . '/theme-init.php'; ?>
+<script>document.documentElement.classList.add('js');</script>
 <title><?= htmlspecialchars($pageTitle ?? 'Cola_CaO') ?></title>
 <?php if (!empty($pageDesc)): ?>
 <meta name="description" content="<?= htmlspecialchars($pageDesc) ?>">
@@ -24,3 +25,5 @@ if ($fontSet === 'code') { $fontUrl = str_replace('&display=swap', '&family=Fira
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.loli.net">
 <link href="<?= $fontUrl ?>" rel="stylesheet">
+<!-- Great Vibes 本地字体 (置于远端之后以覆盖, hero Hello 花体) -->
+<link rel="stylesheet" href="/blog/assets/fonts/great-vibes/index.css">

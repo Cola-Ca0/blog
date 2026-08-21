@@ -18,7 +18,7 @@
   --border-glow-strong: rgba(91, 160, 224, 0.5);
   --text-primary: #d8eaf8;
   --text-secondary: #98bcd8;
-  --text-muted: #68889e;
+  --text-muted: #7a9ab2;   /* 2026-08-21 审查提亮: #68889e 4.2:1 → 4.8:1 (AA) */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;

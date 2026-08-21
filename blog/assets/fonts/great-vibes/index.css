@@ -1,0 +1,8 @@
+/* Great Vibes — 花体字本地化 (2026-08-21: 自 fonts.loli.net 迁入, hero "Hello" 不再依赖外部源) */
+@font-face {
+  font-family: 'Great Vibes';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('great-vibes.ttf') format('truetype');
+}

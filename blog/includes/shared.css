@@ -131,6 +131,8 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
   border-bottom:1px solid rgba(91,160,224,0.06); text-decoration:none;
   transition:var(--transition-smooth); }
 .search-results-dropdown .sr-item:hover { background:rgba(91,160,224,0.06); }
+/* 键盘导航高亮 (2026-08-21) */
+.search-results-dropdown .sr-item.sr-active { background:rgba(91,160,224,0.12); }
 .sr-item .sr-title { font-family:var(--font-display); font-size:0.85rem; font-weight:600;
   color:var(--accent); letter-spacing:0.03em; }
 .sr-item .sr-meta { font-size:0.66rem; color:var(--text-haze); margin-top:2px; }
@@ -198,6 +200,8 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 .section-reveal.visible { opacity: 1; transform: translateY(0); }
+/* no-JS 兜底: JS 未加载时内容保持可见 (2026-08-21 审查; js class 由 head.php 内联脚本注入) */
+html:not(.js) .section-reveal { opacity: 1; transform: none; }
 
 /* Hamburger menu */
 .nav-hamburger { display:none; flex-direction:column; gap:5px; background:transparent;
