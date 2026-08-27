@@ -17,7 +17,7 @@ $pageDesc = '可乐的水下研究站 — CS/网络安全/CTF。在深海中记�
 $extraHead = '<meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">
 <meta property="og:description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://localhost/blog/">';
+<meta property="og:url" content="http://localhost:8080/blog/">';
 require __DIR__ . '/includes/head.php';
 ?>
 <style>
@@ -349,7 +349,7 @@ body {
   padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border-glow);
   background:transparent;color:var(--accent);cursor:pointer;transition:var(--transition-smooth)
 }
-.music-result-item .play-btn:hover { background:var(--primary);color:#fff;border-color:var(--primary) }
+.music-result-item .play-btn:hover { background:var(--primary);color:var(--text-primary);border-color:var(--primary) }
 
 /* ============================================================
    Skill Radar Chart — replaces compact gallery in hero right column
@@ -593,7 +593,7 @@ body {
 .pagination a { color:var(--text-secondary); border:1px solid rgba(91,160,224,0.15); }
 .pagination a:hover { border-color:var(--accent); color:var(--accent);
   background:rgba(91,160,224,0.08); }
-.pagination .current { color:#fff; background:var(--primary); border-color:var(--primary);
+.pagination .current { color:var(--text-primary); background:var(--primary); border-color:var(--primary);
   box-shadow:0 0 12px rgba(91,160,224,0.3); }
 .pagination .disabled { color:var(--text-haze); border-color:transparent; pointer-events:none; }
 
@@ -619,7 +619,7 @@ body {
 .about-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .about-avatar .avatar-placeholder-sm {
   width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--secondary), var(--primary)); font-size: 1.3rem; color: var(--text-primary);
+  background: linear-gradient(135deg, var(--primary), var(--accent)); font-size: 1.3rem; color: var(--text-primary);
 }
 
 .about-name-stack strong { display: block; font-size: 1rem; color: var(--text-primary); }
@@ -645,6 +645,45 @@ body {
 .friend-links a { display:block; padding:8px 12px; font-size:0.78rem; color:var(--text-secondary);
   text-decoration:none; border-radius:var(--radius-sm); transition:var(--transition-smooth); }
 .friend-links a:hover { background:rgba(91,160,224,0.08); color:var(--accent); padding-left:16px; }
+
+/* ============================================================
+   Latest Signals / 最新信号 — 侧栏组件 (2026-08 用户拍板: 低频安静, 状态点 3s 脉冲, hover 光晕 0.35)
+   ============================================================ */
+.signal-list { display:flex; flex-direction:column; gap:2px; }
+.signal-item {
+  display:flex; align-items:flex-start; gap:10px; text-decoration:none;
+  padding:8px 10px; border-radius:var(--radius-sm); border:1px solid transparent;
+  transition:var(--transition-smooth);
+}
+.signal-item:hover { background:rgba(91,160,224,0.08); border-color:rgba(91,160,224,0.35); box-shadow:0 0 12px rgba(91,160,224,0.35); }
+.signal-dot {
+  flex-shrink:0; width:7px; height:7px; margin-top:6px; border-radius:50%;
+  background:var(--accent); box-shadow:0 0 6px rgba(142,208,232,0.5);
+  animation:signal-pulse 3s ease-in-out infinite;
+}
+@keyframes signal-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.45; transform:scale(0.82); } }
+.signal-body { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.signal-meta { font-family:var(--font-display); font-size:0.68rem; color:var(--accent); letter-spacing:0.04em; }
+.signal-text { font-size:0.75rem; color:var(--text-secondary); line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.signal-item:hover .signal-text { color:var(--text-primary); }
+
+/* ============================================================
+   Dive Calendar / 深潜日历 — 侧栏组件 (2026-08 用户拍板: HUD 热力图, glob 直读零缓存, 今日低频脉冲 3s)
+   ============================================================ */
+.dive-cal-head { display:flex; justify-content:space-between; font-family:var(--font-display);
+  font-size:0.68rem; color:var(--text-muted); letter-spacing:0.06em; margin-bottom:10px; }
+.dive-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.dive-cal-dow { text-align:center; font-size:0.6rem; color:var(--text-haze); font-family:var(--font-display); padding-bottom:2px; }
+.dive-cal-cell {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  font-size:0.66rem; color:var(--text-muted); border-radius:var(--radius-sm);
+  border:1px solid transparent; transition:var(--transition-smooth);
+}
+.dive-cal-cell.posted { color:var(--text-primary); background:rgba(91,160,224,0.1);
+  border-color:rgba(91,160,224,0.35); box-shadow:0 0 6px rgba(91,160,224,0.2); }
+.dive-cal-cell.posted:hover { background:rgba(91,160,224,0.18); box-shadow:0 0 12px rgba(91,160,224,0.35); }
+.dive-cal-cell.today { color:var(--bg-deep); background:var(--primary); border-color:var(--primary);
+  font-weight:600; animation:signal-pulse 3s ease-in-out infinite; }
 
 /* Tag filter bar */
 .tag-filter-bar { display:flex; align-items:center; gap:12px; padding:10px 16px;
@@ -702,7 +741,7 @@ body {
 
   <div class="hero-text-center">
     <h1 class="hero-line1"><span class="en">Hello</span><br><span class="en-sub">Welcome to Cola's blog</span></h1>
-    <p class="hero-line2">"The best way to predict the future is to invent it." <span style="font-style:normal;">- Alan Kay</span></p>
+    <p class="hero-line2">"今天也要向深海，发一条温柔的信号。" <span style="font-style:normal;">— 深海研究站日志</span></p>
   </div>
 
 </section>
@@ -839,23 +878,13 @@ body {
         <span class="hud-data-label">FOCUS</span>
         <span class="hud-data-val">Web Security · SRC · Backend</span>
       </div>
-      <!-- Skill Bars (§4.9: mock data, replace with real skill levels) -->
-      <div class="hud-bar-wrap">
-        <div class="hud-bar-label"><span>Web 前端</span><span>90%</span></div>
-        <div class="hud-bar"><div class="hud-bar-fill" style="width:90%;"></div></div>
+      <!-- Skill Bars (2026-08 数据源统一: 与雷达图同读 about-content.json, 不再写死 mock) -->
+      <?php foreach (array_slice($radarSkills, 0, 4) as $barIdx => $barSk): $barLv = intval($barSk['level'] ?? 0); ?>
+      <div class="hud-bar-wrap"<?= $barIdx > 0 ? ' style="margin-top:10px;"' : '' ?>>
+        <div class="hud-bar-label"><span><?= htmlspecialchars($barSk['name']) ?></span><span><?= $barLv ?>%</span></div>
+        <div class="hud-bar"><div class="hud-bar-fill" style="width:<?= $barLv ?>%;"></div></div>
       </div>
-      <div class="hud-bar-wrap" style="margin-top:10px;">
-        <div class="hud-bar-label"><span>后端开发</span><span>78%</span></div>
-        <div class="hud-bar"><div class="hud-bar-fill" style="width:78%;"></div></div>
-      </div>
-      <div class="hud-bar-wrap" style="margin-top:10px;">
-        <div class="hud-bar-label"><span>网络安全</span><span>60%</span></div>
-        <div class="hud-bar"><div class="hud-bar-fill" style="width:60%;"></div></div>
-      </div>
-      <div class="hud-bar-wrap" style="margin-top:10px;">
-        <div class="hud-bar-label"><span>开源贡献</span><span>65%</span></div>
-        <div class="hud-bar"><div class="hud-bar-fill" style="width:65%;"></div></div>
-      </div>
+      <?php endforeach; ?>
       <!-- Social links row -->
       <div class="social-links-row">
         <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
@@ -976,6 +1005,37 @@ body {
 
     <!-- Sidebar -->
     <aside class="sidebar">
+      <?php
+      // 深潜日志 — 海况(日期种子)/本周下潜/任务进度 (数值来自 data/ambience.json, 宪法 4.2 数据即文件)
+      $ambience = json_decode(file_exists(__DIR__ . '/data/ambience.json') ? file_get_contents(__DIR__ . '/data/ambience.json') : '{}', true) ?: [];
+      $seas = $ambience['seas'] ?? [];
+      $sea = $seas ? $seas[crc32(date('Ymd')) % count($seas)] : ['name' => '平静', 'adv' => ''];
+      $weekStart = strtotime('monday this week');
+      $weekDives = 0;
+      foreach (glob(__DIR__ . '/posts/*.md') as $pf) { if (filemtime($pf) >= $weekStart) $weekDives++; }
+      $weekText = ($ambience['weekly'] ?? [])[$weekDives === 0 ? 0 : ($weekDives <= 2 ? 1 : 2)]['text'] ?? '';
+      $mission = $ambience['mission'] ?? ['label' => '任务', 'done' => 0, 'total' => 1, 'unit' => ''];
+      $pct = $mission['total'] > 0 ? round($mission['done'] / $mission['total'] * 100) : 0;
+      $days = floor((time() - strtotime($ambience['since'] ?? '2026-08-06')) / 86400) + 1;
+      ?>
+      <div class="sidebar-widget" id="diveLogWidget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Dive Log / 深潜日志</h3>
+        <div class="hud-data-row">
+          <span class="hud-data-label">今日海况</span>
+          <span class="hud-data-val"><?= htmlspecialchars($sea['name']) ?></span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.8;margin-bottom:12px"><?= htmlspecialchars($sea['adv']) ?></p>
+        <div class="hud-data-row">
+          <span class="hud-data-label">本周下潜</span>
+          <span class="hud-data-val">× <?= $weekDives ?></span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.8;margin-bottom:14px"><?= htmlspecialchars($weekText) ?></p>
+        <div class="hud-bar-wrap">
+          <div class="hud-bar-label"><span><?= htmlspecialchars($mission['label']) ?> · 第 <?= $days ?> 天</span><span><?= $pct ?>%</span></div>
+          <div class="hud-bar"><div class="hud-bar-fill" style="width:<?= $pct ?>%"></div></div>
+        </div>
+      </div>
+
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> About / 关于我</h3>
         <div class="about-avatar-wrap">
@@ -996,6 +1056,91 @@ body {
           <div><strong>CTF</strong> TRAINING</div>
           <div><strong>SRC</strong> HUNTING</div>
           <div><strong>SHARK</strong> MODE</div>
+        </div>
+      </div>
+
+      <!-- Latest Signals — 最近已审评论 (2026-08 用户拍板; 直读 data/comments/*.json, 宪法 4.2/4.4 零缓存) -->
+      <?php
+      $shorten = function ($s, $n) {
+        $s = trim((string)$s);
+        if (preg_match('/^.{0,' . (int)$n . '}/us', $s, $m)) {
+          $out = $m[0];
+          return $out !== $s ? $out . '…' : $out;
+        }
+        return $s;
+      };
+      $signals = [];
+      if (is_dir($commentDir)) {
+        foreach (glob($commentDir . '*.json') as $cf) {
+          $cslug = basename($cf, '.json');
+          $clist = json_decode(file_get_contents($cf), true);
+          if (!is_array($clist)) continue;
+          foreach ($clist as $c) {
+            if (!is_array($c)) continue;
+            if (isset($c['status']) && $c['status'] === 'pending') continue;
+            $signals[] = [
+              'slug' => $cslug,
+              'name' => (string)($c['username'] ?? '访客'),
+              'text' => trim((string)($c['content'] ?? '')),
+              'time' => (string)($c['created_at'] ?? '')
+            ];
+          }
+        }
+      }
+      usort($signals, function ($a, $b) { return strcmp($b['time'], $a['time']); });
+      $signals = array_slice($signals, 0, 5);
+      ?>
+      <div class="sidebar-widget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Latest Signals / 最新信号</h3>
+        <?php if ($signals): ?>
+        <div class="signal-list">
+          <?php foreach ($signals as $sig): ?>
+          <a class="signal-item" href="<?= $sig['slug'] === 'about' ? 'about.php' : 'post.php?slug=' . rawurlencode($sig['slug']) ?>#comments">
+            <span class="signal-dot" aria-hidden="true"></span>
+            <span class="signal-body">
+              <span class="signal-meta"><?= htmlspecialchars($shorten($sig['name'], 12)) ?> · <?= htmlspecialchars($sig['time']) ?></span>
+              <span class="signal-text"><?= htmlspecialchars($shorten($sig['text'], 60)) ?></span>
+            </span>
+          </a>
+          <?php endforeach; ?>
+        </div>
+        <?php else: ?>
+        <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;padding:16px 0">No signals yet. / 暂无信号</p>
+        <?php endif; ?>
+      </div>
+
+      <!-- Dive Calendar — 当月发文热力图 (2026-08 用户拍板; glob 直读 posts/*.md, 宪法 4.4 零缓存) -->
+      <?php
+      $calYear = (int)date('Y'); $calMonth = (int)date('n');
+      $postDays = [];
+      foreach (glob(__DIR__ . '/posts/*.md') as $pf) { // 只统计当月, 防跨月同日污染 (2026-08-27 审查)
+        if ((int)date('n', filemtime($pf)) !== $calMonth) continue;
+        $pd = (int)date('j', filemtime($pf));
+        $postDays[$pd] = ($postDays[$pd] ?? 0) + 1;
+      }
+      $daysInMonth = (int)date('t', mktime(0, 0, 0, $calMonth, 1, $calYear));
+      $firstDow = (int)date('w', mktime(0, 0, 0, $calMonth, 1, $calYear));
+      $calGrid = array_fill(0, $firstDow, null);
+      for ($d = 1; $d <= $daysInMonth; $d++) $calGrid[] = $d;
+      $calToday = (int)date('j');
+      ?>
+      <div class="sidebar-widget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Dive Calendar / 深潜日历</h3>
+        <div class="dive-cal-head">
+          <span><?= sprintf('%04d-%02d', $calYear, $calMonth) ?></span>
+          <span><?= count($postDays) ?> DAYS DIVED / <?= count($postDays) ?> 天下潜</span>
+        </div>
+        <div class="dive-cal-grid">
+          <?php foreach (['日', '一', '二', '三', '四', '五', '六'] as $wd): ?>
+          <span class="dive-cal-dow"><?= $wd ?></span>
+          <?php endforeach; ?>
+          <?php foreach ($calGrid as $cd): ?>
+            <?php if ($cd === null): ?>
+            <span class="dive-cal-cell"></span>
+            <?php else: $dCnt = $postDays[$cd] ?? 0; $dToday = ($cd === $calToday); ?>
+            <span class="dive-cal-cell<?= $dCnt ? ' posted' : '' ?><?= $dToday ? ' today' : '' ?>"<?= $dCnt ? ' title="' . sprintf('%04d-%02d-%02d', $calYear, $calMonth, $cd) . ' · ' . $dCnt . ' 篇 / posts"' : '' ?>><?= $cd ?></span>
+            <?php endif; ?>
+          <?php endforeach; ?>
         </div>
       </div>
 
@@ -1110,40 +1255,44 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   setInterval(tick, 60000);
 })();
 
-// Hitokoto 一言
+// 一言 — 本地治愈系科技文案池 (2026-08-27 脱离 hitokoto 外部 API; 点击轮换)
 (function() {
   var textEl = document.getElementById('hitokotoText');
   var fromEl = document.getElementById('hitokotoFrom');
   if (!textEl) return;
+  var verses = [], idx = -1;
+  var FALLBACK = [
+    { text: '深海之下，别有洞天。', from: 'Cola_CaO' },
+    { text: '雨点敲窗之前，先敲了敲我的终端。', from: '深海研究站日志' }
+  ];
 
-  function fetchHitokoto() {
-    textEl.textContent = 'Loading...';
-    fromEl.textContent = '';
-    var ctrl = new AbortController();
-    var t = setTimeout(function(){ ctrl.abort(); }, 8000);
-    fetch('https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=i&c=k', { signal: ctrl.signal })
-      .then(function(r){ clearTimeout(t); return r.json(); })
-      .then(function(d){
-        textEl.textContent = d.hitokoto;
-        var from = d.from_who ? d.from_who + ' · ' + d.from : d.from;
-        fromEl.textContent = '—— ' + (from || '佚名');
-      })
-      .catch(function(){
-        clearTimeout(t);
-        textEl.textContent = '深海之下，别有洞天';
-        fromEl.textContent = '—— Cola_CaO';
-      });
+  function show(v) {
+    textEl.textContent = v.text;
+    fromEl.textContent = '—— ' + (v.from || '佚名');
   }
 
-  fetchHitokoto();
+  function pick(cycle) {
+    if (!verses.length) { show(FALLBACK[0]); return; }
+    idx = cycle
+      ? (idx + 1 + Math.floor(Math.random() * (verses.length - 1))) % verses.length
+      : Math.floor(Math.random() * verses.length);
+    show(verses[idx]);
+  }
+
+  fetch('/blog/data/ambience.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) { verses = d.verses || []; pick(false); })
+    .catch(function() { pick(false); });
+
   textEl.style.cursor = 'pointer';
-  textEl.title = 'Click to refresh / 点击刷新一言';
-  textEl.addEventListener('click', fetchHitokoto);
+  textEl.title = '点击换一句 / Click to refresh';
+  textEl.addEventListener('click', function() { pick(true); });
 })();
 
 </script>
 
 <script src="js/particle-ocean.js"></script>
+<script src="js/rain-layer.js"></script>
 <script src="js/sparkles.js?v=3"></script>
 <script src="js/music-player.js"></script>
 <script src="js/music-visual.js"></script>
