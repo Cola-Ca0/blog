@@ -41,7 +41,8 @@ if ($action === 'list') {
 } elseif ($action === 'cover') {
     $file = basename($_GET['file'] ?? '');
     $path = $musicDir . $file;
-    if (!file_exists($path)) { http_response_code(404); echo json_encode(['error'=>'File not found']); exit; }
+    // 2026-08 审计 §4.2: 扩展名白名单 (与 lyrics 分支一致)
+    if (!preg_match('/\.mp3$/i', $file) || !file_exists($path)) { http_response_code(404); echo json_encode(['error'=>'File not found']); exit; }
 
     $cover = extractCover($path);
     if ($cover) {

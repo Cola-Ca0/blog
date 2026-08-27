@@ -8,3 +8,22 @@ RewriteRule ^post/([a-zA-Z0-9\-]+)$ post.php?slug=$1 [L,QSA]
 
 # Pagination: /blog/page/2 → index.php?page=2
 RewriteRule ^page/([0-9]+)$ index.php?page=$1 [L,QSA]
+
+# ===== 上线加固 (2026-08 安全审计 §3.1/§6.2/§6.3) =====
+# 敏感数据文件禁止 Web 直读: users.json(凭据哈希)/data/*.json(待审评论)/*.md(草稿) 一律走 PHP 渲染
+# 白名单例外 (2026-08-27): data/ambience.json 是前端一言/深潜日志的公开文案池, 必须可读
+RewriteCond %{REQUEST_URI} !/blog/data/ambience\.json$
+RewriteRule \.(json|md|lock)$ - [F,L]
+
+# 禁止目录列表 (草稿/待审评论/歌曲清单不可枚举)
+Options -Indexes
+
+# ===== 安全响应头 (2026-08-27 审计 §7.1; mod_headers 已加载) =====
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  # 渐进 CSP: 站内大量内联脚本, 暂不锁 script-src; HTTPS(8443) 上线后补 Strict-Transport-Security
+  Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+</IfModule>

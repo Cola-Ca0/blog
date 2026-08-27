@@ -6,7 +6,7 @@ require __DIR__ . '/includes/markdown.php';
 
 header('Content-Type: application/rss+xml; charset=utf-8');
 
-$siteUrl = 'http://localhost/blog';
+$siteUrl = 'http://localhost:8080/blog';
 $postsDir = __DIR__ . '/posts/';
 
 // Collect published posts, sorted by date desc
@@ -44,7 +44,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     <guid isPermaLink="true"><?= htmlspecialchars($siteUrl . '/post/' . $post['slug']) ?></guid>
     <pubDate><?= date('r', strtotime($post['date'])) ?></pubDate>
     <category><?= htmlspecialchars($post['category']) ?></category>
-    <description><![CDATA[<?= $post['body_html'] ?>]]></description>
+    <description><![CDATA[<?= str_replace(']]>', ']]&gt;', $post['body_html']) ?>]]></description>
   </item>
 <?php endforeach; ?>
 

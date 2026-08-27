@@ -26,7 +26,7 @@ if (!isset($navActive)) $navActive = 'home';
       <span></span><span></span><span></span>
     </button>
     <div class="nav-auth">
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode" title="Toggle theme / 切换主题">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换场景 / Scene" title="切换场景 / Scene">
         <span class="theme-toggle-track">
           <span class="theme-toggle-thumb"></span>
         </span>
@@ -87,6 +87,11 @@ window.toggleMobileNav = function() {
   var timer = null;
   var activeIndex = -1;
 
+  // 2026-08 审计 §1.3: 搜索结果渲染层统一转义, 防反射型 DOM XSS
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   function performSearch(q) {
     activeIndex = -1;
     results.innerHTML = '<p class="search-empty">Searching... / 搜索中...</p>';
@@ -99,10 +104,10 @@ window.toggleMobileNav = function() {
           return;
         }
         results.innerHTML = data.results.map(function(p) {
-          return '<a href="/blog/post/' + p.slug + '" class="sr-item">' +
-            '<div class="sr-title">' + p.title + '</div>' +
-            '<div class="sr-meta">' + p.category + ' · ' + p.date + '</div>' +
-            '<div class="sr-summary">' + p.summary + '</div>' +
+          return '<a href="/blog/post/' + esc(p.slug) + '" class="sr-item">' +
+            '<div class="sr-title">' + esc(p.title) + '</div>' +
+            '<div class="sr-meta">' + esc(p.category) + ' · ' + esc(p.date) + '</div>' +
+            '<div class="sr-summary">' + esc(p.summary) + '</div>' +
           '</a>';
         }).join('');
       })

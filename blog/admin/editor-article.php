@@ -15,6 +15,10 @@ $error = '';
 
 // ========== DELETE HANDLER (before HTML) ==========
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['_delete'])) {
+    // 2026-08 审计 §2.1: 删除必须校验 CSRF token, 否则可被跨站静默删文+删评论
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        http_response_code(403); exit('403 Forbidden');
+    }
     $delSlug = $_GET['slug'] ?? '';
     if (preg_match('/^[a-zA-Z0-9\-]+$/', $delSlug)) {
         $delPath = $postsDir . $delSlug . '.md';

@@ -25,6 +25,11 @@
 
   function fmtTime(s) { var m=Math.floor(s/60), sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
 
+  // 2026-08 审计 §1.5: 歌名/歌词来自本地文件, 渲染前统一转义防 HTML 注入
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
   // Load playlist
   var listCtrl = new AbortController();
   var listTimeout = setTimeout(function(){ listCtrl.abort(); }, 10000);
@@ -43,7 +48,7 @@
   function renderPlaylist() {
     resultsDiv.innerHTML = songs.map(function(s, i) {
       return '<div class="music-result-item' + (i===currentIdx?' active':'') + '" onclick="playLocal(' + i + ')">' +
-        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + s.name + '</span>' +
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.name) + '</span>' +
         '<button class="play-btn" onclick="event.stopPropagation();playLocal(' + i + ')">' + (i===currentIdx&&!audio.paused?'Pause':'Play') + '</button>' +
         '</div>';
     }).join('');
@@ -70,7 +75,7 @@
     var a=-1; for(var i=0;i<lrcData.times.length;i++) if(lrcData.times[i]<=cur) a=i;
     var lines=[]; for(var j=Math.max(0,a-1);j<=Math.min(lrcData.times.length-1,a+1);j++) {
       var s=j===a?'color:var(--accent);font-weight:600;font-size:1.15rem':'color:var(--text-muted);font-size:0.9rem';
-      var txt = lrcData.texts[j] || '';
+      var txt = esc(lrcData.texts[j] || '');
       if (!txt) txt = '<span style="opacity:0.35">~ music ~</span>';
       lines.push('<p style="'+s+'">'+txt+'</p>');
     }

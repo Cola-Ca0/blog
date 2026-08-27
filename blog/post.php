@@ -61,7 +61,7 @@ $pageDesc = $post['summary'];
 $extraHead = '<meta property="og:title" content="' . htmlspecialchars($post['title']) . '">
 <meta property="og:description" content="' . htmlspecialchars($post['summary']) . '">
 <meta property="og:type" content="article">
-<meta property="og:url" content="http://localhost/blog/post/' . htmlspecialchars($slug) . '">';
+<meta property="og:url" content="http://localhost:8080/blog/post/' . htmlspecialchars($slug) . '">';
 require __DIR__ . '/includes/head.php';
 ?>
 <style>

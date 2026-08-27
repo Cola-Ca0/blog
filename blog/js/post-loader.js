@@ -18,6 +18,11 @@
     return div.innerHTML;
   }
 
+  // Attribute-context escaping (quotes included) — 2026-08 审计 §1.2
+  function escAttr(str) {
+    return escapeHtml(str).replace(/"/g, '&quot;');
+  }
+
   function loadPosts(page, tag) {
     if (typeof tag === 'undefined') tag = activeTag;
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Loading transmissions... / 加载信号中...</p>';
@@ -35,7 +40,7 @@
         if (!data.posts || data.posts.length === 0) {
           grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:60px">No transmissions received yet / 暂无信号</p>';
           if (activeTag) {
-            grid.innerHTML = '<div class="tag-filter-bar"><span>Filtered by: <strong>' + activeTag + '</strong></span> <a href="/blog/" class="tag-filter-clear">Clear filter / 清除筛选</a></div>' + grid.innerHTML;
+            grid.innerHTML = '<div class="tag-filter-bar"><span>Filtered by: <strong>' + escapeHtml(activeTag) + '</strong></span> <a href="/blog/" class="tag-filter-clear">Clear filter / 清除筛选</a></div>' + grid.innerHTML;
           }
           return;
         }
@@ -43,29 +48,29 @@
         var cardsHtml = data.posts.map(function(p) {
           var tagsHtml = (p.tags || []).map(function(t) {
             var safe = escapeHtml(t);
-            return '<span onclick="event.stopPropagation();filterByTag(\'' + safe.replace(/'/g, "\\'") + '\')" style="cursor:pointer" title="Filter by ' + safe + '">' + safe + '</span>';
+            return '<span onclick="event.stopPropagation();filterByTag(\'' + safe.replace(/'/g, "\\'") + '\')" style="cursor:pointer" title="Filter by ' + escAttr(safe) + '">' + safe + '</span>';
           }).join('');
-          var coverAttr = p.cover ? ' style="--card-cover:url(' + p.cover + ')"' : '';
+          var coverAttr = p.cover ? ' style="--card-cover:url(' + escAttr(p.cover) + ')"' : '';
 
           return '<article class="article-card"' + coverAttr + '>' +
-            (p.cover ? '<div class="card-cover-thumb"><img src="' + p.cover + '" alt="" loading="lazy"></div>' : '') +
+            (p.cover ? '<div class="card-cover-thumb"><img src="' + escAttr(p.cover) + '" alt="" loading="lazy"></div>' : '') +
             '<div class="card-glow-line"></div>' +
             '<div class="card-meta">' +
-              '<span class="meta-cat">' + p.category + '</span>' +
-              '<span class="meta-date">' + p.date + '</span>' +
+              '<span class="meta-cat">' + escapeHtml(p.category) + '</span>' +
+              '<span class="meta-date">' + escapeHtml(p.date) + '</span>' +
               '<span class="meta-comments">' + (p.comment_count || 0) + ' signals</span>' +
             '</div>' +
-            '<a href="/blog/post/' + p.slug + '" class="card-title-link"><h3>' + p.title + '</h3></a>' +
-            '<p>' + p.summary + '</p>' +
+            '<a href="/blog/post/' + escapeHtml(p.slug) + '" class="card-title-link"><h3>' + escapeHtml(p.title) + '</h3></a>' +
+            '<p>' + escapeHtml(p.summary) + '</p>' +
             '<div class="card-footer-row">' +
               '<div class="card-tags">' + tagsHtml + '</div>' +
-              '<a href="/blog/post/' + p.slug + '" class="card-read-more">DECODE <span class="arrow">→</span></a>' +
+              '<a href="/blog/post/' + escapeHtml(p.slug) + '" class="card-read-more">DECODE <span class="arrow">→</span></a>' +
             '</div>' +
           '</article>';
         }).join('');
 
         if (activeTag) {
-          cardsHtml = '<div class="tag-filter-bar"><span>Filtered by: <strong>' + activeTag + '</strong></span> <a href="/blog/" class="tag-filter-clear">Clear filter / 清除筛选</a></div>' + cardsHtml;
+          cardsHtml = '<div class="tag-filter-bar"><span>Filtered by: <strong>' + escapeHtml(activeTag) + '</strong></span> <a href="/blog/" class="tag-filter-clear">Clear filter / 清除筛选</a></div>' + cardsHtml;
         }
         grid.innerHTML = cardsHtml;
 

@@ -16,6 +16,10 @@ $error = '';
 
 // ========== DELETE HANDLER (before HTML) ==========
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['_delete_project'])) {
+    // 2026-08 审计 §2.2: 删除必须校验 CSRF token, 否则可被跨站静默改 projects.json
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        http_response_code(403); exit('403 Forbidden');
+    }
     $delId = $_GET['id'] ?? '';
     $projects = array_filter($projects, function($p) use ($delId) { return $p['id'] !== $delId; });
     file_put_contents($projectsFile, json_encode(array_values($projects), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);

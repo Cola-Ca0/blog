@@ -37,10 +37,10 @@ test('无 CSRF → 403', function () {
 });
 
 test('非管理员 60s 冷却 → 429 (同会话)', function () {
-    $sid = 'cool-' . bin2hex(random_bytes(4));
+    // strict_mode 下服务端签发 sid; 第一次请求回传真实 sid, 第二次复用同一会话
     $p = ['slug' => COMMENTS_SLUG, 'content' => '冷却测试', 'name' => '刷子', 'csrf_token' => COMMENTS_CSRF];
-    $r1 = commentsCall(['action' => 'create'], $p, ['csrf_token' => COMMENTS_CSRF], $sid);
-    $r2 = commentsCall(['action' => 'create'], $p, ['csrf_token' => COMMENTS_CSRF], $sid);
+    $r1 = commentsCall(['action' => 'create'], $p, ['csrf_token' => COMMENTS_CSRF]);
+    $r2 = commentsCall(['action' => 'create'], $p, ['csrf_token' => COMMENTS_CSRF], $r1['sid'] ?? '');
     assertEquals(200, $r1['code'], '第一次应放行');
     assertEquals(429, $r2['code'], '60s 内第二次应 429');
 });

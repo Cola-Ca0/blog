@@ -8,15 +8,19 @@
  */
 $env = json_decode(base64_decode($argv[1] ?? ''), true) ?: [];
 $_GET = $env['get'] ?? [];
+// 2026-08: comments-api 写操作已强制 POST, CLI 默认 GET → 有 post 数据时同步请求方法
+if (!empty($env['post'])) $_SERVER['REQUEST_METHOD'] = 'POST';
 if (!empty($env['sid'])) session_id($env['sid']);
 require __DIR__ . '/../includes/auth.php';
 $_POST = $env['post'] ?? [];
 foreach (($env['sess'] ?? []) as $k => $v) $_SESSION[$k] = $v; // 覆盖注入 (csrf/is_admin/username)
+// 2026-08 strict_mode 加固后: 手工 sid 会被 PHP 丢弃, 必须回传服务端实际签发的 sid 供跨请求串联
+$SID = session_id();
 ob_start();
-register_shutdown_function(function () {
+register_shutdown_function(function () use ($SID) {
     $out = ob_get_clean();
     $code = http_response_code(); // CLI 下未显式设置时返回 false → 兜为 200
     $decoded = json_decode($out, true);
-    echo json_encode(['code' => $code === false ? 200 : $code, 'body' => $decoded === null ? $out : $decoded]);
+    echo json_encode(['code' => $code === false ? 200 : $code, 'body' => $decoded === null ? $out : $decoded, 'sid' => $SID]);
 });
 require __DIR__ . '/../comments-api.php';

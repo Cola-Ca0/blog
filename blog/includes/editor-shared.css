@@ -69,7 +69,7 @@
   font-size:0.78rem; font-weight:600; letter-spacing:0.05em; cursor:pointer;
   transition:var(--transition-smooth); text-decoration:none; display:inline-flex;
   align-items:center; gap:6px; }
-.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary { background:var(--primary); color:var(--text-primary); }
 .btn-primary:hover { box-shadow:0 0 20px rgba(91,160,224,0.35); transform:translateY(-1px); }
 .btn-secondary { background:transparent; color:var(--text-muted); border:1px solid var(--border-glow); }
 .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }

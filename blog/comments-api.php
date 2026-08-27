@@ -11,6 +11,13 @@ if (!is_dir($commentsDir)) mkdir($commentsDir, 0755, true);
 
 $action = $_GET['action'] ?? '';
 
+// 2026-08 审计 §2.4: 写操作只认 POST (红线 3.1)
+if (in_array($action, ['create', 'delete', 'approve'], true) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed']);
+    exit;
+}
+
 // --- LIST ---
 // 2026-08-16 审核: 公开列表只回已通过; 管理员回全部 (带 status 供审核 UI)
 if ($action === 'list') {

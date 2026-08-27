@@ -101,7 +101,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
       <?php endforeach; ?>
       <?php if ($isAdmin): ?>
       <div style="grid-column:1/-1;text-align:right;margin-top:8px">
-        <button onclick="saveSkills()" id="saveSkillsBtn" style="font-family:var(--font-display);background:var(--primary);color:#fff;border:none;padding:6px 16px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.78rem">Save Skills / 保存技能</button>
+        <button onclick="saveSkills()" id="saveSkillsBtn" style="font-family:var(--font-display);background:var(--primary);color:var(--text-primary);border:none;padding:6px 16px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.78rem">Save Skills / 保存技能</button>
         <span id="saveSkillsMsg" style="font-size:0.7rem;color:var(--accent);margin-left:10px"></span>
       </div>
       <?php endif; ?>
@@ -142,7 +142,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
 
   <?php if ($isAdmin): ?>
   <div class="about-card" style="margin-top:40px">
-    <h2><span class="diamond"></span> Admin / 编辑 <button onclick="toggleEditor()" id="editToggleBtn" style="font-family:var(--font-display);font-size:0.7rem;background:var(--primary);color:#fff;border:none;padding:4px 14px;border-radius:var(--radius-pill);cursor:pointer;margin-left:auto;">Edit / 编辑</button></h2>
+    <h2><span class="diamond"></span> Admin / 编辑 <button onclick="toggleEditor()" id="editToggleBtn" style="font-family:var(--font-display);font-size:0.7rem;background:var(--primary);color:var(--text-primary);border:none;padding:4px 14px;border-radius:var(--radius-pill);cursor:pointer;margin-left:auto;">Edit / 编辑</button></h2>
     <div id="editorPanel" style="display:none">
       <div style="display:flex;flex-direction:column;gap:14px">
         <div>
@@ -155,7 +155,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
         </div>
         <p style="font-size:0.65rem;color:var(--text-muted)">Skills and timeline are edited via about-content.json directly.</p>
         <div style="display:flex;gap:10px">
-          <button onclick="saveAboutFields()" style="font-family:var(--font-display);background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.8rem;">Save / 保存</button>
+          <button onclick="saveAboutFields()" style="font-family:var(--font-display);background:var(--primary);color:var(--text-primary);border:none;padding:8px 20px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.8rem;">Save / 保存</button>
           <button onclick="toggleEditor()" style="font-family:var(--font-display);background:transparent;color:var(--text-muted);border:1px solid var(--border-glow);padding:8px 20px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.8rem;">Cancel</button>
           <span id="editorMsg" style="font-size:0.75rem;color:var(--accent);align-self:center"></span>
         </div>
@@ -164,7 +164,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
   </div>
   <script>
   var editorOpen = false;
-  var aboutData = <?= json_encode($about, JSON_UNESCAPED_UNICODE) ?>;
+  var aboutData = <?= json_encode($about, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
   var csrfToken = <?= json_encode($csrfToken ?? '') ?>;
   function toggleEditor() {
     editorOpen = !editorOpen;
@@ -198,7 +198,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
 <script>
 // Draggable skill bars (admin only)
 (function() {
-  var skillsData = <?= json_encode($about['skills'] ?? []) ?>;
+  var skillsData = <?= json_encode($about['skills'] ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
   var dragging = null, dragBar = null, dragIdx = -1;
 
   document.querySelectorAll('.skill-bar-wrap').forEach(function(bar, i) {

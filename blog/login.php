@@ -5,7 +5,15 @@
  * 认证：PHP $_SESSION (server-side, unforgeable)
  */
 
+// 2026-08 上线加固 (审计 §3.2): HttpOnly + SameSite=Lax + strict_mode, 必须在 session_start 之前
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', '1');
 session_start();
+
+// CSRF token — 登录/注册表单随行提交 (审计 §2.3)
+if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
+$csrfToken = $_SESSION['csrf_token'];
 
 // ========== 登出处理 ==========
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -40,8 +48,8 @@ function saveUsers($users) {
 
 // 生成数学验证码
 function generateCaptcha() {
-    $a = rand(1, 20);
-    $b = rand(1, 20);
+    $a = rand(1, 50);
+    $b = rand(1, 50);
     $op = rand(0, 1) ? '+' : '-';
     if ($op === '-') {
         if ($a < $b) { $tmp = $a; $a = $b; $b = $tmp; }
@@ -70,7 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $captchaHash = $_SESSION['captcha_hash'] ?? '';
     unset($_SESSION['captcha_hash']); // one-time use
 
-    if (!password_verify($captchaInput, $captchaHash)) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        $error = '会话校验失败，请刷新页面重试！';
+        $activeTab = 'login';
+        $captcha = generateCaptcha();
+    } elseif (!password_verify($captchaInput, $captchaHash)) {
         $error = '人机验证答案错误，请重试！';
         $activeTab = 'login';
         $captcha = generateCaptcha();
@@ -92,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
 
         if ($loggedIn) {
+            session_regenerate_id(true); // 审计 §3.4: 登录成功更换 session id, 防会话固定
             $_SESSION['username'] = $username;
             $_SESSION['is_admin'] = $isAdmin;
             setcookie('username', $username, [
@@ -119,7 +132,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $captchaHash = $_SESSION['captcha_hash'] ?? '';
     unset($_SESSION['captcha_hash']);
 
-    if (!password_verify($captchaInput, $captchaHash)) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        $error = '会话校验失败，请刷新页面重试！';
+        $activeTab = 'register';
+        $captcha = generateCaptcha();
+    } elseif (!password_verify($captchaInput, $captchaHash)) {
         $error = '人机验证答案错误，请重试！';
         $activeTab = 'register';
         $captcha = generateCaptcha();
@@ -163,6 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             ];
             saveUsers($users);
 
+            session_regenerate_id(true); // 审计 §3.4: 注册并自动登录后更换 session id
             $_SESSION['username'] = $username;
             $_SESSION['is_admin'] = false;
             setcookie('username', $username, [
@@ -306,7 +324,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         }
         .tab-nav .tab-btn.active {
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff;
+            color: var(--text-primary);
             box-shadow: 0 0 22px rgba(91, 160, 224, 0.3);
         }
         .tab-nav .tab-btn:hover:not(.active) {
@@ -352,7 +370,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         .btn-submit {
             width: 100%; padding: 14px 32px;
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none; border-radius: 50px; color: #fff;
+            border: none; border-radius: 50px; color: var(--text-primary);
             font-weight: 600; font-size: 0.95rem; cursor: pointer;
             transition: all 0.3s ease; letter-spacing: 1px;
             box-shadow: 0 0 28px rgba(91, 160, 224, 0.28);
@@ -365,11 +383,11 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         .btn-submit:active { transform: scale(0.96); }
 
         .btn-register-submit {
-            background: linear-gradient(135deg, var(--primary), #22c55e);
-            box-shadow: 0 0 24px rgba(240, 128, 96, 0.25);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 0 24px rgba(91, 160, 224, 0.28);
         }
         .btn-register-submit:hover {
-            box-shadow: 0 0 36px rgba(240, 128, 96, 0.4);
+            box-shadow: 0 0 36px rgba(91, 160, 224, 0.4);
         }
 
         .alert {
@@ -377,14 +395,14 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
             font-size: 0.85rem; text-align: center;
         }
         .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.22);
-            color: #ef4444;
+            background: rgba(240, 128, 96, 0.1);
+            border: 1px solid rgba(240, 128, 96, 0.22);
+            color: var(--secondary);
         }
         .alert-success {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.22);
-            color: #22c55e;
+            background: rgba(91, 160, 224, 0.1);
+            border: 1px solid rgba(91, 160, 224, 0.22);
+            color: var(--primary);
         }
 
         .login-footer {
@@ -439,7 +457,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
     <div class="tab-panel active" id="panelLogin">
         <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
             <input type="hidden" name="action" value="login">
-            <input type="hidden" name="captcha_hash" value="<?= htmlspecialchars($captcha['hash']) ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
             <div class="form-group">
                 <div class="field">
                     <label for="username">用户名</label>
@@ -470,7 +488,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
     <div class="tab-panel" id="panelRegister">
         <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
             <input type="hidden" name="action" value="register">
-            <input type="hidden" name="reg_captcha_hash" id="regCaptchaHash" value="<?= htmlspecialchars($captcha['hash']) ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
             <div class="form-group">
                 <div class="field">
                     <label for="reg_username">用户名</label>

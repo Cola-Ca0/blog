@@ -42,7 +42,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
 .lightbox .lb-close{position:absolute;top:20px;right:24px;font-size:1.5rem;color:var(--text-muted);cursor:pointer;background:none;border:none;transition:color 0.2s}
 .lightbox .lb-close:hover{color:var(--accent)}
 .lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:2rem;color:rgba(255,255,255,0.5);cursor:pointer;background:none;border:none;padding:12px;transition:color 0.2s}
-.lightbox .lb-nav:hover{color:#fff}
+.lightbox .lb-nav:hover{color:var(--text-primary)}
 .lb-prev{left:16px}.lb-next{right:16px}
 
 .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
