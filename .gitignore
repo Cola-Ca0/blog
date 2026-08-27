@@ -33,3 +33,14 @@ docs/superpowers/
 # IDE
 .vscode/
 .idea/
+
+# agent skills (installed by skills CLI)
+.agents/
+skills-lock.json
+
+# SRC 安全研究敏感材料 — 禁止入库 (2026-08-27)
+strix_runs/
+docs/
+r.txt
+r2.txt
+.mcp.json

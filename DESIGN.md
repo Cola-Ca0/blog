@@ -105,6 +105,8 @@ This is a tech blog dressed as a HUD — not the aggressive neon of cyberpunk, b
 
 **Hero Wallpaper (2026-08-16, user's call).** The hero wallpaper (`assets/images/wallpaper.jpg`) is an intentional personal choice — an anime ocean illustration (Gura). It overrides the "abstract deep-sea" description above: the hero may carry bright sky tones that would otherwise violate the Pure White Ban. The wallpaper is exempt from the ban; all other chrome and content areas still follow it. The wave shimmer overlay bridges the illustration with the station metaphor.
 
+**Mascot (2026-08-27, user's call).** No Live2D 看板娘 / waifu mascot. Tried once before without success; the research pod stays crewless. Do not re-propose mascot features — the station's voice is instrumentation, not characters.
+
 ## Colors
 
 The palette reads like a submarine instrument panel: cool blues for structure and depth, a single warm accent for alerts and highlights. Every color has a technical codename that fits the station metaphor.

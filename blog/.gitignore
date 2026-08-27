@@ -1,0 +1,12 @@
+# Cola_CaO Blog — 上传卫生 (2026-08-27)
+# 凭据与隐私数据: 运行时由 PHP 直读, 不入库
+users.json
+users.example.json
+data/comments/*.json
+
+# 版权音乐 (40+ mp3, 不入公开仓库) 与个人图片
+assets/music/*.mp3
+assets/music/*.lrc
+assets/images/wallpaper.jpg
+assets/images/my-avatar.jpg
+assets/images/gura-avatar.jpg
