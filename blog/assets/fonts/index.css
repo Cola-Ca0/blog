@@ -1,0 +1,10 @@
+/* 本地字体 (2026-08-27 提速: 脱离 fonts.loli.net 外网阻塞; 与 great-vibes 同先例)
+   Exo 2 (400/700) + Rajdhani (600/700) — 其余字重由浏览器就近匹配 */
+@font-face { font-family: 'Exo 2'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('exo2/exo2-400.ttf') format('truetype'); }
+@font-face { font-family: 'Exo 2'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('exo2/exo2-700.ttf') format('truetype'); }
+@font-face { font-family: 'Rajdhani'; font-style: normal; font-weight: 600; font-display: swap;
+  src: url('rajdhani/rajdhani-600.ttf') format('truetype'); }
+@font-face { font-family: 'Rajdhani'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('rajdhani/rajdhani-700.ttf') format('truetype'); }

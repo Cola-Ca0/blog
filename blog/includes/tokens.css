@@ -28,7 +28,7 @@
   --shadow-md: 0 8px 28px rgba(91, 160, 224, 0.1);
   --shadow-lg: 0 16px 44px rgba(91, 160, 224, 0.15);
   --shadow-glow: 0 0 20px rgba(91, 160, 224, 0.2), 0 0 55px rgba(142, 208, 232, 0.08);
-  --font-body: 'Exo 2', 'Quicksand', sans-serif;
+  --font-body: 'Exo 2', 'Quicksand', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', sans-serif; /* 2026-08-27: 中文系统栈(秒开), 英文 Exo 2; 原本拟用 Zen Maru 圆体, 因外网字体阻塞首屏改系统栈 */
   --font-display: 'Rajdhani', 'Exo 2', sans-serif;
   --font-mono: 'Fira Code', 'Courier New', monospace;
   --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);

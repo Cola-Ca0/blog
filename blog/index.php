@@ -61,6 +61,7 @@ body {
 }
 @keyframes bio-breathe { 0%,100%{opacity:0.15} 50%{opacity:0.6} }
 
+
 .hero-wallpaper {
   position: relative;
   width: 100%;
@@ -168,6 +169,14 @@ body {
   animation: hero-text-in 1.4s ease-out;
 }
 [data-theme="light"] .hero-text-center .hero-line2 { color: rgba(26,48,64,0.72); }
+
+/* 打字机光标 (2026-08-27 用户拍板) — 与 hero 同色系, reduced-motion 由 shared.css 全局降级 */
+.hero-text-center .hero-line2 .tw-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  animation: tw-blink 0.9s steps(1) infinite;
+}
+@keyframes tw-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
 @keyframes hero-text-in {
   from { opacity: 0; transform: translateY(50px); filter: blur(6px); }
@@ -521,7 +530,9 @@ body {
 /* ============================================================
    Content Grid — Blog Posts + Sidebar
    ============================================================ */
-.content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+.content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: stretch; } /* 2026-08-27 用户: 左右栏等高 */
+.posts-column { display: flex; flex-direction: column; }
+.posts-grid { flex: 1; } /* 文章区吃满高度, pagination 落底, 与侧栏对齐 */
 
 /* Posts Header */
 .posts-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
@@ -546,17 +557,16 @@ body {
 .article-card:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-lg), 0 0 32px rgba(91,160,224,0.2), inset 0 1px 0 rgba(255,255,255,0.04); transform: translateY(-4px); background: var(--bg-card-hover); }
 /* Cover image cards — transition to show cover on hover */
 .article-card[style*="--card-cover"] { transition: background 0.45s ease, transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth); }
-.article-card:has(.card-cover-thumb) { padding-top:0; }
-.card-cover-thumb { height:140px;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin:-1px -1px 16px -1px; }
-.card-cover-thumb img { width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease; }
-.article-card:hover .card-cover-thumb img { transform:scale(1.06); }
-.article-card[style*="--card-cover"]:hover { background: linear-gradient(var(--bg-card-hover), var(--bg-card-hover)), var(--card-cover) center/cover; }
+/* 封面右图 (2026-08-27 用户拍板, 参照 mizuki: 图片右边栏不占整行) */
+.article-card:has(.card-cover-side) { display:grid; grid-template-columns: 1fr 96px; gap: 18px; align-items: center; }
+.card-body { min-width: 0; }
+.card-cover-side { height:88px; overflow:hidden; border-radius:var(--radius-sm); margin:4px 0; align-self:center; }
+.card-cover-side img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease; }
+.article-card:hover .card-cover-side img { transform:scale(1.08); }
+/* 2026-08-27 用户: 移除 hover 封面背景浮现 (封面只留右侧图栏) */
+.article-card[style*="--card-cover"]:hover { background: var(--bg-card-hover); }
 .article-card[style*="--card-cover"]:hover::before,
 .article-card[style*="--card-cover"]:hover::after { border-color: var(--border-glow-strong); }
-.article-card[style*="--card-cover"]:hover .card-title-link h3 { text-shadow: 0 1px 8px rgba(8,24,40,0.8); }
-.article-card[style*="--card-cover"]:hover .card-meta,
-.article-card[style*="--card-cover"]:hover .card-tags span,
-.article-card[style*="--card-cover"]:hover p { color: rgba(220,240,255,0.85); }
 .article-card:hover::before, .article-card:hover::after { border-color: var(--border-glow-strong); opacity: 1; }
 
 .card-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 0.76rem; color: var(--text-muted); letter-spacing: 0.04em; }
@@ -709,6 +719,9 @@ body {
 }
 @media (max-width: 768px) {
   .blog-hero-title { font-size: 2rem; }
+  /* 封面右图 <768px 回顶部横幅 (2026-08-27) */
+  .article-card:has(.card-cover-side) { grid-template-columns: 1fr; gap: 12px; }
+  .card-cover-side { height:110px; width:100%; }
   .char-card-grid { grid-template-columns: 1fr 1fr; }
   .footer-inner { flex-direction: column; text-align: center; }
   .hero-wallpaper .hero-line1 { font-size: 1.8rem; }
@@ -741,7 +754,7 @@ body {
 
   <div class="hero-text-center">
     <h1 class="hero-line1"><span class="en">Hello</span><br><span class="en-sub">Welcome to Cola's blog</span></h1>
-    <p class="hero-line2">"今天也要向深海，发一条温柔的信号。" <span style="font-style:normal;">— 深海研究站日志</span></p>
+    <p class="hero-line2 typewriter">"今天也要向深海，发一条温柔的信号。" <span style="font-style:normal;">— 深海研究站日志</span></p>
   </div>
 
 </section>
@@ -795,7 +808,7 @@ body {
   <!-- Blog Hero -->
   <section class="blog-hero">
     <div class="blog-hero-content">
-      <div class="hero-badge section-reveal" style="transition-delay:0ms">
+      <div class="hero-badge section-reveal reveal-left" style="transition-delay:0ms">
         <span class="diamond"></span>
         DEPTH 0x0028 // OCEAN LINK ACTIVE
       </div>
@@ -852,7 +865,7 @@ body {
 
     <div class="blog-hero-right">
       <!-- Personal Info Panel -->
-      <div class="hero-panel section-reveal" style="transition-delay:400ms">
+      <div class="hero-panel section-reveal reveal-right" style="transition-delay:400ms">
       <div class="panel-hud-header">
         <span class="hud-label">SYS.PROFILE</span>
         <span class="hud-value">STATUS: <?= $isLoggedIn ? 'AUTHENTICATED' : 'ONLINE' ?></span>
@@ -1289,13 +1302,16 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   textEl.addEventListener('click', function() { pick(true); });
 })();
 
+// Crew 舱员台词轮换 — 已移除 (2026-08-27 用户: 角色素材自行挑选后再放)
+
 </script>
 
 <script src="js/particle-ocean.js"></script>
 <script src="js/rain-layer.js"></script>
+<script src="js/typewriter.js"></script>
 <script src="js/sparkles.js?v=3"></script>
 <script src="js/music-player.js"></script>
 <script src="js/music-visual.js"></script>
-<script src="js/post-loader.js"></script>
+<script src="js/post-loader.js?v=20260827"></script>
 </body>
 </html>

@@ -28,8 +28,17 @@
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Loading transmissions... / 加载信号中...</p>';
     pagination.style.display = 'none';
 
+    // 2026-08-27 用户方案: 首页自适应页大小 — 量右栏高度, 填平才翻页 (其余页默认 6)
     var apiUrl = 'posts-api.php?action=list&page=' + page;
     if (tag) apiUrl += '&tag=' + encodeURIComponent(tag);
+    if (!tag && page === 1) {
+      var sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        var per = Math.ceil(sidebar.offsetHeight / 240) + 1; // 卡均高 240px, +1 保底
+        per = Math.min(50, Math.max(6, per));
+        apiUrl += '&per=' + per;
+      }
+    }
 
     var controller = new AbortController();
     var timeoutId = setTimeout(function() { controller.abort(); }, 10000);
@@ -53,7 +62,7 @@
           var coverAttr = p.cover ? ' style="--card-cover:url(' + escAttr(p.cover) + ')"' : '';
 
           return '<article class="article-card"' + coverAttr + '>' +
-            (p.cover ? '<div class="card-cover-thumb"><img src="' + escAttr(p.cover) + '" alt="" loading="lazy"></div>' : '') +
+            '<div class="card-body">' +
             '<div class="card-glow-line"></div>' +
             '<div class="card-meta">' +
               '<span class="meta-cat">' + escapeHtml(p.category) + '</span>' +
@@ -66,6 +75,8 @@
               '<div class="card-tags">' + tagsHtml + '</div>' +
               '<a href="/blog/post/' + escapeHtml(p.slug) + '" class="card-read-more">DECODE <span class="arrow">→</span></a>' +
             '</div>' +
+            '</div>' + // /card-body
+            (p.cover ? '<div class="card-cover-side"><img src="' + escAttr(p.cover) + '" alt="" loading="lazy"></div>' : '') +
           '</article>';
         }).join('');
 

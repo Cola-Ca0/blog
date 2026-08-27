@@ -17,10 +17,9 @@ if (!isset($navActive)) $navActive = 'home';
       <li><a href="<?= ($navActive === 'home') ? '#top' : '/blog/index.php' ?>"          class="<?= $navActive === 'home'     ? 'active' : '' ?>">HOME</a></li>
       <li><a href="<?= ($navActive === 'home') ? '#blog-start' : '/blog/index.php#blog-start' ?>" class="<?= $navActive === 'blog'     ? 'active' : '' ?>">BLOG</a></li>
       <li><a href="/blog/projects/index.php"                                               class="<?= $navActive === 'projects' ? 'active' : '' ?>">PROJECTS</a></li>
+      <li><a href="/blog/timeline.php"                                                     class="<?= $navActive === 'timeline' ? 'active' : '' ?>">TIMELINE</a></li>
+      <li><a href="/blog/treehole.php"                                                     class="<?= $navActive === 'treehole' ? 'active' : '' ?>">TREEHOLE</a></li>
       <li><a href="/blog/about.php"                                                        class="<?= $navActive === 'about'    ? 'active' : '' ?>">ABOUT</a></li>
-      <?php if ($isAdmin): ?>
-      <li><a href="/blog/admin/editor.php" class="nav-editor-link">EDITOR</a></li>
-      <?php endif; ?>
     </ul>
     <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu" title="Menu">
       <span></span><span></span><span></span>
@@ -36,6 +35,9 @@ if (!isset($navActive)) $navActive = 'home';
         <div class="search-results-dropdown" id="searchResults"></div>
       </div>
       <?php if ($isLoggedIn): ?>
+        <?php if ($isAdmin): ?>
+        <a href="/blog/admin/editor.php" class="nav-editor-mini" title="Editor / 编辑器" aria-label="Editor">&#9998;</a>
+        <?php endif; ?>
         <div class="user-greeting">
           <div class="user-avatar-small">
             <?php if (file_exists(__DIR__ . '/../assets/images/my-avatar.jpg')): ?>
@@ -61,6 +63,8 @@ if (!isset($navActive)) $navActive = 'home';
   <a href="/blog/">HOME</a>
   <a href="/blog/#blog-start">BLOG</a>
   <a href="/blog/projects/">PROJECTS</a>
+  <a href="/blog/timeline.php">TIMELINE</a>
+  <a href="/blog/treehole.php">TREEHOLE</a>
   <a href="/blog/about.php">ABOUT</a>
   <?php if ($isAdmin): ?>
   <a href="/blog/admin/editor.php">EDITOR</a>

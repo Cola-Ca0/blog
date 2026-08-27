@@ -10,3 +10,9 @@ assets/music/*.lrc
 assets/images/wallpaper.jpg
 assets/images/my-avatar.jpg
 assets/images/gura-avatar.jpg
+
+# 二次元角色素材 (5px 版权角色, 只留本地; 2026-08-27)
+assets/images/roles/
+
+# 树洞匿名倾诉数据 (本地隐私, 2026-08-27)
+data/treehole/*.json

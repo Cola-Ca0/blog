@@ -107,6 +107,8 @@ This is a tech blog dressed as a HUD — not the aggressive neon of cyberpunk, b
 
 **Mascot (2026-08-27, user's call).** No Live2D 看板娘 / waifu mascot. Tried once before without success; the research pod stays crewless. Do not re-propose mascot features — the station's voice is instrumentation, not characters.
 
+**二次元温度升级 (2026-08-27, user's call, 参照 mizuki/lin-xin).** The station keeps its deep-sea stillness but gains warm accents: body font switched to **Zen Maru Gothic** (圆体, CJK) stacked over Exo 2 — roundness × code; hero 引言 **打字机逐字动效** (typewriter + blinking cursor, reduced-motion shows full text); 文章卡封面改为**右侧图栏** (not full-width, mizuki-style; <768px returns to top banner); 滚动渐入加 **reveal-left/right** 方向变体 (mizuki scroll-fade, 仍温和不翻页); 新增 **树洞 treehole.php** (匿名倾诉, CSRF + 审核后公开) 与 **文章时间轴 timeline.php**; 侧栏 **Crew 舱员卡** — a single pixel-art character card (明日香, 本地素材不入库, 点击换台词, 低调装饰). 无看板娘 & One Accent 等红线全部保持。
+
 ## Colors
 
 The palette reads like a submarine instrument panel: cool blues for structure and depth, a single warm accent for alerts and highlights. Every color has a technical codename that fits the station metaphor.

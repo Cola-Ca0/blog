@@ -58,7 +58,7 @@ if ($action !== 'list') {
 }
 
 $page = max(1, intval($_GET['page'] ?? 1));
-$perPage = 6;
+$perPage = isset($_GET['per']) ? min(50, max(4, intval($_GET['per']))) : 6; /* 2026-08-27: 首页自适应(右栏等高用), 其余默认 6 */
 $filterTag = $_GET['tag'] ?? null;
 $filterCat = $_GET['category'] ?? null;
 
