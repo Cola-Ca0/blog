@@ -44,3 +44,12 @@ docs/
 r.txt
 r2.txt
 .mcp.json
+
+# 深海密件区 (2026-09-10): AI 代笔文章私区, 只留本地知识库, 永不入库
+blog/posts-private/
+
+# SRC 侦察产物 (2026-09-14 收尾): 战役现场 HTML/JSON, 只留本地
+cai-pypi.json
+err404.html
+h5_center.html
+my_out.html

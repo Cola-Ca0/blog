@@ -33,6 +33,10 @@
   --font-mono: 'Fira Code', 'Courier New', monospace;
   --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* 数据可视化顺序色阶 (2026-09-10, 科研冰雪蓝阶; 深底反转: 值越高越亮, 高值不沉入背景) */
+  --viz-1-bg: #344c67; --viz-1-ink: #d8eaf8;  /* 1 篇: 藏青 */
+  --viz-2-bg: #556c8d; --viz-2-ink: #e8f1f9;  /* 2 篇: 深度灰蓝 */
+  --viz-3-bg: #becddc; --viz-3-ink: #081828;  /* 3+ 篇: 中度灰蓝, 深字 */
 }
 
 /* Light theme — Sea Surface / 海面白昼 */
@@ -42,8 +46,8 @@
   --secondary: #d06848;
   --accent: #3a80b0;
   --bg-deep: #d6e4f0;
-  --bg-card: rgba(240, 246, 252, 0.78);
-  --bg-card-hover: rgba(245, 250, 255, 0.95);
+  --bg-card: rgba(240, 244, 248, 0.85);   /* 2026-09-10: 面板色换 #f0f4f8 系 (冰雪配色浅端), 卡片浮于海面 */
+  --bg-card-hover: rgba(246, 249, 252, 0.95);
   --border-glow: rgba(58, 128, 176, 0.2);
   --border-glow-strong: rgba(58, 128, 176, 0.42);
   --text-primary: #1a3040;
@@ -53,4 +57,8 @@
   --shadow-md: 0 8px 28px rgba(58, 128, 176, 0.08);
   --shadow-lg: 0 16px 44px rgba(58, 128, 176, 0.12);
   --shadow-glow: 0 0 20px rgba(58, 128, 176, 0.15), 0 0 55px rgba(142, 208, 232, 0.05);
+  /* 数据可视化顺序色阶 (浅主题反转: 值越高越深, 墨色惯例) */
+  --viz-1-bg: #e2e9f2; --viz-1-ink: #556c8d;  /* 1 篇: 冰面浅纹 */
+  --viz-2-bg: #becddc; --viz-2-ink: #344c67;  /* 2 篇: 浅灰蓝 */
+  --viz-3-bg: #556c8d; --viz-3-ink: #f0f4f8;  /* 3+ 篇: 深度灰蓝, 冰字 */
 }

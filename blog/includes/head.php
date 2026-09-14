@@ -15,10 +15,14 @@ $fontSet = $fonts ?? 'full'; // 'full'|'basic'|'code' 保留兼容; 字体一律
 <meta name="description" content="<?= htmlspecialchars($pageDesc) ?>">
 <?php endif; ?>
 <?= $extraHead ?? '' ?>
-<link rel="stylesheet" href="/blog/includes/tokens.css">
-<link rel="stylesheet" href="/blog/includes/shared.css">
+<?php
+// CSS 缓存指纹 (2026-09-10): 以文件 mtime 作版本号, 改文件即自动换 URL, 根治「改版后访客拿旧缓存」
+$cssV = static fn (string $f): string => '/blog/includes/' . $f . '?v=' . filemtime(__DIR__ . '/' . $f);
+?>
+<link rel="stylesheet" href="<?= $cssV('tokens.css') ?>">
+<link rel="stylesheet" href="<?= $cssV('shared.css') ?>">
 <?php if (!empty($editorCss)): ?>
-<link rel="stylesheet" href="/blog/includes/editor-shared.css">
+<link rel="stylesheet" href="<?= $cssV('editor-shared.css') ?>">
 <?php endif; ?>
 <!-- 本地字体 (2026-08-27: Exo2/Rajdhani woff 切片自托管, Great Vibes 同先例; 无外网请求) -->
 <link rel="stylesheet" href="/blog/assets/fonts/index.css">

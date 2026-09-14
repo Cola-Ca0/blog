@@ -4,6 +4,7 @@
  * 功能：全屏壁纸Hero、登录状态检测、博客内容展示、图廊轮播
  */
 require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/markdown.php'; // 深海密件区列表 (2026-09-10)
 // Load skills from about-content.json for radar chart
 $aboutJson = json_decode(file_get_contents(__DIR__ . '/about-content.json'), true) ?: [];
 $radarSkills = $aboutJson['skills'] ?? [];
@@ -689,9 +690,11 @@ body {
   font-size:0.66rem; color:var(--text-muted); border-radius:var(--radius-sm);
   border:1px solid transparent; transition:var(--transition-smooth);
 }
-.dive-cal-cell.posted { color:var(--text-primary); background:rgba(91,160,224,0.1);
-  border-color:rgba(91,160,224,0.35); box-shadow:0 0 6px rgba(91,160,224,0.2); }
-.dive-cal-cell.posted:hover { background:rgba(91,160,224,0.18); box-shadow:0 0 12px rgba(91,160,224,0.35); }
+/* 2026-09-10: 四段强度热力图 (--viz-* 顺序色阶, 科研冰雪蓝阶; 深浅主题各自反转) */
+.dive-cal-cell.posted:hover { filter:brightness(1.15); box-shadow:0 0 12px rgba(91,160,224,0.35); }
+.dive-cal-cell.lv1 { color:var(--viz-1-ink); background:var(--viz-1-bg); }
+.dive-cal-cell.lv2 { color:var(--viz-2-ink); background:var(--viz-2-bg); }
+.dive-cal-cell.lv3 { color:var(--viz-3-ink); background:var(--viz-3-bg); box-shadow:0 0 10px rgba(142,208,232,0.25); }
 .dive-cal-cell.today { color:var(--bg-deep); background:var(--primary); border-color:var(--primary);
   font-weight:600; animation:signal-pulse 3s ease-in-out infinite; }
 
@@ -1049,6 +1052,28 @@ body {
         </div>
       </div>
 
+      <?php
+      // 深海密件区 — 仅站长可见的 AI 代笔文章私区 (2026-09-10, 宪法 3.5 默认拒绝)
+      $privatePosts = $isAdmin ? getPublishedPosts(__DIR__ . '/posts-private/') : [];
+      ?>
+      <?php if ($isAdmin): ?>
+      <div class="sidebar-widget" id="vaultWidget">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Classified / 深海密件</h3>
+        <?php if ($privatePosts): ?>
+        <ul style="list-style:none;margin:0;padding:0">
+          <?php foreach ($privatePosts as $pp): ?>
+          <li style="margin-bottom:8px">
+            <a href="/blog/post/<?= htmlspecialchars($pp['slug']) ?>" style="font-size:0.8rem;color:var(--text-secondary);text-decoration:none;letter-spacing:0.02em"><?= htmlspecialchars($pp['title']) ?></a>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin:10px 0 0">共 <?= count($privatePosts) ?> 件 · 矿石原料, 消化重写后移回公海</p>
+        <?php else: ?>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin:0">密室空空 —— 公海只留你自己的声音。</p>
+        <?php endif; ?>
+      </div>
+      <?php endif; ?>
+
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> About / 关于我</h3>
         <div class="about-avatar-wrap">
@@ -1151,7 +1176,7 @@ body {
             <?php if ($cd === null): ?>
             <span class="dive-cal-cell"></span>
             <?php else: $dCnt = $postDays[$cd] ?? 0; $dToday = ($cd === $calToday); ?>
-            <span class="dive-cal-cell<?= $dCnt ? ' posted' : '' ?><?= $dToday ? ' today' : '' ?>"<?= $dCnt ? ' title="' . sprintf('%04d-%02d-%02d', $calYear, $calMonth, $cd) . ' · ' . $dCnt . ' 篇 / posts"' : '' ?>><?= $cd ?></span>
+            <span class="dive-cal-cell<?= $dCnt ? ' posted lv' . min(3, $dCnt) : '' ?><?= $dToday ? ' today' : '' ?>"<?= $dCnt ? ' title="' . sprintf('%04d-%02d-%02d', $calYear, $calMonth, $cd) . ' · ' . $dCnt . ' 篇 / posts"' : '' ?>><?= $cd ?></span>
             <?php endif; ?>
           <?php endforeach; ?>
         </div>
@@ -1221,14 +1246,17 @@ body {
 // Navbar visibility via IntersectionObserver (§5.D: no scroll listeners)
 (function() {
   var navbar = document.getElementById('navbar');
-  var blogStart = document.getElementById('blog-start');
-  if (!navbar || !blogStart) return;
+  // 2026-09-10 修: 哨兵从细分割线 #blog-start 换成整屏 hero #top。
+  // 旧逻辑在矮视口 (如 VS Code Simple Browser) 下分割线开局就在屏幕外 → 判定「已滚过」→ 导航开局即现身。
+  // hero 顶格 100vh, 任何视口高度下 scrollY=0 都相交 → 导航必藏, 滚过 hero 才现身。
+  var hero = document.getElementById('top');
+  if (!navbar || !hero) return;
 
   var observer = new IntersectionObserver(function(entries) {
     navbar.classList.toggle('visible', !entries[0].isIntersecting);
   }, { threshold: 0, rootMargin: '-60px 0px 0px 0px' });
 
-  observer.observe(blogStart);
+  observer.observe(hero);
 })();
 
 // Smooth scroll for nav links

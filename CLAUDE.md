@@ -70,6 +70,9 @@
 
 4.6 **图片懒加载与封面缩略图已确立。**（MUST）新增文章卡片必须走 `--card-cover` 约定与 loading="lazy"；图库图片命名 slide-01 ~ slide-20（jpg/jpeg/png/webp）。
 
+4.7 **文章双通道：公海只放本人声音。**（MUST）`blog/posts/`（⇔ 知识库 `blog-posts/` junction）只收用户自己写或消化重写的文章；AI 代笔文章一律放 `blog/posts-private/`（⇔ 知识库 `blog-posts-private/`），仅站长会话（auth.php `$isAdmin`）可读，未登录/非站长一律渲染 0x0194 404。任何扫描 posts/ 的新端点（列表/搜索/RSS/统计）必须对私区保持无感知；私区文件永不入库（.gitignore 已堵）。
+*Why: 2026-09-10 用户裁决「AI 写博客不可取」——博客的存在意义是每一行都是自己的（4.1），公海即面试作品集。双向调整 = 在知识库两文件夹间移动 .md。*
+
 ## 第五条 运行与调试
 
 5.1 **访问地址带端口。**（MUST）Apache 已于 2026-08-14 从 80/443 迁移至 **8080/8443**（为 GitHub 加速器让位）。博客入口：`http://localhost:8080/blog/` 或 `http://blog.test:8080/`。不得改回 80。

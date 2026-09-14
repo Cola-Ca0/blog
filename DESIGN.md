@@ -166,7 +166,9 @@ The page uses a single-column centered container (max-width 1200px, 28px side pa
 
 Below the wave, the layout alternates: split hero (text left, personal panel right) → three-column stat cards → two-column blog + sidebar grid (1fr + 340px). The sidebar is sticky at `top: 86px` for persistent access.
 
-Spacing rhythm: sections are separated by 40-60px vertical gaps. Cards carry 24-28px internal padding. The nav bar is fixed at 66px, sits above everything at z-index 100, and only becomes visible once the user scrolls past the full-screen hero.
+Spacing rhythm: sections are separated by 40-60px vertical gaps. Cards carry 24-28px internal padding. The nav bar is fixed at 66px, sits above everything at z-index 100, and only becomes visible once the user scrolls past the full-screen hero. The navbar spans the full viewport width (2026-09-10 user's call: brand pinned to the left edge, action cluster to the right edge — no 1200px centering cap), link labels never wrap (white-space: nowrap), and CSS assets carry mtime cache fingerprints (`?v=`) so style updates reach every visitor without manual hard-refresh.
+
+**Data-viz sequential ramp (2026-09-10):** the Dive Calendar heatmap grades post-count into four steps via `--viz-1/2/3` tokens, drawn from the "ice research" palette (a Douyin find, user-submitted). The 4-step blue ramp (#becddc / #90a8c5 / #556c8d / #344c67) passed sequential validation (monotonic lightness, single hue); the palette's pink and lavender were rejected under the One Accent Rule, and the full 7-color set is banned as a *categorical* palette (CVD ΔE 4.3, normal-vision ΔE 5.4 — fails the chart-color floor). Dark theme inverts the ramp (higher count = brighter blue, so hot cells never sink into the background); light theme follows ink convention (higher = darker). Light-theme card surface moved to the palette's ice white #f0f4f8 family.
 
 Breakpoints collapse predictably: the hero panel stacks at 1024px, the sidebar drops below content at 1024px, card grids go 2-column at 768px and single-column at 480px.
 

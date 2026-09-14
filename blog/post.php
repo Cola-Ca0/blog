@@ -17,6 +17,20 @@ if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
 // Load post
 $postPath = __DIR__ . '/posts/' . $slug . '.md';
 $post = parsePost($postPath);
+
+// 深海密件区 (2026-09-10): 公海未命中 → 查私区; 仅站长可见。
+// 未登录/非站长一律落到下方 404「信号丢失」, 不暴露私文存在性 (宪法 3.5 默认拒绝)。
+$isPrivatePost = false;
+if (($post === null || $post['draft']) && $isAdmin) {
+    $privatePath = __DIR__ . '/posts-private/' . $slug . '.md';
+    $privatePost = parsePost($privatePath);
+    if ($privatePost !== null && !$privatePost['draft']) {
+        $post = $privatePost;
+        $postPath = $privatePath;
+        $isPrivatePost = true;
+    }
+}
+
 if ($post === null || $post['draft']) {
     http_response_code(404);
     ?>
@@ -62,6 +76,20 @@ $extraHead = '<meta property="og:title" content="' . htmlspecialchars($post['tit
 <meta property="og:description" content="' . htmlspecialchars($post['summary']) . '">
 <meta property="og:type" content="article">
 <meta property="og:url" content="http://localhost:8080/blog/post/' . htmlspecialchars($slug) . '">';
+// 数学公式渲染 (2026-09-13): 正文含 $ 时加载自托管 KaTeX, 渲染 $行内$ 与 $$块级$$ — 宪法 4.1: 静态资源自托管, 同字体本地化先例
+if (str_contains($post['body'], '$')) {
+    $extraHead .= '
+<link rel="stylesheet" href="/blog/assets/katex/katex.min.css">
+<script defer src="/blog/assets/katex/katex.min.js"></script>
+<script defer src="/blog/assets/katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof renderMathInElement === "function") {
+    renderMathInElement(document.body, {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});
+  }
+});
+</script>';
+}
 require __DIR__ . '/includes/head.php';
 ?>
 <style>

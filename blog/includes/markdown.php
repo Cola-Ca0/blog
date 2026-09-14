@@ -174,15 +174,38 @@ function renderMarkdown(string $text): string {
     $text = preg_replace_callback('/`([^`]+)`/', fn($m) => '<code>' . $esc($m[1]) . '</code>', $text);
 
     // 9. Unordered lists — group consecutive <li> into <ul>
-    $text = preg_replace_callback('/^- (.+)$/m', fn($m) => '<li>' . $esc($m[1]) . '</li>', $text);
+    $text = preg_replace_callback('/^- (.+)$/m', fn($m) => '<li>' . $m[1] . '</li>', $text);
     $text = preg_replace('/((?:<li>.*<\/li>\n?)+)/', '<ul>$1</ul>', $text);
+    // 9b. Tables — header + |---| separator + body rows
+    // (cells raw: inline transforms already applied upstream, same as paragraphs)
+    $text = preg_replace_callback(
+        '/^\|(.+)\|\n\|[ :|-]+\|\n((?:\|.*\|\n?)+)/m',
+        function ($m) {
+            $cells = fn(string $row): string => implode('', array_map(
+                fn($c) => '<td>' . trim($c) . '</td>',
+                explode('|', trim($row, '|'))
+            ));
+            $rows = preg_split('/\r?\n/', rtrim($m[2]));
+            $body = implode('', array_map(
+                fn($r) => '<tr>' . $cells(trim($r, '|')) . '</tr>',
+                array_filter($rows, fn($r) => trim($r) !== '')
+            ));
+            return '<table><thead><tr>' . $cells($m[1]) . '</tr></thead><tbody>' . $body . '</tbody></table>';
+        },
+        $text
+    );
+
+    // 9c. Ordered lists — group consecutive "N. " lines into <ol>
+    $text = preg_replace_callback('/^\d+\. (.+)$/m', fn($m) => '<oli>' . $m[1] . '</oli>', $text);
+    $text = preg_replace('/((?:<oli>.*<\/oli>\n?)+)/', "<ol>\n$1</ol>", $text);
+    $text = str_replace(['<oli>', '</oli>'], ['<li>', '</li>'], $text);
 
     // 10. Paragraphs — wrap remaining text blocks in <p>
     $blocks = explode("\n\n", $text);
     $blocks = array_map(function ($block) use ($esc) {
         $block = trim($block);
         if ($block === '') return '';
-        if (preg_match('/^<(h[1-6]|ul|ol|pre|blockquote|hr|li)/', $block)) return $block;
+        if (preg_match('/^<(h[1-6]|ul|ol|pre|blockquote|hr|li|table)/', $block)) return $block;
         return '<p>' . str_replace("\n", "<br>", $block) . '</p>';
     }, $blocks);
     $text = implode("\n", $blocks);
