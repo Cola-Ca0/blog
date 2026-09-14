@@ -101,12 +101,12 @@ body {
 <?php require __DIR__ . '/../includes/navbar.php'; ?>
 
 <main class="editor-page">
-  <a href="/blog/admin/editor.php" class="editor-back">&larr; Editor Hub / 编辑器中心</a>
+  <a href="<?= $BASE ?>/admin/editor.php" class="editor-back">&larr; Editor Hub / 编辑器中心</a>
 
   <!-- Mode Tabs -->
   <div class="editor-tabs">
-    <a href="/blog/admin/editor-article.php" class="editor-tab">Article / 文章</a>
-    <a href="/blog/admin/editor-project.php" class="editor-tab active">Project / 项目</a>
+    <a href="<?= $BASE ?>/admin/editor-article.php" class="editor-tab">Article / 文章</a>
+    <a href="<?= $BASE ?>/admin/editor-project.php" class="editor-tab active">Project / 项目</a>
   </div>
 
   <div class="editor-header">
@@ -120,7 +120,7 @@ body {
 
   <?php if ($saved): ?>
     <div class="editor-msg success">
-      Project saved. <a href="/blog/projects/">View projects / 查看项目</a>
+      Project saved. <a href="<?= $BASE ?>/projects/">View projects / 查看项目</a>
     </div>
   <?php endif; ?>
 
@@ -172,7 +172,7 @@ body {
     </div>
     <div class="editor-actions">
       <button type="submit" class="btn btn-primary">SAVE PROJECT</button>
-      <a href="/blog/projects/" class="btn btn-secondary">Cancel</a>
+      <a href="<?= $BASE ?>/projects/" class="btn btn-secondary">Cancel</a>
       <?php if ($isEdit && $existingProject): ?>
       <button type="button" class="btn btn-danger" onclick="deleteItem()">Delete Project</button>
       <?php endif; ?>
@@ -191,7 +191,7 @@ body {
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="/blog/includes/editor-shared.js"></script>
+<script src="<?= $BASE ?>/includes/editor-shared.js"></script>
 
 <?php if ($isEdit && $existingProject): ?>
 <script>

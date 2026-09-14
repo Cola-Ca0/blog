@@ -2,11 +2,12 @@
 /**
  * RSS 2.0 Feed — last 10 published posts
  */
+require __DIR__ . '/includes/config.php'; // 站点地址唯一来源 (2026-09-14 上线准备)
 require __DIR__ . '/includes/markdown.php';
 
 header('Content-Type: application/rss+xml; charset=utf-8');
 
-$siteUrl = 'http://localhost:8080/blog';
+$siteUrl = $SITE_URL;
 $postsDir = __DIR__ . '/posts/';
 
 // Collect published posts, sorted by date desc

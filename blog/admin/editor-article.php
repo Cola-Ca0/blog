@@ -100,12 +100,12 @@ body {
 <?php require __DIR__ . '/../includes/navbar.php'; ?>
 
 <main class="editor-page">
-  <a href="/blog/admin/editor.php" class="editor-back">&larr; Editor Hub / 编辑器中心</a>
+  <a href="<?= $BASE ?>/admin/editor.php" class="editor-back">&larr; Editor Hub / 编辑器中心</a>
 
   <!-- Mode Tabs -->
   <div class="editor-tabs">
-    <a href="/blog/admin/editor-article.php" class="editor-tab active">Article / 文章</a>
-    <a href="/blog/admin/editor-project.php" class="editor-tab">Project / 项目</a>
+    <a href="<?= $BASE ?>/admin/editor-article.php" class="editor-tab active">Article / 文章</a>
+    <a href="<?= $BASE ?>/admin/editor-project.php" class="editor-tab">Project / 项目</a>
   </div>
 
   <div class="editor-header">
@@ -119,7 +119,7 @@ body {
 
   <?php if ($saved): ?>
     <div class="editor-msg success">
-      Transmission saved. <a href="/blog/post/<?= htmlspecialchars($editSlug) ?>">View article / 查看文章</a>
+      Transmission saved. <a href="<?= $BASE ?>/post/<?= htmlspecialchars($editSlug) ?>">View article / 查看文章</a>
     </div>
   <?php endif; ?>
 
@@ -153,7 +153,7 @@ body {
       </div>
       <div class="editor-field full-width">
         <label>Cover Image / 封面图 <span class="hint">optional</span></label>
-        <input type="text" name="cover" value="<?= htmlspecialchars($_POST['cover'] ?? $existingPost['cover'] ?? '') ?>" placeholder="/blog/assets/images/posts/cover.jpg">
+        <input type="text" name="cover" value="<?= htmlspecialchars($_POST['cover'] ?? $existingPost['cover'] ?? '') ?>" placeholder="<?= $BASE ?>/assets/images/posts/cover.jpg">
       </div>
       <?php if ($isEdit): ?>
       <div class="editor-field">
@@ -195,7 +195,7 @@ body {
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="/blog/includes/editor-shared.js"></script>
+<script src="<?= $BASE ?>/includes/editor-shared.js"></script>
 
 <?php if ($isEdit && $existingPost): ?>
 <script>

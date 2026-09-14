@@ -99,7 +99,7 @@ a { color: var(--accent); font-size: 0.8rem; }
     <?php endforeach; ?>
   </div>
 
-  <a href="/blog/admin/editor.php">← 返回 Editor</a>
+  <a href="<?= $BASE ?>/admin/editor.php">← 返回 Editor</a>
 </div>
 </body>
 </html>

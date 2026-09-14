@@ -4,6 +4,7 @@
  * URL: /blog/post/{slug} via .htaccess rewrite → post.php?slug={slug}
  */
 require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/config.php'; // 站点地址唯一来源 (2026-09-14 上线准备)
 require __DIR__ . '/includes/markdown.php';
 
 // Security: validate slug — only a-z, 0-9, hyphens
@@ -56,7 +57,7 @@ if ($post === null || $post['draft']) {
       <div class="code">0x0194</div>
       <p>Signal lost // 信号丢失</p>
       <p style="font-size:0.8rem">This transmission does not exist or has been classified.</p>
-      <p><a href="/blog/">Return to Surface / 返回水面</a></p>
+      <p><a href="<?= $BASE ?>/">Return to Surface / 返回水面</a></p>
     </div>
     </body>
     </html>
@@ -75,13 +76,13 @@ $pageDesc = $post['summary'];
 $extraHead = '<meta property="og:title" content="' . htmlspecialchars($post['title']) . '">
 <meta property="og:description" content="' . htmlspecialchars($post['summary']) . '">
 <meta property="og:type" content="article">
-<meta property="og:url" content="http://localhost:8080/blog/post/' . htmlspecialchars($slug) . '">';
+<meta property="og:url" content="' . $SITE_URL . '/post/' . htmlspecialchars($slug) . '">';
 // 数学公式渲染 (2026-09-13): 正文含 $ 时加载自托管 KaTeX, 渲染 $行内$ 与 $$块级$$ — 宪法 4.1: 静态资源自托管, 同字体本地化先例
 if (str_contains($post['body'], '$')) {
     $extraHead .= '
-<link rel="stylesheet" href="/blog/assets/katex/katex.min.css">
-<script defer src="/blog/assets/katex/katex.min.js"></script>
-<script defer src="/blog/assets/katex/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="' . $BASE . '/assets/katex/katex.min.css">
+<script defer src="' . $BASE . '/assets/katex/katex.min.js"></script>
+<script defer src="' . $BASE . '/assets/katex/contrib/auto-render.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   if (typeof renderMathInElement === "function") {
@@ -230,7 +231,7 @@ body {
 
 <div class="reading-progress" id="readingProgress"></div>
 
-<a href="/blog/" class="article-back">&larr; Return to Surface / 返回水面</a>
+<a href="<?= $BASE ?>/" class="article-back">&larr; Return to Surface / 返回水面</a>
 
 <main class="article-page">
 
@@ -251,7 +252,7 @@ body {
     <h1 class="article-title">
       <?= htmlspecialchars($post['title']) ?>
       <?php if ($isAdmin): ?>
-      <a href="/blog/admin/editor-article.php?slug=<?= htmlspecialchars($slug) ?>" class="admin-edit-link" title="Edit this article">[EDIT]</a>
+      <a href="<?= $BASE ?>/admin/editor-article.php?slug=<?= htmlspecialchars($slug) ?>" class="admin-edit-link" title="Edit this article">[EDIT]</a>
       <?php endif; ?>
     </h1>
 

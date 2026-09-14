@@ -16,10 +16,10 @@ if (!isset($navActive)) $navActive = 'home';
     <ul class="nav-links">
       <li><a href="<?= ($navActive === 'home') ? '#top' : '/blog/index.php' ?>"          class="<?= $navActive === 'home'     ? 'active' : '' ?>">HOME</a></li>
       <li><a href="<?= ($navActive === 'home') ? '#blog-start' : '/blog/index.php#blog-start' ?>" class="<?= $navActive === 'blog'     ? 'active' : '' ?>">BLOG</a></li>
-      <li><a href="/blog/projects/index.php"                                               class="<?= $navActive === 'projects' ? 'active' : '' ?>">PROJECTS</a></li>
-      <li><a href="/blog/timeline.php"                                                     class="<?= $navActive === 'timeline' ? 'active' : '' ?>">TIMELINE</a></li>
-      <li><a href="/blog/treehole.php"                                                     class="<?= $navActive === 'treehole' ? 'active' : '' ?>">TREEHOLE</a></li>
-      <li><a href="/blog/about.php"                                                        class="<?= $navActive === 'about'    ? 'active' : '' ?>">ABOUT</a></li>
+      <li><a href="<?= $BASE ?>/projects/index.php"                                               class="<?= $navActive === 'projects' ? 'active' : '' ?>">PROJECTS</a></li>
+      <li><a href="<?= $BASE ?>/timeline.php"                                                     class="<?= $navActive === 'timeline' ? 'active' : '' ?>">TIMELINE</a></li>
+      <li><a href="<?= $BASE ?>/treehole.php"                                                     class="<?= $navActive === 'treehole' ? 'active' : '' ?>">TREEHOLE</a></li>
+      <li><a href="<?= $BASE ?>/about.php"                                                        class="<?= $navActive === 'about'    ? 'active' : '' ?>">ABOUT</a></li>
     </ul>
     <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu" title="Menu">
       <span></span><span></span><span></span>
@@ -36,12 +36,12 @@ if (!isset($navActive)) $navActive = 'home';
       </div>
       <?php if ($isLoggedIn): ?>
         <?php if ($isAdmin): ?>
-        <a href="/blog/admin/editor.php" class="nav-editor-mini" title="Editor / 编辑器" aria-label="Editor">&#9998;</a>
+        <a href="<?= $BASE ?>/admin/editor.php" class="nav-editor-mini" title="Editor / 编辑器" aria-label="Editor">&#9998;</a>
         <?php endif; ?>
         <div class="user-greeting">
           <div class="user-avatar-small">
             <?php if (file_exists(__DIR__ . '/../assets/images/my-avatar.jpg')): ?>
-              <img src="/blog/assets/images/my-avatar.jpg" alt="avatar">
+              <img src="<?= $BASE ?>/assets/images/my-avatar.jpg" alt="avatar">
             <?php else: ?>
               <span style="font-size:0.9rem;">C</span>
             <?php endif; ?>
@@ -49,10 +49,10 @@ if (!isset($navActive)) $navActive = 'home';
           <span><?= $username ?></span>
           <?php if ($isAdmin): ?><span style="font-size:0.65rem;color:var(--secondary);">[ADMIN]</span><?php endif; ?>
         </div>
-        <a href="/blog/login.php?action=logout" class="btn-logout">LOGOUT</a>
+        <a href="<?= $BASE ?>/login.php?action=logout" class="btn-logout">LOGOUT</a>
       <?php else: ?>
-        <a href="/blog/login.php" class="btn-login">SIGN IN</a>
-        <a href="/blog/login.php?tab=register" class="btn-register">SIGN UP</a>
+        <a href="<?= $BASE ?>/login.php" class="btn-login">SIGN IN</a>
+        <a href="<?= $BASE ?>/login.php?tab=register" class="btn-register">SIGN UP</a>
       <?php endif; ?>
     </div>
   </div>
@@ -60,14 +60,14 @@ if (!isset($navActive)) $navActive = 'home';
 
 <!-- Mobile Navigation Panel -->
 <div class="mobile-nav-panel" id="mobileNavPanel">
-  <a href="/blog/">HOME</a>
-  <a href="/blog/#blog-start">BLOG</a>
-  <a href="/blog/projects/">PROJECTS</a>
-  <a href="/blog/timeline.php">TIMELINE</a>
-  <a href="/blog/treehole.php">TREEHOLE</a>
-  <a href="/blog/about.php">ABOUT</a>
+  <a href="<?= $BASE ?>/">HOME</a>
+  <a href="<?= $BASE ?>/#blog-start">BLOG</a>
+  <a href="<?= $BASE ?>/projects/">PROJECTS</a>
+  <a href="<?= $BASE ?>/timeline.php">TIMELINE</a>
+  <a href="<?= $BASE ?>/treehole.php">TREEHOLE</a>
+  <a href="<?= $BASE ?>/about.php">ABOUT</a>
   <?php if ($isAdmin): ?>
-  <a href="/blog/admin/editor.php">EDITOR</a>
+  <a href="<?= $BASE ?>/admin/editor.php">EDITOR</a>
   <?php endif; ?>
 </div>
 
@@ -108,7 +108,7 @@ window.toggleMobileNav = function() {
           return;
         }
         results.innerHTML = data.results.map(function(p) {
-          return '<a href="/blog/post/' + esc(p.slug) + '" class="sr-item">' +
+          return '<a href="<?= $BASE ?>/post/' + esc(p.slug) + '" class="sr-item">' +
             '<div class="sr-title">' + esc(p.title) + '</div>' +
             '<div class="sr-meta">' + esc(p.category) + ' · ' + esc(p.date) + '</div>' +
             '<div class="sr-summary">' + esc(p.summary) + '</div>' +

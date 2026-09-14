@@ -9,6 +9,10 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', '1');
     ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', '1');
+    // 2026-09-14 上线准备: HTTPS 下 cookie 标记 Secure (本地 HTTP 不受影响)
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_secure', '1');
+    }
     session_start();
 }
 $isLoggedIn = isset($_SESSION['username']) && $_SESSION['username'] !== '';

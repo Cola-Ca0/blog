@@ -4,6 +4,7 @@
  * 功能：全屏壁纸Hero、登录状态检测、博客内容展示、图廊轮播
  */
 require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/config.php'; // 站点地址唯一来源 (2026-09-14 上线准备)
 require __DIR__ . '/includes/markdown.php'; // 深海密件区列表 (2026-09-10)
 // Load skills from about-content.json for radar chart
 $aboutJson = json_decode(file_get_contents(__DIR__ . '/about-content.json'), true) ?: [];
@@ -18,7 +19,7 @@ $pageDesc = '可乐的水下研究站 — CS/网络安全/CTF。在深海中记�
 $extraHead = '<meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">
 <meta property="og:description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="http://localhost:8080/blog/">';
+<meta property="og:url" content="' . $SITE_URL . '/">';
 require __DIR__ . '/includes/head.php';
 ?>
 <style>
@@ -906,7 +907,7 @@ body {
         <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
         <a href="mailto:cola_ca0@qq.com" class="social-icon-link" title="Email">Email</a>
         <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener" class="social-icon-link" title="Bilibili">Bilibili</a>
-        <a href="/blog/feed.xml" class="social-icon-link" title="RSS">RSS</a>
+        <a href="<?= $BASE ?>/feed.xml" class="social-icon-link" title="RSS">RSS</a>
       </div>
 
       <!-- Skill Radar Chart (dynamic from about-content.json) -->
@@ -1063,7 +1064,7 @@ body {
         <ul style="list-style:none;margin:0;padding:0">
           <?php foreach ($privatePosts as $pp): ?>
           <li style="margin-bottom:8px">
-            <a href="/blog/post/<?= htmlspecialchars($pp['slug']) ?>" style="font-size:0.8rem;color:var(--text-secondary);text-decoration:none;letter-spacing:0.02em"><?= htmlspecialchars($pp['title']) ?></a>
+            <a href="<?= $BASE ?>/post/<?= htmlspecialchars($pp['slug']) ?>" style="font-size:0.8rem;color:var(--text-secondary);text-decoration:none;letter-spacing:0.02em"><?= htmlspecialchars($pp['title']) ?></a>
           </li>
           <?php endforeach; ?>
         </ul>

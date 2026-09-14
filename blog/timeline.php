@@ -86,7 +86,7 @@ body {
     <?php foreach ($yearPosts as $p): ?>
       <div class="tl-item section-reveal">
         <div class="tl-date"><?= htmlspecialchars($p['date']) ?></div>
-        <a class="tl-title-link" href="/blog/post/<?= htmlspecialchars($p['slug']) ?>">
+        <a class="tl-title-link" href="<?= $BASE ?>/post/<?= htmlspecialchars($p['slug']) ?>">
           <div class="tl-title"><?= htmlspecialchars($p['title']) ?>
             <span class="tl-tag"><?= htmlspecialchars($p['category']) ?></span>
           </div>

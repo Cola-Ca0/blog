@@ -10,10 +10,10 @@
       <span>Cola_CaO · 深海之下，别有洞天</span>
     </div>
     <div class="footer-links">
-      <a href="/blog/">Home</a>
-      <a href="/blog/projects/">Projects</a>
-      <a href="/blog/about.php">About</a>
-      <a href="/blog/feed.xml">RSS</a>
+      <a href="<?= $BASE ?>/">Home</a>
+      <a href="<?= $BASE ?>/projects/">Projects</a>
+      <a href="<?= $BASE ?>/about.php">About</a>
+      <a href="<?= $BASE ?>/feed.xml">RSS</a>
       <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
     </div>
     <div class="footer-hud">

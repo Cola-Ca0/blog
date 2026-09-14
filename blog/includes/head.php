@@ -25,8 +25,8 @@ $cssV = static fn (string $f): string => '/blog/includes/' . $f . '?v=' . filemt
 <link rel="stylesheet" href="<?= $cssV('editor-shared.css') ?>">
 <?php endif; ?>
 <!-- 本地字体 (2026-08-27: Exo2/Rajdhani woff 切片自托管, Great Vibes 同先例; 无外网请求) -->
-<link rel="stylesheet" href="/blog/assets/fonts/index.css">
-<link rel="stylesheet" href="/blog/assets/fonts/great-vibes/index.css">
+<link rel="stylesheet" href="<?= $BASE ?>/assets/fonts/index.css">
+<link rel="stylesheet" href="<?= $BASE ?>/assets/fonts/great-vibes/index.css">
 <?php if ($fontSet === 'code'): ?>
-<link rel="stylesheet" href="/blog/assets/fonts/fira-code/index.css">
+<link rel="stylesheet" href="<?= $BASE ?>/assets/fonts/fira-code/index.css">
 <?php endif; ?>

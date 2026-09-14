@@ -54,18 +54,18 @@ body {
 <?php require __DIR__ . '/../includes/navbar.php'; ?>
 
 <main class="editor-hub">
-  <a href="/blog/" class="hub-back">&larr; Command Center / 指挥中心</a>
+  <a href="<?= $BASE ?>/" class="hub-back">&larr; Command Center / 指挥中心</a>
 
   <h1>Editor / 编辑器</h1>
   <p class="subtitle">Choose content type to edit / 选择要编辑的内容类型</p>
 
   <div class="hub-cards">
-    <a href="/blog/admin/editor-article.php" class="hub-card">
+    <a href="<?= $BASE ?>/admin/editor-article.php" class="hub-card">
       <span class="icon">📝</span>
       <span class="label">Article / 文章</span>
       <span class="desc">Write or edit a new blog transmission</span>
     </a>
-    <a href="/blog/admin/editor-project.php" class="hub-card">
+    <a href="<?= $BASE ?>/admin/editor-project.php" class="hub-card">
       <span class="icon">📦</span>
       <span class="label">Project / 项目</span>
       <span class="desc">Add or edit a project entry</span>
