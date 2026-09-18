@@ -69,9 +69,17 @@ function parsePost(string $filePath): ?array {
  * Internal: parse YAML-style front matter lines into $post array.
  */
 function _parseFrontMatter(string $fmRaw, array &$post): void {
+    $tagsListMode = false; // 2026-09-18: tags 空值进入 YAML 列表模式，兼容 Obsidian 手写的 "- item" 续行
     foreach (explode("\n", $fmRaw) as $line) {
         $line = trim($line);
         if ($line === '') continue;
+
+        if ($tagsListMode && str_starts_with($line, '- ')) {
+            $item = trim(trim(substr($line, 2)), '"\'');
+            if ($item !== '') $post['tags'][] = $item;
+            continue;
+        }
+        $tagsListMode = false;
 
         $colon = strpos($line, ':');
         if ($colon === false) continue;
@@ -106,8 +114,11 @@ function _parseFrontMatter(string $fmRaw, array &$post): void {
                 if (str_starts_with($val, '[') && str_ends_with($val, ']')) {
                     $decoded = json_decode($val, true);
                     $post['tags'] = is_array($decoded) ? $decoded : [];
-                } else {
+                } elseif ($val !== '') {
                     $post['tags'] = array_map('trim', explode(',', $val));
+                } else {
+                    $post['tags'] = [];
+                    $tagsListMode = true;
                 }
                 break;
         }
