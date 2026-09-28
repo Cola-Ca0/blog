@@ -196,7 +196,7 @@ body {
 <?php if ($isEdit && $existingProject): ?>
 <script>
 function deleteItem() {
-  editorDelete('/blog/admin/editor-project.php?_delete_project=1&id=<?= htmlspecialchars($editProjectId) ?>', '<?= htmlspecialchars(addslashes($existingProject['title'])) ?>', '/blog/projects/');
+  editorDelete('<?= $BASE ?>/admin/editor-project.php?_delete_project=1&id=<?= htmlspecialchars($editProjectId) ?>', '<?= htmlspecialchars(addslashes($existingProject['title'])) ?>', '<?= $BASE ?>/projects/');
 }
 </script>
 <?php endif; ?>

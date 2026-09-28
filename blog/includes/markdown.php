@@ -131,17 +131,31 @@ function _parseFrontMatter(string $fmRaw, array &$post): void {
  */
 function renderMarkdown(string $text): string {
     $text = str_replace("\r\n", "\n", $text);
+
+    // ===== 2026-09-28 XSS 修复 (根因) =====
+    // 此前只有第 1~8 步的「行内元素」调用了 $esc(); 段落(第10步)/无序列表(第9步)/
+    // 表格单元格(第9b步)/有序列表(第9c步)把捕获到的文本原样输出 ——
+    // 任何写进正文的 <script> / <img onerror> / <svg onload> 都会原样落到访客浏览器。
+    // 判据: renderMarkdown('<script>alert(1)</script>') 曾返回 <p><script>alert(1)</script></p>。
+    // 安全类文章粘 XSS payload 极易命中, 且 .htaccess 的 CSP 未锁 script-src, 无第二道拦截。
+    //
+    // 修法: 入口整体转义一次。下游所有 $esc() 随之变成恒等(避免二次转义),
+    // 而段落/列表/表格分支无需改动即自动安全。
+    // ⚠️ 副作用已处理: 转义会把块引用标记 '>' 变成 '&gt;', 第 4 步的正则已同步改为匹配 &gt;。
+    $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
     $placeholders = [];
 
-    // Helper: escape text content (not attributes)
-    $esc = function(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); };
+    // Helper: 恒等 —— 入口已整体转义。保留函数形态以最小化改动面(下游调用点无需逐个改)。
+    $esc = fn(string $s): string => $s;
 
     // Helper: sanitize URL — block javascript: and data: schemes
+    // (入口已转义, 这里只做协议白名单, 不再二次转义)
     $safeUrl = function(string $url): string {
         $url = trim($url);
         $lower = strtolower($url);
         if (str_starts_with($lower, 'javascript:') || str_starts_with($lower, 'data:')) return '';
-        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        return $url;
     };
 
     // 1. Fenced code blocks (protect from later processing)
@@ -163,8 +177,8 @@ function renderMarkdown(string $text): string {
     // 3. Horizontal rule (only standalone ---, not in front matter)
     $text = preg_replace('/^---$/m', '<hr>', $text);
 
-    // 4. Blockquote
-    $text = preg_replace_callback('/^>\s+(.+)$/m', fn($m) => '<blockquote>' . $esc($m[1]) . '</blockquote>', $text);
+    // 4. Blockquote — ⚠️ 入口已整体转义, '>' 已变成 '&gt;', 故匹配 &gt;
+    $text = preg_replace_callback('/^&gt;\s+(.+)$/m', fn($m) => '<blockquote>' . $m[1] . '</blockquote>', $text);
 
     // 5. Images (before links — same bracket syntax)
     $text = preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {

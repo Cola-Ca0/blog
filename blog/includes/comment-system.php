@@ -5,6 +5,9 @@
  * Requires: auth.php (for $isLoggedIn, $username, $isAdmin)
  */
 if (!isset($commentSlug)) $commentSlug = 'about';
+// 2026-09-28 部署修复: 本文件的 5 处 fetch 此前硬编码 '/blog/comments-api.php',
+// 域名根部署($BASE='')会导致评论列表/提交/删除/审核全部 404。
+require_once __DIR__ . '/config.php';
 ?>
 
 <section class="comments-section" id="comments">
@@ -48,7 +51,7 @@ if (!isset($commentSlug)) $commentSlug = 'about';
   if (!container) return;
 
   window.loadComments = function() {
-    fetch('/blog/comments-api.php?action=list&slug=' + slug)
+    fetch('<?= $BASE ?>/comments-api.php?action=list&slug=' + slug)
       .then(function(r) { return r.json(); })
       .then(function(comments) {
         if (!comments || !comments.length) {
@@ -112,13 +115,13 @@ if (!isset($commentSlug)) $commentSlug = 'about';
     if (!c) return;
     var d = document.getElementById('replyForm-' + pid);
     d.innerHTML = '<span style="font-size:0.72rem;color:var(--text-muted)">Transmitting...</span>';
-    fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,reply_to:pid,csrf_token:csrfToken}) })
+    fetch('<?= $BASE ?>/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,reply_to:pid,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); else d.innerHTML = '<span style="font-size:0.72rem;color:var(--secondary)">Error</span>'; })
       .catch(function(){ d.innerHTML = '<span style="font-size:0.72rem;color:var(--secondary)">Failed</span>'; });
   };
   window.deleteComment = function(id) {
     if (!confirm('Delete this comment?')) return;
-    fetch('/blog/comments-api.php?action=delete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,csrf_token:csrfToken}) })
+    fetch('<?= $BASE ?>/comments-api.php?action=delete', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); });
   };
   window.submitComment = function() {
@@ -127,7 +130,7 @@ if (!isset($commentSlug)) $commentSlug = 'about';
     var n = document.getElementById('commentName');
     var m = document.getElementById('commentMsg');
     m.style.color = 'var(--text-muted)'; m.textContent = 'Transmitting...';
-    fetch('/blog/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,name:n?n.value:'',reply_to:null,csrf_token:csrfToken}) })
+    fetch('<?= $BASE ?>/comments-api.php?action=create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slug:slug,content:c,name:n?n.value:'',reply_to:null,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){
         if(data.success){
           t.value=''; if (n) n.value='';
@@ -138,7 +141,7 @@ if (!isset($commentSlug)) $commentSlug = 'about';
       }).catch(function(){ m.style.color='var(--secondary)'; m.textContent='Failed'; });
   };
   window.approveComment = function(id) {
-    fetch('/blog/comments-api.php?action=approve', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,slug:slug,csrf_token:csrfToken}) })
+    fetch('<?= $BASE ?>/comments-api.php?action=approve', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,slug:slug,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); });
   };
   loadComments();

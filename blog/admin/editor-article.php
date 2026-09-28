@@ -172,7 +172,7 @@ body {
     </div>
     <div class="editor-actions">
       <button type="submit" class="btn btn-primary">TRANSMIT SIGNAL</button>
-      <a href="<?= $isEdit ? '/blog/post/' . htmlspecialchars($editSlug) : '/blog/admin/editor.php' ?>" class="btn btn-secondary">Cancel</a>
+      <a href="<?= $isEdit ? $BASE . '/post/' . htmlspecialchars($editSlug) : $BASE . '/admin/editor.php' ?>" class="btn btn-secondary">Cancel</a>
       <?php if ($isEdit && $existingPost): ?>
       <button type="button" class="btn btn-danger" onclick="deleteItem()">Delete Article</button>
       <?php endif; ?>
@@ -200,7 +200,7 @@ body {
 <?php if ($isEdit && $existingPost): ?>
 <script>
 function deleteItem() {
-  editorDelete('/blog/admin/editor-article.php?slug=<?= htmlspecialchars($editSlug) ?>&_delete=1', '<?= htmlspecialchars(addslashes($existingPost['title'] ?? $editSlug)) ?>', '/blog/');
+  editorDelete('<?= $BASE ?>/admin/editor-article.php?slug=<?= htmlspecialchars($editSlug) ?>&_delete=1', '<?= htmlspecialchars(addslashes($existingPost['title'] ?? $editSlug)) ?>', '<?= $BASE ?>/');
 }
 </script>
 <?php endif; ?>

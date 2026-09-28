@@ -5,17 +5,20 @@
  * Variables consumed: $isLoggedIn, $username, $isAdmin (from auth.php)
  */
 if (!isset($navActive)) $navActive = 'home';
+// 2026-09-28 部署修复: 本文件此前混用 $BASE 与硬编码 '/blog/'(第 12/17/18/104 行),
+// 域名根部署($BASE='')会让导航全 404。统一走 config.php 单一来源。
+require_once __DIR__ . '/config.php';
 ?>
 <a href="#blog-start" class="skip-link">Skip to content / 跳到内容</a>
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
-    <a href="<?= ($navActive === 'home') ? '#top' : '/blog/index.php' ?>" class="nav-brand">
+    <a href="<?= ($navActive === 'home') ? '#top' : $BASE . '/index.php' ?>" class="nav-brand">
       <div class="shark-fin-icon"></div>
       <span class="brand-text">Cola_CaO</span>
     </a>
     <ul class="nav-links">
-      <li><a href="<?= ($navActive === 'home') ? '#top' : '/blog/index.php' ?>"          class="<?= $navActive === 'home'     ? 'active' : '' ?>">HOME</a></li>
-      <li><a href="<?= ($navActive === 'home') ? '#blog-start' : '/blog/index.php#blog-start' ?>" class="<?= $navActive === 'blog'     ? 'active' : '' ?>">BLOG</a></li>
+      <li><a href="<?= ($navActive === 'home') ? '#top' : $BASE . '/index.php' ?>"          class="<?= $navActive === 'home'     ? 'active' : '' ?>">HOME</a></li>
+      <li><a href="<?= ($navActive === 'home') ? '#blog-start' : $BASE . '/index.php#blog-start' ?>" class="<?= $navActive === 'blog'     ? 'active' : '' ?>">BLOG</a></li>
       <li><a href="<?= $BASE ?>/projects/index.php"                                               class="<?= $navActive === 'projects' ? 'active' : '' ?>">PROJECTS</a></li>
       <li><a href="<?= $BASE ?>/timeline.php"                                                     class="<?= $navActive === 'timeline' ? 'active' : '' ?>">TIMELINE</a></li>
       <li><a href="<?= $BASE ?>/treehole.php"                                                     class="<?= $navActive === 'treehole' ? 'active' : '' ?>">TREEHOLE</a></li>
@@ -38,6 +41,7 @@ if (!isset($navActive)) $navActive = 'home';
         <?php if ($isAdmin): ?>
         <a href="<?= $BASE ?>/admin/editor.php" class="nav-editor-mini" title="Editor / 编辑器" aria-label="Editor">&#9998;</a>
         <?php endif; ?>
+        <a href="<?= $BASE ?>/admin/account.php" class="nav-editor-mini" title="Account / 修改密码" aria-label="Account">&#9881;</a>
         <div class="user-greeting">
           <div class="user-avatar-small">
             <?php if (file_exists(__DIR__ . '/../assets/images/my-avatar.jpg')): ?>
@@ -100,7 +104,7 @@ window.toggleMobileNav = function() {
     activeIndex = -1;
     results.innerHTML = '<p class="search-empty">Searching... / 搜索中...</p>';
     results.classList.add('has-results');
-    fetch('/blog/posts-api.php?action=search&q=' + encodeURIComponent(q))
+    fetch('<?= $BASE ?>/posts-api.php?action=search&q=' + encodeURIComponent(q))
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (!data.results || !data.results.length) {

@@ -54,3 +54,12 @@ err404.html
 h5_center.html
 my_out.html
 config-override.php
+
+# 留言板账号数据（含 bcrypt 哈希）—— 2026-09-28 停止跟踪
+users.json
+
+# 留言板内容数据 —— 2026-09-28 停止跟踪（停跟踪 users.json 时一并处理）
+messages.json
+journal.json
+stats.json
+uploads/

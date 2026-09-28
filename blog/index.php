@@ -1268,17 +1268,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   });
 });
 
-// Section reveal observer
-(function() {
-  var reveals = document.querySelectorAll('.section-reveal');
-  if (!reveals.length) return;
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  reveals.forEach(function(el) { observer.observe(el); });
-})();
+// Section reveal observer —— 2026-09-28 已移到 includes/footer.php。
+// 原因: 此前只有本页有这段, 而 timeline.php / treehole.php 也用 .section-reveal,
+// 导致那两页内容永远 opacity:0 (DOM 里有、看不见)。footer 被所有页面引用, 放那里才对。
 
 // Site uptime counter
 (function() {
@@ -1321,7 +1313,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     show(verses[idx]);
   }
 
-  fetch('/blog/data/ambience.json')
+  fetch('<?= $BASE ?>/data/ambience.json')
     .then(function(r) { return r.json(); })
     .then(function(d) { verses = d.verses || []; pick(false); })
     .catch(function() { pick(false); });

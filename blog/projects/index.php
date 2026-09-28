@@ -13,16 +13,38 @@ if (file_exists($projectsFile)) {
 }
 
 // Handle file view request
-$viewFile = $_GET['view'] ?? null;
+$viewFile    = $_GET['view'] ?? null;
 $viewProject = $_GET['project'] ?? null;
 $fileContent = '';
-$fileLang = '';
+$fileLang    = '';
+
+// ============================================================================
+// 2026-09-28 严重漏洞修复 —— 路径遍历 → 任意文件读取 (CWE-22)
+// ----------------------------------------------------------------------------
+// 原实现有两个致命错误, 已实测: 一个刚注册的普通 role=user 账号用两个请求
+// (?project=..&download=users.json) 即可读走管理员 bcrypt 哈希、
+// posts-private/ 私区文章(破宪法 4.7)、乃至跨仓库文件。
+//
+//   ① download 分支使用了**未清洗**的 $viewProject —— basename() 只写在 view 分支的
+//      if 内部, 而该分支要求 $viewFile 非空。于是 ?project=..&download=... 完全绕过清洗。
+//   ② 即便清洗也挡不住: basename('..') === '..'。**basename 根本不是防遍历手段**。
+//      而且包含校验的锚点 realpath(__DIR__.'/'.$viewProject) 被攻击者用 '..' 控制 ——
+//      等于「拿攻击者指定的目录当基准」, 自证自答, 校验永远通过。
+//
+// 修法(三重独立防线):
+//   ① 项目 id 白名单 [a-zA-Z0-9\-] —— 连 '.' 都不可能出现, 从根上杜绝 '..'
+//      (与 post.php:12 / editor-article.php:54 的 slug 同一套约定)
+//   ② 文件名 basename 后显式拒绝 '' / '.' / '..'
+//   ③ 包含校验锚点固定为 realpath(__DIR__) = projects/ 自身, 不再随用户输入漂移
+// ============================================================================
+$PROJECTS_ROOT = realpath(__DIR__);
+require_once __DIR__ . '/../includes/path-safe.php';   // resolveProjectFile()
+
 if ($viewFile && $viewProject && $isLoggedIn) {
-    $viewProject = basename($viewProject); // prevent path traversal
-    $filePath = __DIR__ . '/' . $viewProject . '/' . basename($viewFile);
-    if (file_exists($filePath) && str_starts_with(realpath($filePath), realpath(__DIR__ . '/' . $viewProject))) {
+    $filePath = resolveProjectFile($PROJECTS_ROOT, (string)$viewProject, (string)$viewFile);
+    if ($filePath !== null) {
         $fileContent = htmlspecialchars(file_get_contents($filePath));
-        $ext = pathinfo($viewFile, PATHINFO_EXTENSION);
+        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
         $langMap = ['php' => 'php', 'py' => 'python', 'js' => 'javascript', 'css' => 'css', 'html' => 'html', 'md' => 'markdown', 'json' => 'json', 'java' => 'java', 'c' => 'c', 'cpp' => 'cpp'];
         $fileLang = $langMap[$ext] ?? '';
     }
@@ -30,8 +52,8 @@ if ($viewFile && $viewProject && $isLoggedIn) {
 
 // Handle download
 if (isset($_GET['download']) && $isLoggedIn && $viewProject) {
-    $dlFile = __DIR__ . '/' . $viewProject . '/' . basename($_GET['download']);
-    if (file_exists($dlFile) && str_starts_with(realpath($dlFile), realpath(__DIR__ . '/' . $viewProject))) {
+    $dlFile = resolveProjectFile($PROJECTS_ROOT, (string)$viewProject, (string)$_GET['download']);
+    if ($dlFile !== null) {
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($dlFile) . '"');
         header('Content-Length: ' . filesize($dlFile));

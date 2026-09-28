@@ -4,7 +4,8 @@
  * 宪法 3.x: is_admin 守卫 + CSRF + 写只认 POST
  */
 require __DIR__ . '/../includes/auth.php';
-if (!$isLoggedIn || !$isAdmin) { header('Location: /blog/login.php'); exit; }
+require_once __DIR__ . '/../includes/config.php';   // 2026-09-28: $BASE 单一来源
+if (!$isLoggedIn || !$isAdmin) { header('Location: ' . $BASE . '/login.php'); exit; }
 if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
 $csrfToken = $_SESSION['csrf_token'];
 

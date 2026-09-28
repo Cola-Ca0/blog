@@ -5,6 +5,12 @@
 // 宪法 2.1 铁律: theme-init.php 在任何 CSS 渲染前执行 (防 FOUC)
 // 2026-08-27 提速: 全站字体本地化 (Exo2/Rajdhani/Great Vibes 全部 assets/fonts 自托管), 彻底脱离 fonts.loli.net 渲染阻塞
 $fontSet = $fonts ?? 'full'; // 'full'|'basic'|'code' 保留兼容; 字体一律本地, 仅编辑器页后续可按需加载 Fira Code
+
+// 2026-09-28 部署修复: $BASE 必须来自 config.php 单一来源。
+// 此前本文件第 20 行的 CSS 路径硬编码 '/blog/includes/', 而字体那几行用的是 $BASE ——
+// 同一文件两套写法。本地 $BASE='/blog' 恰好与硬编码一致所以看不出来;
+// 线上是域名根部署($BASE=''), 硬编码会让**全站 CSS 404 → 整站无样式**。
+require_once __DIR__ . '/config.php';
 ?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +23,7 @@ $fontSet = $fonts ?? 'full'; // 'full'|'basic'|'code' 保留兼容; 字体一律
 <?= $extraHead ?? '' ?>
 <?php
 // CSS 缓存指纹 (2026-09-10): 以文件 mtime 作版本号, 改文件即自动换 URL, 根治「改版后访客拿旧缓存」
-$cssV = static fn (string $f): string => '/blog/includes/' . $f . '?v=' . filemtime(__DIR__ . '/' . $f);
+$cssV = fn (string $f): string => $BASE . '/includes/' . $f . '?v=' . filemtime(__DIR__ . '/' . $f);
 ?>
 <link rel="stylesheet" href="<?= $cssV('tokens.css') ?>">
 <link rel="stylesheet" href="<?= $cssV('shared.css') ?>">

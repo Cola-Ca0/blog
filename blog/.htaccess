@@ -12,8 +12,19 @@ RewriteRule ^page/([0-9]+)$ index.php?page=$1 [L,QSA]
 # ===== 上线加固 (2026-08 安全审计 §3.1/§6.2/§6.3) =====
 # 敏感数据文件禁止 Web 直读: users.json(凭据哈希)/data/*.json(待审评论)/*.md(草稿) 一律走 PHP 渲染
 # 白名单例外 (2026-08-27): data/ambience.json 是前端一言/深潜日志的公开文案池, 必须可读
-RewriteCond %{REQUEST_URI} !/blog/data/ambience\.json$
+# 2026-09-28 修复: 原写法锚定 '/blog/' 前缀, 域名根部署后 REQUEST_URI='/data/ambience.json'
+# 不匹配例外 → 被下面的 json 规则 403 掉, 首页一言/深潜日志静默失效。改为前缀无关。
+RewriteCond %{REQUEST_URI} !/data/ambience\.json$
 RewriteRule \.(json|md|lock)$ - [F,L]
+
+# 2026-09-28 补: 编辑器/备份残留类文件 —— **不以被禁扩展名结尾**, 上面那条匹配不到。
+# 实测: users.json.bak-20260928-192601 → HTTP 200, bcrypt 哈希被直接下载 (users.json 本身却是 403)。
+# 这类文件迟早会再出现(vim 的 ~/swp/swo、sed -i 的备份、手动的 .old/.orig/.save/.bak-时间戳),
+# 所以堵「整类」而不是改某个文件名。
+# ⚠️ 例外: /.well-known/ 是 ACME(certbot) 签证书必需的验证路径, 绝不能挡 —— 挡了 HTTPS 就签不出来。
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteCond %{REQUEST_URI} !/\.well-known/
+RewriteRule (^|/)\.|\.(bak|old|orig|save|swp|swo|tmp|temp|copy|dist|example|sql|ini|log|yml|yaml)([-.0-9]*)?$|~$ - [F,L]
 
 # 禁止目录列表 (草稿/待审评论/歌曲清单不可枚举)
 Options -Indexes

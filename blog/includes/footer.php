@@ -42,3 +42,37 @@
   });
 })();
 </script>
+
+<!-- Section reveal observer (2026-09-28 从 index.php 提出; 宪法 2.6 单一来源) -->
+<script>
+(function() {
+  // 背景: .section-reveal 的 CSS 是 opacity:0, 靠 JS 加 .visible 才显示;
+  // no-JS 兜底 html:not(.js) 不生效, 因为 head.php 无条件加了 .js。
+  // 此前这段只写在 index.php 里 —— 于是 timeline.php / treehole.php 的内容
+  // 永远停在 opacity:0: DOM 里有、肉眼看不见 (用户实测"审核通过了却不显示")。
+  // 放进 footer.php = 每个页面都有 (footer 被所有页面引用)。
+  var reveals = document.querySelectorAll('.section-reveal');
+  if (!reveals.length) return;
+
+  // 兜底: 不支持 IntersectionObserver 时直接全显, 不给"隐形内容"
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function(el) { el.classList.add('visible'); });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(function(el) { observer.observe(el); });
+
+  // 再兜一层: 首屏已可见但 threshold 未达标的元素(极短页面) 1 秒后强制显示
+  setTimeout(function() {
+    reveals.forEach(function(el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
+    });
+  }, 1000);
+})();
+</script>
