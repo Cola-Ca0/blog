@@ -1227,6 +1227,7 @@ body {
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Links / 友链</h3>
         <div class="friend-links">
+          <a href="https://www.ymsora.com/" target="_blank" rel="noopener">Sora大佬</a>
           <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
           <a href="https://www.bilibili.com" target="_blank" rel="noopener">Bilibili</a>
           <a href="https://moejue.cn" target="_blank" rel="noopener">Moejue</a>
