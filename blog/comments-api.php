@@ -3,6 +3,8 @@
  * Comments API — list, create, delete
  */
 require __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/config.php';   // 2026-09-28: 时区(created_at 此前早 8 小时) + $BASE 单一来源
+require_once __DIR__ . '/includes/json-store.php'; // 2026-09-28: 原子读改写（并发评论会丢数据）
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -105,9 +107,11 @@ if ($action === 'create') {
     ];
 
     $file = $commentsDir . $slug . '.json';
-    $comments = file_exists($file) ? (json_decode(file_get_contents($file), true) ?: []) : [];
-    $comments[] = $comment;
-    file_put_contents($file, json_encode($comments, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
+    // 2026-09-28: 改为原子读改写 —— 原来「读→追加→写」不在同一把锁里,
+    // 两人同时评论会互相覆盖(实测 12 条静默丢 9 条)。
+    jsonUpdate($file, function (array &$comments) use ($comment) {
+        $comments[] = $comment;
+    });
 
     echo json_encode(['success' => true, 'comment' => $comment], JSON_UNESCAPED_UNICODE);
     exit;
@@ -139,23 +143,28 @@ if ($action === 'delete') {
     }
 
     // Search all comment files for this ID
-    $found = false;
+    // 2026-09-28: 改原子读改写 —— 权限判断也放进锁里, 避免「判断后再删」之间被并发改动
+    $found  = false;
+    $denied = false;
     foreach (glob($commentsDir . '*.json') as $file) {
-        $comments = json_decode(file_get_contents($file), true) ?: [];
-        foreach ($comments as $i => $c) {
-            if ($c['id'] === $commentId) {
-                // Permission: own comment, or admin
-                if ($c['username'] !== $username && !$isAdmin) {
-                    http_response_code(403);
-                    echo json_encode(['error' => 'Permission denied']);
-                    exit;
+        jsonUpdate($file, function (array &$comments) use ($commentId, $username, $isAdmin, &$found, &$denied) {
+            foreach ($comments as $i => $c) {
+                if (($c['id'] ?? '') === $commentId) {
+                    // Permission: own comment, or admin
+                    if (($c['username'] ?? '') !== $username && !$isAdmin) { $denied = true; return false; }
+                    array_splice($comments, $i, 1);
+                    $found = true;
+                    return;                 // 有改动 → 写盘
                 }
-                array_splice($comments, $i, 1);
-                file_put_contents($file, json_encode($comments, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
-                $found = true;
-                break 2;
             }
+            return false;                   // 本文件没有目标 id → 不写盘
+        });
+        if ($denied) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Permission denied']);
+            exit;
         }
+        if ($found) break;
     }
 
     if (!$found) {
@@ -190,14 +199,21 @@ if ($action === 'approve') {
         exit;
     }
     $file = $commentsDir . $slug . '.json';
-    $comments = file_exists($file) ? (json_decode(file_get_contents($file), true) ?: []) : [];
-    foreach ($comments as $i => $c) {
-        if ($c['id'] === $commentId) {
-            $comments[$i]['status'] = 'approved';
-            file_put_contents($file, json_encode($comments, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
-            echo json_encode(['success' => true]);
-            exit;
+    // 2026-09-28: 改成原子读改写（原来 approve 与并发提交会互相覆盖）
+    $hit = false;
+    jsonUpdate($file, function (array &$comments) use ($commentId, &$hit) {
+        foreach ($comments as $i => $c) {
+            if (($c['id'] ?? '') === $commentId) {
+                $comments[$i]['status'] = 'approved';
+                $hit = true;
+                return;
+            }
         }
+        return false;                       // 没找到 → 不写盘
+    });
+    if ($hit) {
+        echo json_encode(['success' => true]);
+        exit;
     }
     http_response_code(404);
     echo json_encode(['error' => 'Comment not found']);

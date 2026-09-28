@@ -4,8 +4,26 @@
  * Entry point with tab selector, delegates to editor-article.php / editor-project.php
  */
 require __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/config.php';   // 2026-09-28: $BASE 单一来源(此前重定向硬编码 '/blog/login.php')
 
-if (!$isLoggedIn || !$isAdmin) { header('Location: /blog/login.php'); exit; }
+if (!$isLoggedIn || !$isAdmin) { header('Location: ' . $BASE . '/login.php'); exit; }
+
+// 2026-09-28: 待审计数 —— 此前 treehole-review.php 没有任何入口(孤岛),
+// 评论审核也藏在文章页底部, 管理员无从知道"有没有东西要审"。这里统一暴露。
+$pendingTreehole = 0;
+foreach (glob(__DIR__ . '/../data/treehole/*.json') ?: [] as $f) {
+    $t = json_decode(@file_get_contents($f) ?: '[]', true);
+    if (is_array($t) && ($t['status'] ?? '') === 'pending') $pendingTreehole++;
+}
+$pendingComments = 0;
+foreach (glob(__DIR__ . '/../data/comments/*.json') ?: [] as $f) {
+    $c = json_decode(@file_get_contents($f) ?: '[]', true);
+    if (!is_array($c)) continue;
+    foreach ($c as $row) {
+        if (is_array($row) && ($row['status'] ?? '') === 'pending') $pendingComments++;
+    }
+}
+$pendingTotal = $pendingTreehole + $pendingComments;
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -59,6 +77,13 @@ body {
   <h1>Editor / 编辑器</h1>
   <p class="subtitle">Choose content type to edit / 选择要编辑的内容类型</p>
 
+  <?php if ($pendingTotal > 0): ?>
+  <p class="subtitle" style="color:var(--secondary);margin-bottom:22px;">
+    ● 有 <b><?= (int)$pendingTotal ?></b> 条待审核
+    （树洞 <?= (int)$pendingTreehole ?> · 评论 <?= (int)$pendingComments ?>）
+  </p>
+  <?php endif; ?>
+
   <div class="hub-cards">
     <a href="<?= $BASE ?>/admin/editor-article.php" class="hub-card">
       <span class="icon">📝</span>
@@ -69,6 +94,16 @@ body {
       <span class="icon">📦</span>
       <span class="label">Project / 项目</span>
       <span class="desc">Add or edit a project entry</span>
+    </a>
+    <a href="<?= $BASE ?>/admin/treehole-review.php" class="hub-card">
+      <span class="icon">🕳️</span>
+      <span class="label">Review / 审核</span>
+      <span class="desc">树洞待审<?= $pendingTreehole > 0 ? ' · ' . (int)$pendingTreehole . ' 条' : '' ?>；评论在文章页评论区就地审核</span>
+    </a>
+    <a href="<?= $BASE ?>/admin/account.php" class="hub-card">
+      <span class="icon">⚙️</span>
+      <span class="label">Account / 账号</span>
+      <span class="desc">修改昵称与密码</span>
     </a>
   </div>
 </main>

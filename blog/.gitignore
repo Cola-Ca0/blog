@@ -16,3 +16,7 @@ assets/images/roles/
 
 # 树洞匿名倾诉数据 (本地隐私, 2026-08-27)
 data/treehole/*.json
+
+# 登录失败计数（运行时状态，2026-09-28）
+data/login-attempts.json
+

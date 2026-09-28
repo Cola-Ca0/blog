@@ -41,6 +41,8 @@ echo "\n=== Cola_CaO Blog Test Suite ===\n\n";
 require __DIR__ . '/test_auth.php';
 require __DIR__ . '/test_projects.php';
 require __DIR__ . '/test_comments.php';
+require __DIR__ . '/test_markdown_xss.php';
+require __DIR__ . '/test_json_store.php';
 
 echo "\n---\n";
 echo "Results: $pass passed, $fail failed, " . ($pass + $fail) . " total\n";

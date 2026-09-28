@@ -5,15 +5,14 @@
  * 认证：PHP $_SESSION (server-side, unforgeable)
  */
 
-// 2026-08 上线加固 (审计 §3.2): HttpOnly + SameSite=Lax + strict_mode, 必须在 session_start 之前
-ini_set('session.cookie_httponly', '1');
-ini_set('session.cookie_samesite', 'Lax');
-ini_set('session.use_strict_mode', '1');
-session_start();
-
-// CSRF token — 登录/注册表单随行提交 (审计 §2.3)
-if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
-$csrfToken = $_SESSION['csrf_token'];
+// 2026-09-28: 会话引导统一走 auth.php (宪法 3.4「认证状态以 auth.php 为准」)。
+// 此前本页自己又写了一份 ini_set/session_start, 与 auth.php 两套参数容易漂移 —— 现已收口。
+// auth.php 同时提供 $isLoggedIn / $isAdmin / $csrfToken / $username(显示名, 已转义)。
+require __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/json-store.php';   // 2026-09-28: 原子读改写
+// ⚠️ 注意: 下文登录表单里的局部 $username 会覆盖 auth.php 的显示名变量。
+//    无害 —— 本页不 include navbar.php, 那个 $username 只用于导航栏渲染。
+//    若日后本页要用导航栏, 请把表单变量改名为 $inputUser。
 
 // ========== 登出处理 ==========
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -31,6 +30,54 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 date_default_timezone_set('Asia/Shanghai');
 
 $usersFile = __DIR__ . '/users.json';
+
+// ============================================================
+// 登录失败限速 (2026-09-28)
+// ------------------------------------------------------------
+// Why: 本站的人机验证是**数学题**, 脚本解析 "12 + 7 = ?" 即可自动作答 ——
+//      它挡的是人肉刷, 挡不住机器人。所以爆破唯一的门槛就是密码强度。
+// Why 落盘而不是只放 $_SESSION: 会话级计数丢掉 cookie 就归零, 等于没有。
+// 规则: 同一 (用户名 + 来源IP) 在 15 分钟内失败满 5 次 → 锁 15 分钟。
+// 存储: data/login-attempts.json (data/ 下的 .json 被 .htaccess 禁止 Web 直读)
+// ============================================================
+$attemptsFile  = __DIR__ . '/data/login-attempts.json';
+$lockThreshold = 5;
+$lockWindow    = 900;   // 15 分钟: 既是统计窗口, 也是锁定时长
+
+function attemptKey(string $user): string {
+    return sha1($user . '|' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'));
+}
+function attemptsLoad(string $file): array {
+    $d = json_decode(@file_get_contents($file) ?: '[]', true);
+    return is_array($d) ? $d : [];
+}
+/** 还剩多少秒锁定; 0 = 未锁 */
+function attemptsLockLeft(array $d, string $k, int $threshold, int $window): int {
+    $r = $d[$k] ?? null;
+    if (!$r || ($r['fails'] ?? 0) < $threshold) return 0;
+    $left = ($r['last'] ?? 0) + $window - time();
+    return $left > 0 ? $left : 0;
+}
+// 2026-09-28: 计数改为原子读改写 —— 原来并发爆破时「读→加1→写」会互相覆盖,
+// 把 5 次计成 1 次, 限速形同虚设(攻击者只要并发就绕过了)。
+function attemptsBump(string $file, string $k, int $window): void {
+    jsonUpdate($file, function (array &$d) use ($k, $window) {
+        $now = time();
+        foreach ($d as $key => $r) {                 // 顺手清理过期条目, 防文件无限增长
+            if (($r['last'] ?? 0) + 86400 < $now) unset($d[$key]);
+        }
+        $r = $d[$k] ?? ['fails' => 0, 'last' => 0];
+        if (($r['last'] ?? 0) + $window < $now) $r['fails'] = 0;   // 窗口已过 → 重新计数
+        $r['fails'] = ($r['fails'] ?? 0) + 1;
+        $r['last']  = $now;
+        $d[$k] = $r;
+    });
+}
+function attemptsClear(string $file, string $k): void {
+    jsonUpdate($file, function (array &$d) use ($k) {
+        if (isset($d[$k])) unset($d[$k]);
+    });
+}
 
 function loadUsers() {
     global $usersFile;
@@ -91,34 +138,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $activeTab = 'login';
         $captcha = generateCaptcha();
     } else {
-        $users = loadUsers();
-        $loggedIn = false;
-        $isAdmin = false;
+        // ---- 限速闸门: 锁定期内直接拒绝, 不进入密码校验 ----
+        $aKey = attemptKey($username);
+        $lockLeft = attemptsLockLeft(attemptsLoad($attemptsFile), $aKey, $lockThreshold, $lockWindow);
 
-        foreach ($users as $user) {
-            if ($user['username'] === $username && password_verify($password, $user['password'])) {
-                $loggedIn = true;
-                $isAdmin = ($user['role'] ?? 'user') === 'admin';
-                break;
-            }
-        }
-
-        if ($loggedIn) {
-            session_regenerate_id(true); // 审计 §3.4: 登录成功更换 session id, 防会话固定
-            $_SESSION['username'] = $username;
-            $_SESSION['is_admin'] = $isAdmin;
-            setcookie('username', $username, [
-                'expires' => time() + 86400 * 7,
-                'path' => '/',
-                'httponly' => true,
-                'samesite' => 'Lax',
-            ]);
-            header('Location: index.php');
-            exit;
-        } else {
-            $error = '用户名或密码错误！';
+        if ($lockLeft > 0) {
+            $error = '尝试过于频繁，请 ' . ceil($lockLeft / 60) . ' 分钟后再试。';
             $activeTab = 'login';
             $captcha = generateCaptcha();
+        } else {
+            $users = loadUsers();
+            $loggedIn = false;
+            $isAdmin = false;
+
+            foreach ($users as $user) {
+                if ($user['username'] === $username && password_verify($password, $user['password'])) {
+                    $loggedIn = true;
+                    $isAdmin = ($user['role'] ?? 'user') === 'admin';
+                    break;
+                }
+            }
+
+            if ($loggedIn) {
+                attemptsClear($attemptsFile, $aKey);   // 成功即清零
+                session_regenerate_id(true); // 审计 §3.4: 登录成功更换 session id, 防会话固定
+                $_SESSION['username'] = $username;
+                $_SESSION['is_admin'] = $isAdmin;
+                setcookie('username', $username, [
+                    'expires' => time() + 86400 * 7,
+                    'path' => '/',
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ]);
+                header('Location: index.php');
+                exit;
+            } else {
+                // 失败计数 +1 (按 用户名+IP 落盘, 丢 cookie 绕不过)
+                attemptsBump($attemptsFile, $aKey, $lockWindow);
+                $row  = attemptsLoad($attemptsFile)[$aKey] ?? [];
+                $left = $lockThreshold - (int)($row['fails'] ?? 0);
+                $error = $left > 0
+                    ? '用户名或密码错误！还可以尝试 ' . $left . ' 次。'
+                    : '尝试过于频繁，请 ' . ceil($lockWindow / 60) . ' 分钟后再试。';
+                $activeTab = 'login';
+                $captcha = generateCaptcha();
+            }
         }
     }
 }
@@ -148,8 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error = '用户名长度需为 2-20 个字符！';
         $activeTab = 'register';
         $captcha = generateCaptcha();
-    } elseif (strlen($password) < 4) {
-        $error = '密码长度至少为 4 位！';
+    } elseif (strlen($password) < 8) {
+        $error = '密码长度至少为 8 位！';
         $activeTab = 'register';
         $captcha = generateCaptcha();
     } elseif ($password !== $password2) {
@@ -161,25 +225,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $activeTab = 'register';
         $captcha = generateCaptcha();
     } else {
-        $users = loadUsers();
-        foreach ($users as $user) {
-            if ($user['username'] === $username) {
-                $error = '该用户名已被注册，请换一个！';
-                $activeTab = 'register';
-                $captcha = generateCaptcha();
-                break;
+        // 2026-09-28: 查重与追加必须在同一把锁里 —— 原来「先查后写」之间有窗口,
+        // 两人同时注册同一用户名会双双通过查重, 后写的覆盖先写的(静默丢一个账号)。
+        $dup = false; $created = false;
+        $ok = jsonUpdate($usersFile, function (array &$users) use ($username, $password, &$dup, &$created) {
+            foreach ($users as $u) {
+                if (($u['username'] ?? '') === $username) { $dup = true; return false; }
             }
-        }
-
-        if ($error === '') {
             $users[] = [
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_BCRYPT),
-                'role' => 'user',
-                'created_at' => date('Y-m-d H:i:s')
+                'username'   => $username,
+                'password'   => password_hash($password, PASSWORD_BCRYPT),
+                'role'       => 'user',
+                'created_at' => date('Y-m-d H:i:s'),
             ];
-            saveUsers($users);
+            $created = true;
+        });
 
+        if ($dup) {
+            $error = '该用户名已被注册，请换一个！';
+            $activeTab = 'register';
+            $captcha = generateCaptcha();
+        } elseif (!$ok || !$created) {
+            $error = '注册写入失败，请重试。';
+            $activeTab = 'register';
+            $captcha = generateCaptcha();
+        } else {
             session_regenerate_id(true); // 审计 §3.4: 注册并自动登录后更换 session id
             $_SESSION['username'] = $username;
             $_SESSION['is_admin'] = false;
@@ -496,7 +566,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
                 </div>
                 <div class="field">
                     <label for="reg_password">密码</label>
-                    <input type="password" id="reg_password" name="reg_password" placeholder="至少 4 位密码" required autocomplete="new-password">
+                    <input type="password" id="reg_password" name="reg_password" placeholder="至少 8 位密码" required minlength="8" autocomplete="new-password">
                 </div>
                 <div class="field">
                     <label for="reg_password2">确认密码</label>
