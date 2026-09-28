@@ -16,6 +16,16 @@ require_once __DIR__ . '/config.php';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php require __DIR__ . '/theme-init.php'; ?>
 <script>document.documentElement.classList.add('js');</script>
+<?php
+// 2026-09-28 部署修复(第二批): 把 $BASE 暴露给前端 JS。
+// 上一批只修了 PHP 里的 17 处硬编码 —— 漏掉 JS, 因为 JS 拿不到 PHP 变量:
+//   post-loader.js 11 处 '/blog/...'、music-player.js 3 处相对路径、index.php 的 js/ 相对 src。
+// 本地 $BASE='/blog' 恰好与硬编码一致所以看不出来; 线上是域名根部署($BASE=''),
+// 表现 = 首页**卡片链接全部 404**(点进去是 Apache Not Found 页)、翻页与音乐 API 全断。
+// ⚠️ index.php 也由 /page/N 重写命中, 此时地址栏不含文件名 —— 任何**相对路径**都会解析错
+//    (js/x.js → /page/js/x.js), 所以下面这些一律用绝对 BASE 前缀, 不用相对。
+?>
+<script>window.BLOG_BASE = <?= json_encode($BASE) ?>;</script>
 <title><?= htmlspecialchars($pageTitle ?? 'Cola_CaO') ?></title>
 <?php if (!empty($pageDesc)): ?>
 <meta name="description" content="<?= htmlspecialchars($pageDesc) ?>">

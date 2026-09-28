@@ -3,6 +3,10 @@
  * Dispatches: music:play (detail.audio), music:pause
  */
 (function() {
+  // 2026-09-28: 由 includes/head.php 注入(= PHP 的 $BASE)。此前 3 处 fetch('music-api.php')
+  // 是相对路径 —— 在 /page/2 上会解析成 /page/music-api.php, 播放列表直接空。
+  var BASE = window.BLOG_BASE || '';
+
   var audio = document.getElementById('musicAudio');
   var resultsDiv = document.getElementById('musicResults');
   var lyricsBox = document.getElementById('musicLyrics');
@@ -33,7 +37,7 @@
   // Load playlist
   var listCtrl = new AbortController();
   var listTimeout = setTimeout(function(){ listCtrl.abort(); }, 10000);
-  fetch('music-api.php?action=list', { signal: listCtrl.signal }).then(function(r){ clearTimeout(listTimeout); return r.json() }).then(function(data){
+  fetch(BASE + '/music-api.php?action=list', { signal: listCtrl.signal }).then(function(r){ clearTimeout(listTimeout); return r.json() }).then(function(data){
     songs = data;
     if (songs.length === 0) {
       resultsDiv.innerHTML = '<p style="font-size:0.68rem;color:var(--text-muted);text-align:center;padding:16px">Drop .mp3 + .lrc into assets/music/</p>';
@@ -175,7 +179,7 @@
     audio.play().catch(function(){});
     renderPlaylist();
     if (song.hasCover) {
-      fetch('music-api.php?action=cover&file=' + encodeURIComponent(song.name + '.mp3'))
+      fetch(BASE + '/music-api.php?action=cover&file=' + encodeURIComponent(song.name + '.mp3'))
         .then(function(r){return r.json()}).then(function(d){
           if (d.cover) coverDisc.style.backgroundImage = 'url(' + d.cover + ')';
         }).catch(function(){});
@@ -183,7 +187,7 @@
       coverDisc.style.backgroundImage = '';
     }
     if (song.hasLrc) {
-      fetch('music-api.php?action=lyrics&file=' + encodeURIComponent(song.name + '.lrc'))
+      fetch(BASE + '/music-api.php?action=lyrics&file=' + encodeURIComponent(song.name + '.lrc'))
         .then(function(r){return r.text()}).then(function(raw){lrcData=parseLrc(raw)}).catch(function(){});
     }
   };

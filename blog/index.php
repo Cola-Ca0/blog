@@ -877,7 +877,7 @@ body {
       <div class="panel-avatar-row">
         <div class="panel-avatar">
           <?php if (file_exists(__DIR__ . '/assets/images/my-avatar.jpg')): ?>
-            <img src="assets/images/my-avatar.jpg" alt="可乐">
+            <img src="<?= $BASE ?>/assets/images/my-avatar.jpg" alt="可乐">
           <?php else: ?>
             <span class="avatar-placeholder">C</span>
           <?php endif; ?>
@@ -1080,7 +1080,7 @@ body {
         <div class="about-avatar-wrap">
           <div class="about-avatar">
             <?php if (file_exists(__DIR__ . '/assets/images/my-avatar.jpg')): ?>
-              <img src="assets/images/my-avatar.jpg" alt="可乐">
+              <img src="<?= $BASE ?>/assets/images/my-avatar.jpg" alt="可乐">
             <?php else: ?>
               <span class="avatar-placeholder-sm">C</span>
             <?php endif; ?>
@@ -1198,11 +1198,11 @@ body {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
           <?php foreach (array_slice($allImages, 0, 4) as $img): ?>
           <div class="gallery-thumb" style="aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border-glow);transition:var(--transition-smooth);cursor:pointer">
-            <img src="<?= htmlspecialchars($img) ?>" alt="" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s" loading="lazy">
+            <img src="<?= $BASE . '/' . htmlspecialchars($img) ?>" alt="" style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s" loading="lazy">
           </div>
           <?php endforeach; ?>
         </div>
-        <a href="gallery.php" style="display:block;text-align:center;font-family:var(--font-display);font-size:0.72rem;color:var(--accent);text-decoration:none;letter-spacing:0.06em;padding:6px;border:1px solid var(--border-glow);border-radius:var(--radius-pill);transition:var(--transition-smooth)">
+        <a href="<?= $BASE ?>/gallery.php" style="display:block;text-align:center;font-family:var(--font-display);font-size:0.72rem;color:var(--accent);text-decoration:none;letter-spacing:0.06em;padding:6px;border:1px solid var(--border-glow);border-radius:var(--radius-pill);transition:var(--transition-smooth)">
           View all <?= count($allImages) ?> images / 查看全部
         </a>
         <?php else: ?>
@@ -1328,12 +1328,13 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 
 </script>
 
-<script src="js/particle-ocean.js"></script>
-<script src="js/rain-layer.js"></script>
-<script src="js/typewriter.js"></script>
-<script src="js/sparkles.js?v=3"></script>
-<script src="js/music-player.js"></script>
-<script src="js/music-visual.js"></script>
-<script src="js/post-loader.js?v=20260827"></script>
+<!-- 2026-09-28: 一律绝对 BASE 前缀。本页也被 /page/N 重写命中, 那里相对 "js/x.js" → /page/js/x.js -->
+<script src="<?= $BASE ?>/js/particle-ocean.js"></script>
+<script src="<?= $BASE ?>/js/rain-layer.js"></script>
+<script src="<?= $BASE ?>/js/typewriter.js"></script>
+<script src="<?= $BASE ?>/js/sparkles.js?v=3"></script>
+<script src="<?= $BASE ?>/js/music-player.js"></script>
+<script src="<?= $BASE ?>/js/music-visual.js"></script>
+<script src="<?= $BASE ?>/js/post-loader.js?v=20260928"></script>
 </body>
 </html>
