@@ -32,8 +32,12 @@ if ($action === 'list') {
 
     $file = $commentsDir . $slug . '.json';
     $comments = file_exists($file) ? (json_decode(file_get_contents($file), true) ?: []) : [];
+    // 2026-09-29: 缺 status 字段一律视为「未通过」(fail-closed)。
+    // 原写法 ?? 'approved' 是 fail-open, 与 treehole.php 的 ?? '' 方向相反 ——
+    // 会让「站内访客内容一律先审后发」的对外声明出现缺口。
+    // 加审核(2026-08-16)后所有写入都带显式 status, 故该默认值只影响更早的历史数据。
     if (!$isAdmin) {
-        $comments = array_values(array_filter($comments, fn($c) => ($c['status'] ?? 'approved') === 'approved'));
+        $comments = array_values(array_filter($comments, fn($c) => ($c['status'] ?? '') === 'approved'));
     }
 
     echo json_encode($comments, JSON_UNESCAPED_UNICODE);

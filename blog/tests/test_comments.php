@@ -77,4 +77,37 @@ test('approve: 管理员通过后公开可见; 非管理员 403', function () {
     assertTrue($seen, '通过后公开列表可见');
 });
 
+// 2026-09-29 备案口径: 「站内访客内容一律先审后发」必须真的 fail-closed。
+// 判据 = 缺 status 字段的评论不得出现在任何公开面 (此前 ?? 'approved' 是 fail-open)。
+test('无 status 字段的评论对公开面不可见 (fail-closed)', function () {
+    $file = __DIR__ . '/../data/comments/' . COMMENTS_SLUG . '.json';
+    file_put_contents($file, json_encode([[
+        'id'         => 'legacy1',
+        'username'   => '上古访客',
+        'content'    => '缺status的历史评论',
+        'created_at' => '2020-01-01 00:00:00',
+    ]], JSON_UNESCAPED_UNICODE));
+
+    $pub = commentsCall(['action' => 'list', 'slug' => COMMENTS_SLUG], []);
+    $seen = false;
+    foreach (($pub['body'] ?? []) as $c) if (($c['content'] ?? '') === '缺status的历史评论') $seen = true;
+    assertFalse($seen, '缺 status 必须视为未通过 —— 否则对外的「先审后发」声明有缺口');
+
+    // 反向: 管理员仍应看得到 (证明不是一刀切过滤, 审核 UI 没坏)
+    $adm = commentsCall(['action' => 'list', 'slug' => COMMENTS_SLUG], [], ['is_admin' => 1, 'username' => 'admin', 'csrf_token' => COMMENTS_CSRF]);
+    $adminSees = false;
+    foreach (($adm['body'] ?? []) as $c) if (($c['content'] ?? '') === '缺status的历史评论') $adminSees = true;
+    assertTrue($adminSees, '管理员列表应仍包含它');
+});
+
+// index.php 的首页侧栏 (Latest Signals) 是同一逻辑的另一份内联拷贝, 跑不进 harness,
+// 只能用源码守卫。2026-09-29 之前它写的是「只跳过显式 pending」, 缺 status 的会漏上公开面。
+test('首页侧栏 Latest Signals 同样 fail-closed (源码守卫)', function () {
+    $src = file_get_contents(__DIR__ . '/../index.php');
+    assertFalse(str_contains($src, "isset(\$c['status']) && \$c['status'] === 'pending'"),
+        'index.php 又变回「只跳过显式 pending」—— 缺 status 的评论会漏上首页侧栏');
+    assertTrue(str_contains($src, "(\$c['status'] ?? '') !== 'approved'"),
+        'index.php 的 Latest Signals 应为「非 approved 一律跳过」');
+});
+
 commentsCleanup();

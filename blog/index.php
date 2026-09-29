@@ -1116,7 +1116,9 @@ body {
           if (!is_array($clist)) continue;
           foreach ($clist as $c) {
             if (!is_array($c)) continue;
-            if (isset($c['status']) && $c['status'] === 'pending') continue;
+            // 2026-09-29: 原写法只跳过显式 pending —— 缺 status 字段的仍会出现在首页侧栏 (fail-open)。
+            // 与 comments-api.php / treehole.php 统一: 非 approved 一律不上公开面。
+            if (($c['status'] ?? '') !== 'approved') continue;
             $signals[] = [
               'slug' => $cslug,
               'name' => (string)($c['username'] ?? '访客'),
