@@ -105,3 +105,31 @@ test('URL 里的 & 正确实体化为 &amp;', function () {
     $out = renderMarkdown('[点](https://a.com/?x=1&y=2)');
     assertTrue(strpos($out, '&amp;y=2') !== false, "URL 实体化坏了: $out");
 });
+
+// ---- 白名单放行 (2026-10-02): 自己写的署名/换行要活, 其余 HTML 照旧死 ----
+
+test('署名块 <blockquote style="text-align:right"> 原样渲染', function () {
+    $sig = '<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.09.22</blockquote>';
+    $out = renderMarkdown($sig);
+    assertTrue(strpos($out, $sig) !== false, "署名没渲染: $out");
+    assertFalse(strpos($out, '&lt;blockquote') !== false, "署名被转义了: $out");
+});
+
+test('表格单元格里的 <br> 生效', function () {
+    $out = renderMarkdown("| a | b |\n|---|---|\n| x<br>y | z |");
+    assertTrue(strpos($out, '<td>x<br>y</td>') !== false, "单元格 br 没生效: $out");
+});
+
+test('代码块里的 <br> 保持字面量 (第 1 步占位优先)', function () {
+    $out = renderMarkdown("```html\n<br>\n```");
+    assertTrue(strpos($out, '&lt;br&gt;') !== false, "代码块里的 br 被放行了: $out");
+    assertFalse(strpos($out, '<code class="language-html"><br>') !== false, "代码块里的 br 变活了: $out");
+});
+
+test('白名单是字面量匹配 —— 带属性的 br / blockquote 不放行', function () {
+    $a = renderMarkdown('<br onload=alert(1)>');
+    assertFalse(strpos($a, '<br onload') !== false, "带属性 br 被放行: $a");
+    $b = renderMarkdown('<blockquote style="text-align:right" onmouseover=alert(1)>x</blockquote>');
+    assertFalse(strpos($b, 'onmouseover=alert(1)>') !== false, "带事件属性的 blockquote 被放行: $b");
+    assertFalse(md_hasLiveTag($b), "产出活标签: $b");
+});

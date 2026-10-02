@@ -353,6 +353,44 @@ curl.exe -s -X POST -d "username=admin&pazzword=a599ac85a73384ee3219fa684296eaa6
 
 **SRC 视角**：`.mdb` 泄露在国产老站（政府/企业旧站）至今常见，黑话"**脱裤**"就是从这类事件来的——一个文件被拿走 = 全库用户表，没有任何"最小权限"可言。
 
+**14.seed**
+
+在web里面，seed可以生成无限的随机数，同样的seed生成的随机数是一样的，也就是说抓住了seed就可以拿到"一模一样的随机"
+
+当然在我们这里有一道题目，可以通过拿到的第一个随机数来反推种子，至于如何通过随机数来反推种子则需要我们后面密码中的PRNG来说了。
+
+```php
+mt_srand(372619038);                          // 常量
+mt_srand(time());                             // 时间戳（秒）
+mt_srand(microtime(true) * 1000000);          // 微秒
+mt_srand(hexdec(substr(md5($flag), 0, 8)));   // 从数据派生
+mt_srand(crc32($username));                   // 从字符串派生
+mt_srand($_GET['seed']);                      // 用户可控 ← 最惨的一种
+```
+
+> [!tip] 别被写法骗了
+> `hexdec(substr(md5($flag), 0, 8))` 看着复杂，展开后 ==还是一个整数==。
+> 剥掉派生过程，所有 seed 最终都是「一个数」。
+
+```python
+import requests
+import subprocess
+import urllib3
+urllib3.disable_warnings()
+
+A = 1335612619
+seeds = [1120848884,3908320010]
+URL = "https://a6dea7e2-cf5c-4.........."
+for s in seeds:
+    PHP = r"Z:\laragon\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe"
+
+    tok = subprocess.check_output(
+    [PHP, "-r", f"mt_srand({s}); mt_rand(); echo mt_rand()+mt_rand();"],
+    text=True,).strip()
+    r = requests.get(URL, params={"r": A}, cookies={"token": str(tok)}, verify=False)
+    print(s, r.status_code, repr(r.text))
+```
+
 
 ## 第三节：复盘 / 教训
 

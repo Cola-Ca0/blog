@@ -171,6 +171,23 @@ function renderMarkdown(string $text): string {
         $text
     );
 
+    // 1b. 白名单放行「自己写的」少量 HTML —— 2026-10-02 署名修复
+    //     2026-09-28 的入口整体转义把正文里故意写的 HTML 也吃掉了:
+    //     署名 <blockquote style="text-align:right">…</blockquote>(16 篇) 与表格单元格里的 <br>(6 处)
+    //     都渲染成了可见的实体文本。这里只还原这几串**字面量** ——
+    //     可执行/带任意属性的标签(script/onerror/<br onload=…>)依旧还原不了, 安全性质不变。
+    //     ⚠️ 必须在第 1 步之后: 代码块已占位, 块里的 &lt;br&gt; 保持字面量。
+    //     已知残留: 行内码 `&lt;br&gt;` 会被放行(第 8 步晚于此), 暂未遇到。
+    $text = preg_replace(
+        [
+            '/&lt;br\s*\/?&gt;/',
+            '/&lt;blockquote style=&quot;text-align:right&quot;&gt;/',
+            '/&lt;\/blockquote&gt;/',
+        ],
+        ['<br>', '<blockquote style="text-align:right">', '</blockquote>'],
+        $text
+    );
+
     // 2. Headings — single pass
     $text = preg_replace_callback('/^(#{1,6})\s+(.+)$/m', fn($m) => '<h' . strlen($m[1]) . '>' . $esc($m[2]) . '</h' . strlen($m[1]) . '>', $text);
 
