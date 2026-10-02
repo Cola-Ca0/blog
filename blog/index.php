@@ -248,59 +248,47 @@ body {
 }
 
 /* ============================================================
-   Music Hero — fills hero left column, bottom-aligns with radar
+   深海观测窗 — 2026-10-02 接替下线的音乐位 (公开图库慢速交叉淡化)
+   ⚠️ 尺寸必须锁死: hero 行高 = 两栏内容的较大值, 不锁会撑高整行
+   (实测: 空格子内容一撑, hero 825 → 1048, 右栏雷达下方留一大块空白)
    ============================================================ */
-.music-hero {
+.hero-viewport {
   background: var(--bg-card); backdrop-filter: blur(14px);
   border: 1px solid var(--border-glow); border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm); padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  margin: auto 0 0; flex: 0 1 auto; min-height: 0;
   transition: var(--transition-smooth);
 }
-.music-hero:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.04); }
-.music-hero-inner {
-  flex:1; display:flex; flex-direction:column; padding:14px 16px; min-height:0;
-}
-.music-hero-header {
+.hero-viewport:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.04); }
+.viewport-head {
   font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase;
-  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px; flex: none;
 }
-.music-hero-header .diamond-sm {
-  width: 5px; height: 5px; background: var(--accent);
-  transform: rotate(45deg); box-shadow: 0 0 3px var(--accent);
+.viewport-head .diamond-sm { width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg); box-shadow: 0 0 3px var(--accent); flex: none; }
+.viewport-count { margin-left: auto; color: var(--text-muted); letter-spacing: 0.04em; }
+.viewport-frame {
+  position: relative; aspect-ratio: 16 / 9; max-height: 460px; flex: none;
+  border-radius: var(--radius-sm); overflow: hidden;
+  border: 1px solid var(--border-glow); background: rgba(0,0,0,0.35);
 }
-/* --- Music Cover Row --- */
-.music-cover-row { display:flex; gap:16px; align-items:center; flex:0 0 auto; min-height:0; margin-bottom:8px }
-.music-cover-wrap { flex-shrink:0; width:130px; height:130px; margin-left:16px; cursor:pointer; position:relative }
-.music-cover-disc {
-  width:100%; height:100%; border-radius:50%; overflow:hidden;
-  background-color:#0a2848;
-  background-image:linear-gradient(135deg,#0a2848,#0d3a5c,#0a2848);
-  background-size:cover;background-position:center;
-  border:2px solid var(--border-glow); box-shadow:0 0 16px rgba(91,160,224,0.25);
-  animation:cover-spin 12s linear infinite paused;
-  display:flex;align-items:center;justify-content:center;position:relative
+.viewport-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.6s ease; }
+.viewport-slide.active { opacity: 1; }
+.viewport-vault { aspect-ratio: 16 / 9; max-height: 460px; overflow-y: auto; flex: none; padding-right: 6px; }
+.viewport-vault ul { list-style: none; margin: 0; padding: 0; }
+.viewport-vault li { margin-bottom: 8px; }
+.viewport-vault a { font-size: 0.8rem; color: var(--text-secondary); text-decoration: none; letter-spacing: 0.02em; }
+.viewport-vault a:hover { color: var(--accent); }
+.viewport-vault p { font-size: 0.72rem; color: var(--text-muted); margin: 10px 0 0; }
+.viewport-toggle {
+  align-self: flex-start; flex: none; font-family: var(--font-display);
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent); background: transparent; border: 1px solid var(--border-glow);
+  border-radius: var(--radius-pill); padding: 5px 12px; cursor: pointer; transition: var(--transition-smooth);
 }
-.music-cover-disc.playing { animation-play-state:running }
-@keyframes cover-spin { 100%{transform:rotate(360deg)} }
-.music-cover-inner {
-  width:34px;height:34px;border-radius:50%;
-  background:radial-gradient(circle,var(--accent),var(--primary));
-  box-shadow:0 0 8px rgba(91,160,224,0.5)
-}
-.music-cover-disc::after {
-  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:24px;height:24px;border-radius:50%;background:var(--bg-deep);z-index:1
-}
-/* --- Lyrics --- */
-.music-lyrics {
-  flex:1;min-width:0;overflow:hidden;font-size:0.95rem;color:var(--text-muted);
-  line-height:2.4;display:flex;flex-direction:column;justify-content:center;
-  text-align:center
-}
-.music-lyrics p { margin:0;overflow:hidden;text-overflow:ellipsis;transition:all 0.3s }
+.viewport-toggle:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(142,208,232,0.2); }
+@media (prefers-reduced-motion: reduce) { .viewport-slide { transition: none; } }
 /* --- Particle Ocean Canvas --- */
 .particle-ocean {
   position: fixed; inset: 0; width: 100%; height: 100%;
@@ -312,55 +300,6 @@ body {
   position: fixed; inset: 0; width: 100%; height: 100%;
   pointer-events: none; z-index: 1;
 }
-/* --- Progress Bar --- */
-.music-progress-wrap { display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0 }
-.music-time { font-family:var(--font-mono,monospace);font-size:0.6rem;color:var(--text-muted);min-width:32px;text-align:center }
-.music-progress-bar {
-  flex:1;height:8px;background:rgba(91,160,224,0.12);border-radius:4px;cursor:pointer;
-  position:relative;overflow:visible
-}
-.music-progress-bar:hover { height:10px }
-.music-progress-fill {
-  height:100%;border-radius:4px;
-  background:linear-gradient(90deg,var(--primary),var(--accent));
-  width:0%;transition:width 0.15s linear;position:relative
-}
-.music-progress-thumb {
-  position:absolute;right:-6px;top:50%;transform:translateY(-50%);
-  width:12px;height:12px;border-radius:50%;background:var(--accent);
-  box-shadow:0 0 6px var(--accent);opacity:0;transition:opacity 0.2s
-}
-.music-progress-bar:hover .music-progress-thumb { opacity:1 }
-#musicVolume { -webkit-appearance:none;appearance:none;height:4px;background:rgba(91,160,224,0.15);border-radius:2px;outline:none;cursor:pointer;accent-color:var(--accent) }
-#musicVolume::-webkit-slider-thumb { -webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent);cursor:pointer }
-/* --- Controls Row --- */
-.music-ctrls { display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;flex-shrink:0 }
-.music-ctrl-btn {
-  background:transparent;border:1px solid var(--border-glow);color:var(--text-secondary);
-  border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:0.6rem;transition:var(--transition-smooth);
-  position:relative;
-}
-/* 触控热区扩展至 44px (ui-ux-pro-max §2 touch-target-size; 视觉尺寸不变) */
-.music-ctrl-btn::before { content:''; position:absolute; inset:-8px; }
-.music-ctrl-btn:hover { border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(142,208,232,0.2) }
-.music-ctrl-play { width:34px;height:34px;font-size:0.75rem;border-color:var(--accent);color:var(--accent) }
-.music-ctrl-mode { font-size:0.52rem;font-weight:700;letter-spacing:0.04em;font-family:var(--font-display);width:auto;padding:0 6px;border-radius:var(--radius-pill) }
-/* --- Song List --- */
-.music-results { flex:1 1 0;overflow-y:auto;min-height:50px;border-top:1px solid var(--border-glow);padding-top:6px }
-.music-result-item {
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:5px 8px;border-radius:var(--radius-sm);cursor:pointer;
-  font-size:0.68rem;color:var(--text-secondary);transition:var(--transition-smooth)
-}
-.music-result-item:hover { background:rgba(91,160,224,0.1);color:var(--text-primary) }
-.music-result-item.active { color:var(--accent);background:rgba(91,160,224,0.08) }
-.music-result-item .play-btn {
-  font-family:var(--font-display);font-size:0.6rem;font-weight:600;letter-spacing:0.06em;
-  padding:2px 10px;border-radius:var(--radius-pill);border:1px solid var(--border-glow);
-  background:transparent;color:var(--accent);cursor:pointer;transition:var(--transition-smooth)
-}
-.music-result-item .play-btn:hover { background:var(--primary);color:var(--text-primary);border-color:var(--primary) }
 
 /* ============================================================
    Skill Radar Chart — replaces compact gallery in hero right column
@@ -369,6 +308,7 @@ body {
   background: var(--bg-card); backdrop-filter: blur(14px);
   border: 1px solid var(--border-glow); border-radius: var(--radius-lg);
   padding: 16px; box-shadow: var(--shadow-sm);
+  margin-top: 16px; /* 2026-10-02: 社交按钮搬去左栏后, 顶上不再有它的 margin 撑开间距 */
   transition: var(--transition-smooth);
 }
 .radar-card:hover { border-color: var(--border-glow-strong); box-shadow: var(--shadow-md); }
@@ -641,9 +581,9 @@ body {
 .about-hud-mini strong { color: var(--accent); font-family: var(--font-display); font-size: 0.85rem; }
 
 /* Social icon links */
-.social-links-row { display:flex;gap:10px;margin-top:16px;justify-content:center }
-.social-icon-link { color:var(--text-secondary);text-decoration:none;font-size:0.7rem;
-  padding:3px 10px;border:1px solid var(--border-glow);border-radius:var(--radius-pill);
+.social-links-row { display:flex;gap:12px;margin-top:22px;flex-wrap:wrap }
+.social-icon-link { color:var(--text-secondary);text-decoration:none;font-size:0.82rem;
+  padding:8px 20px;border:1px solid var(--border-glow);border-radius:var(--radius-pill);
   font-family:var(--font-display);letter-spacing:0.04em;transition:var(--transition-smooth); }
 .social-icon-link:hover { color:var(--accent);border-color:var(--accent);
   background:rgba(91,160,224,0.08); }
@@ -716,6 +656,7 @@ body {
    ============================================================ */
 @media (max-width: 1024px) {
   .blog-hero { grid-template-columns: 1fr; gap: 30px; }
+  .hero-viewport { margin-top: 18px; }  /* 单列堆叠时列高=内容高, auto 会归零 */
   .hero-panel { max-width: 500px; }
   .content-grid { grid-template-columns: 1fr; }
   .sidebar { position: static; top: auto; }
@@ -821,50 +762,54 @@ body {
         潜入代码的深海，在寂静中寻找思维的涟漪。这里是可乐的水下基地——每一行代码都是一次深潜。
       </p>
 
-      <!-- Local Music Player -->
-      <div class="music-hero section-reveal" id="musicHero" style="flex:1;min-height:0;max-width:100%;margin-top:18px;transition-delay:300ms">
-        <div class="music-hero-inner">
-          <div class="music-hero-header">
-            <span class="diamond-sm"></span> Deep Sea Frequency / 深海频率
-          </div>
-          <!-- Cover + Lyrics row -->
-          <div class="music-cover-row">
-            <div class="music-cover-wrap" onclick="togglePlay()" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); togglePlay(); }" role="button" tabindex="0" title="Play/Pause" aria-label="Play or pause music">
-              <div class="music-cover-disc" id="musicCoverDisc">
-                <div class="music-cover-inner"></div>
-              </div>
-            </div>
-            <div class="music-lyrics" id="musicLyrics">
-              <p style="color:var(--text-muted)">Select a song to begin</p>
-              <p style="color:var(--text-muted)">选择歌曲开始</p>
-              <p>&nbsp;</p>
-            </div>
-          </div>
-          <!-- Progress + Volume row -->
-          <div class="music-progress-wrap" id="musicProgressWrap">
-            <span class="music-time" id="musicCurTime">0:00</span>
-            <div class="music-progress-bar" id="musicProgressBar" role="slider" tabindex="0" aria-label="Music progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <div class="music-progress-fill" id="musicProgressFill"></div>
-              <div class="music-progress-thumb" id="musicProgressThumb"></div>
-            </div>
-            <span class="music-time" id="musicDurTime">0:00</span>
-          </div>
-          <!-- Controls row: prev | play/pause | next | mode | volume -->
-          <div class="music-ctrls">
-            <button class="music-ctrl-btn" onclick="playLocal(currentIdx-1)" title="Previous" aria-label="上一首">&#9664;&#9664;</button>
-            <button class="music-ctrl-btn music-ctrl-play" id="musicCtrlPlay" onclick="togglePlay()" aria-label="Play music">&#9654;</button>
-            <button class="music-ctrl-btn" onclick="playLocal(currentIdx+1)" title="Next" aria-label="下一首">&#9654;&#9654;</button>
-            <button class="music-ctrl-btn music-ctrl-mode" id="musicModeBtn" onclick="cycleMode()" title="List loop" aria-label="播放模式">ALL</button>
-            <span style="font-size:0.6rem;color:var(--text-muted);margin-left:4px">Vol</span>
-            <input type="range" id="musicVolume" min="0" max="100" value="40" style="width:56px;flex-shrink:0" aria-label="音量">
-          </div>
-          <audio id="musicAudio" style="display:none"></audio>
-          <!-- Song list (scrollable) -->
-          <div class="music-results" id="musicResults">
-            <p style="font-size:0.7rem;color:var(--text-muted);text-align:center;padding:8px">Loading playlist... / 加载歌单中...</p>
-          </div>
-        </div>
+      <!-- 社交入口 — 2026-10-02 从右栏 hero-panel 搬到左栏 (填副标题与深海图库之间的空档), 放大成胶囊 -->
+      <div class="social-links-row section-reveal" style="transition-delay:250ms">
+        <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
+        <a href="mailto:cola_ca0@qq.com" class="social-icon-link" title="Email">Email</a>
+        <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener" class="social-icon-link" title="Bilibili">Bilibili</a>
+        <a href="<?= $BASE ?>/feed.xml" target="_blank" rel="noopener" class="social-icon-link" title="RSS">RSS</a>
       </div>
+
+      <?php
+      // 深海密件区 — 仅站长可见的 AI 代笔文章私区 (2026-09-10, 宪法 3.5 默认拒绝)
+      $privatePosts = $isAdmin ? getPublishedPosts(__DIR__ . '/posts-private/') : [];
+      ?>
+      <!-- 深海观测窗 (2026-10-02) — 接替下线的音乐位: 公开图库慢速交叉淡化;
+           站长视图多一枚小按钮切到深海密件, 访客/审核员只有图片。
+           下线音频在 本地 .scratch/music-offline/ · 服务器 /var/www/music-offline/ -->
+      <?php if ($slides): ?>
+      <div class="hero-viewport section-reveal reveal-left" id="heroViewport" style="transition-delay:350ms">
+        <div class="viewport-head">
+          <span class="diamond-sm"></span>
+          <span id="viewportTitle">Deep Sea Gallery / 深海图库</span>
+          <span class="viewport-count"><?= count($slides) ?> 帧</span>
+        </div>
+        <div class="viewport-frame" id="viewportSlides">
+          <?php foreach ($slides as $i => $sl): $slUrl = $BASE . '/' . htmlspecialchars($sl); ?>
+          <?php if ($i === 0): ?>
+          <img class="viewport-slide active" src="<?= $slUrl ?>" alt="深潜影像 1" loading="eager">
+          <?php else: ?>
+          <img class="viewport-slide" data-src="<?= $slUrl ?>" alt="深潜影像 <?= $i + 1 ?>">
+          <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
+        <?php if ($isAdmin): ?>
+        <div class="viewport-vault" id="viewportVault" hidden>
+          <?php if ($privatePosts): ?>
+          <ul>
+            <?php foreach ($privatePosts as $pp): ?>
+            <li><a href="<?= $BASE ?>/post/<?= htmlspecialchars($pp['slug']) ?>"><?= htmlspecialchars($pp['title']) ?></a></li>
+            <?php endforeach; ?>
+          </ul>
+          <p>共 <?= count($privatePosts) ?> 件 · 矿石原料, 消化重写后移回公海</p>
+          <?php else: ?>
+          <p>密室空空 —— 公海只留你自己的声音。</p>
+          <?php endif; ?>
+        </div>
+        <button type="button" class="viewport-toggle" id="viewportToggle" onclick="toggleHeroVault()">Classified / 深海密件 ▸</button>
+        <?php endif; ?>
+      </div>
+      <?php endif; ?>
     </div>
 
     <div class="blog-hero-right">
@@ -903,13 +848,6 @@ body {
       </div>
       <?php endforeach; ?>
       <!-- Social links row -->
-      <div class="social-links-row">
-        <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener" class="social-icon-link" title="GitHub">GitHub</a>
-        <a href="mailto:cola_ca0@qq.com" class="social-icon-link" title="Email">Email</a>
-        <a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener" class="social-icon-link" title="Bilibili">Bilibili</a>
-        <a href="<?= $BASE ?>/feed.xml" class="social-icon-link" title="RSS">RSS</a>
-      </div>
-
       <!-- Skill Radar Chart (dynamic from about-content.json) -->
       <?php
       // Map JSON skills to radar: take first 6 skills, compute polygon
@@ -1052,28 +990,6 @@ body {
           <div class="hud-bar"><div class="hud-bar-fill" style="width:<?= $pct ?>%"></div></div>
         </div>
       </div>
-
-      <?php
-      // 深海密件区 — 仅站长可见的 AI 代笔文章私区 (2026-09-10, 宪法 3.5 默认拒绝)
-      $privatePosts = $isAdmin ? getPublishedPosts(__DIR__ . '/posts-private/') : [];
-      ?>
-      <?php if ($isAdmin): ?>
-      <div class="sidebar-widget" id="vaultWidget">
-        <h3 class="widget-title"><span class="diamond-sm"></span> Classified / 深海密件</h3>
-        <?php if ($privatePosts): ?>
-        <ul style="list-style:none;margin:0;padding:0">
-          <?php foreach ($privatePosts as $pp): ?>
-          <li style="margin-bottom:8px">
-            <a href="<?= $BASE ?>/post/<?= htmlspecialchars($pp['slug']) ?>" style="font-size:0.8rem;color:var(--text-secondary);text-decoration:none;letter-spacing:0.02em"><?= htmlspecialchars($pp['title']) ?></a>
-          </li>
-          <?php endforeach; ?>
-        </ul>
-        <p style="font-size:0.72rem;color:var(--text-muted);margin:10px 0 0">共 <?= count($privatePosts) ?> 件 · 矿石原料, 消化重写后移回公海</p>
-        <?php else: ?>
-        <p style="font-size:0.78rem;color:var(--text-muted);margin:0">密室空空 —— 公海只留你自己的声音。</p>
-        <?php endif; ?>
-      </div>
-      <?php endif; ?>
 
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> About / 关于我</h3>
@@ -1335,8 +1251,65 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 <script src="<?= $BASE ?>/js/rain-layer.js"></script>
 <script src="<?= $BASE ?>/js/typewriter.js"></script>
 <script src="<?= $BASE ?>/js/sparkles.js?v=3"></script>
-<script src="<?= $BASE ?>/js/music-player.js"></script>
-<script src="<?= $BASE ?>/js/music-visual.js"></script>
 <script src="<?= $BASE ?>/js/post-loader.js?v=20260928"></script>
+<script>
+// 深海观测窗 (2026-10-02): 8s 交叉淡化 · 悬停暂停 · prefers-reduced-motion 时完全静止
+// 非首帧走 data-src 懒加载: 轮到自己才下载, 避免一次拉完整个图库 (每张 ~1MB)
+(function () {
+  var frame = document.getElementById('viewportSlides');
+  if (!frame) return;
+  var slides = frame.querySelectorAll('.viewport-slide');
+  if (slides.length < 2) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var cur = 0, timer = null;
+
+  function load(i, cb) {                   // 下载第 i 帧 (已有 src 直接回调)
+    var img = slides[i];
+    if (!img.hasAttribute('data-src')) { if (cb) cb(); return; }
+    var url = img.getAttribute('data-src');
+    var pre = new Image();
+    var done = function () {               // 坏图也放行, 别把轮转卡死
+      img.src = url; img.removeAttribute('data-src'); if (cb) cb();
+    };
+    pre.onload = done; pre.onerror = done;
+    pre.src = url;
+  }
+
+  function swap(n) {
+    slides[cur].classList.remove('active');
+    slides[n].classList.add('active');
+    cur = n;
+    load((cur + 1) % slides.length);       // 提前下载下一张
+  }
+
+  function advance() {
+    var n = (cur + 1) % slides.length;
+    load(n, function () { swap(n); });     // 下好即切, 不必等下一拍
+  }
+
+  function start() { if (!timer) timer = setInterval(advance, 8000); }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+  frame.addEventListener('mouseenter', stop);
+  frame.addEventListener('mouseleave', start);
+  setTimeout(function () { load(1); }, 3000);   // 3s 后预热第二帧, 别抢首屏带宽
+  start();
+})();
+
+// 站长: 观测窗 ⇄ 深海密件 切换 (访客没有这枚按钮, DOM 里也没有密件)
+function toggleHeroVault() {
+  var v = document.getElementById('viewportVault');
+  var s = document.getElementById('viewportSlides');
+  var t = document.getElementById('viewportTitle');
+  var b = document.getElementById('viewportToggle');
+  if (!v || !s) return;
+  var showVault = v.hasAttribute('hidden');
+  if (showVault) { v.removeAttribute('hidden'); } else { v.setAttribute('hidden', ''); }
+  s.style.display = showVault ? 'none' : '';
+  if (t) t.textContent = showVault ? 'Classified / 深海密件' : 'Deep Sea Gallery / 深海图库';
+  if (b) b.textContent = showVault ? '◂ 回到观测窗' : 'Classified / 深海密件 ▸';
+}
+</script>
 </body>
 </html>
