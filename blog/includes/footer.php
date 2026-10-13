@@ -15,6 +15,7 @@
       <a href="<?= $BASE ?>/about.php">About</a>
       <a href="<?= $BASE ?>/feed.xml">RSS</a>
       <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:cola_ca0@qq.com" title="投诉举报 / Report abuse">举报</a>
     </div>
     <div class="footer-hud">
       Cola_CaO // PHP · Vanilla JS · Deep Sea Station · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2026084546号-1</a>
