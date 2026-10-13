@@ -203,6 +203,8 @@ body { transition:background-color var(--transition-smooth),color var(--transiti
 .footer-links a { color:var(--text-muted); text-decoration:none; font-size:0.78rem; letter-spacing:0.03em; transition:color var(--transition-smooth); }
 .footer-links a:hover { color:var(--accent); }
 .footer-hud { font-family:var(--font-display); font-size:0.68rem; color:var(--text-muted); letter-spacing:0.08em; }
+.footer-hud a { color:var(--text-muted); text-decoration:none; transition:color var(--transition-smooth); }
+.footer-hud a:hover { color:var(--accent); }
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar { width:6px; }
