@@ -430,6 +430,14 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
             box-shadow: 0 0 24px rgba(91, 160, 224, 0.1);
             background: rgba(255,255,255,0.05);
         }
+        /* 2026-10-14: 注册「同意条款」行 —— 抵抗上方 .field input{width:100%} 对 checkbox 的污染
+           (曾把 checkbox 撑满整行, 文字被挤压成每行一字) */
+        .terms-label { display:flex; align-items:flex-start; gap:8px; font-size:0.75rem; color:var(--text-muted); cursor:pointer; font-weight:400; line-height:1.5; }
+        .terms-label input[type="checkbox"] { -webkit-appearance:none; appearance:none; width:14px; height:14px; flex-shrink:0; margin:3px 0 0; padding:0; background:rgba(91,160,224,0.06); border:1px solid rgba(91,160,224,0.35); border-radius:4px; cursor:pointer; position:relative; transition:all 0.2s ease; }
+        .terms-label input[type="checkbox"]:checked { background:var(--accent); border-color:var(--accent); }
+        .terms-label input[type="checkbox"]:checked::after { content:''; position:absolute; left:4px; top:1px; width:4px; height:8px; border:solid var(--bg-deep); border-width:0 2px 2px 0; transform:rotate(45deg); }
+        .terms-label span { flex:1; min-width:0; }
+        .terms-label a { color:var(--accent); }
 
         .captcha-row { display: flex; gap: 12px; align-items: flex-end; }
         .captcha-row .captcha-field { flex: 1; }
@@ -594,10 +602,10 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
                         </div>
                     </div>
                 </div>
-                <div class="field" style="margin-top:2px">
-                    <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.75rem;color:var(--text-muted);cursor:pointer;font-weight:400;line-height:1.5">
-                        <input type="checkbox" name="agree_terms" value="1" required style="margin-top:3px;flex-shrink:0">
-                        <span>我已阅读并同意 <a href="<?= $BASE ?>/terms.php" target="_blank" style="color:var(--accent)">《用户服务协议与隐私政策》</a></span>
+                <div class="field">
+                    <label class="terms-label">
+                        <input type="checkbox" name="agree_terms" value="1" required>
+                        <span>我已阅读并同意 <a href="<?= $BASE ?>/terms.php" target="_blank">《用户服务协议与隐私政策》</a></span>
                     </label>
                 </div>
                 <button type="submit" class="btn-submit btn-register-submit">注册 / Register并登录</button>
