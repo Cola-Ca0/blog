@@ -41,6 +41,7 @@ echo "\n=== Cola_CaO Blog Test Suite ===\n\n";
 require __DIR__ . '/test_auth.php';
 require __DIR__ . '/test_projects.php';
 require __DIR__ . '/test_comments.php';
+require __DIR__ . '/test_content_guard.php';   // 依赖 test_comments.php 的 commentsCall()
 require __DIR__ . '/test_markdown_xss.php';
 require __DIR__ . '/test_json_store.php';
 require __DIR__ . '/test_paths.php';

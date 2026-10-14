@@ -79,11 +79,14 @@ require_once __DIR__ . '/config.php';
       var pending = c.status === 'pending' ? ' <span style="font-size:0.6rem;color:var(--secondary);font-family:var(--font-display);letter-spacing:0.06em">[待审核]</span>' : '';
       var canDel = isLoggedIn && (c.username === username || isAdmin);
       var canApprove = isAdmin && c.status === 'pending';
+      // 2026-10-14: 黑名单按钮 (检查表 9.2.2c) —— 只对注册用户, 匿名访客/管理员不显示
+      var canBan = isAdmin && !c.is_admin && c.username && c.username !== '匿名访客';
       var h = '<div class="comment-item" style="margin-bottom:12px;margin-left:' + ml + 'px;padding:10px 14px;background:rgba(91,160,224,0.03);border-radius:var(--radius-sm);border:1px solid rgba(91,160,224,0.06);' + bl + pl + '">' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
           '<span style="font-family:var(--font-display);font-size:0.8rem;font-weight:600;color:var(--accent)">' + esc(c.username) + '</span>' + badge + pending +
           '<span style="font-size:0.66rem;color:var(--text-haze)">' + esc(c.created_at) + '</span>' +
           (canApprove ? ' <button onclick="approveComment(\'' + c.id + '\')" style="background:none;border:1px solid var(--border-glow);color:var(--accent);cursor:pointer;font-size:0.62rem;padding:1px 6px;border-radius:var(--radius-pill)">通过</button>' : '') +
+          (canBan ? ' <button onclick="toggleBan(\'' + encodeURIComponent(c.username) + '\',' + (c.author_banned ? 1 : 0) + ')" style="background:none;border:1px solid var(--border-glow);color:var(--secondary);cursor:pointer;font-size:0.62rem;padding:1px 6px;border-radius:var(--radius-pill)">' + (c.author_banned ? '解封' : '封禁') + '</button>' : '') +
           (canDel ? ' <button onclick="deleteComment(\'' + c.id + '\')" style="background:none;border:none;color:var(--text-haze);cursor:pointer;font-size:0.62rem;margin-left:auto;transition:color 0.2s">Delete</button>' : '') +
         '</div>' +
         '<div style="font-size:0.85rem;color:var(--text-primary);line-height:1.65">' + c.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '</div>';
@@ -143,6 +146,11 @@ require_once __DIR__ . '/config.php';
   window.approveComment = function(id) {
     fetch('<?= $BASE ?>/comments-api.php?action=approve', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id,slug:slug,csrf_token:csrfToken}) })
       .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); });
+  };
+  window.toggleBan = function(name, banned) {
+    var action = banned ? 'unban' : 'ban';
+    fetch('<?= $BASE ?>/comments-api.php?action=' + action, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username: decodeURIComponent(name), csrf_token:csrfToken}) })
+      .then(function(r){return r.json()}).then(function(data){ if(data.success) loadComments(); else alert(data.error || 'Failed'); });
   };
   loadComments();
 })();

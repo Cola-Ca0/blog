@@ -5,6 +5,7 @@
  * 数据: data/treehole/{id}.json (宪法 4.2 数据即文件)
  */
 require __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/content-guard.php'; // 2026-10-14: 违法词过滤 (检查表 9.3.3)
 
 // CSRF token (会话级)
 if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); }
@@ -25,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content = trim($_POST['content'] ?? '');
         if ($content === '' || mb_strlen($content) > 200) {
             $error = '请写点什么（1-200 字）。';
+        } elseif (guard_hit($content) !== '' || guard_hit($nick) !== '') {   // 2026-10-14: 违法词过滤 (检查表 9.3.3)
+            $error = '内容包含禁止发布的词汇，请修改后再试。';
         } elseif (isset($_SESSION['treehole_last']) && time() - $_SESSION['treehole_last'] < 60) {
             $error = '请给树洞一点安静的时间（60 秒冷却）。';
         } else {

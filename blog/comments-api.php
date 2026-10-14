@@ -5,6 +5,7 @@
 require __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/config.php';   // 2026-09-28: 时区(created_at 此前早 8 小时) + $BASE 单一来源
 require_once __DIR__ . '/includes/json-store.php'; // 2026-09-28: 原子读改写（并发评论会丢数据）
+require_once __DIR__ . '/includes/content-guard.php'; // 2026-10-14: 违法词过滤 + 用户黑名单 (检查表 9.3.3 / 9.2.2c)
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -14,7 +15,7 @@ if (!is_dir($commentsDir)) mkdir($commentsDir, 0755, true);
 $action = $_GET['action'] ?? '';
 
 // 2026-08 审计 §2.4: 写操作只认 POST (红线 3.1)
-if (in_array($action, ['create', 'delete', 'approve'], true) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+if (in_array($action, ['create', 'delete', 'approve', 'ban', 'unban'], true) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
     exit;
@@ -38,6 +39,13 @@ if ($action === 'list') {
     // 加审核(2026-08-16)后所有写入都带显式 status, 故该默认值只影响更早的历史数据。
     if (!$isAdmin) {
         $comments = array_values(array_filter($comments, fn($c) => ($c['status'] ?? '') === 'approved'));
+    } else {
+        // 2026-10-14: 给审核界面标注作者的黑名单状态 (封禁/解封按钮, 检查表 9.2.2c)
+        $users = json_decode(@file_get_contents(__DIR__ . '/users.json') ?: '[]', true) ?: [];
+        $banned = [];
+        foreach ($users as $u) { if (!empty($u['banned'])) $banned[$u['username'] ?? ''] = true; }
+        foreach ($comments as &$c) { $c['author_banned'] = !empty($banned[$c['username'] ?? '']); }
+        unset($c);
     }
 
     echo json_encode($comments, JSON_UNESCAPED_UNICODE);
@@ -73,6 +81,17 @@ if ($action === 'create') {
     if (mb_strlen($content) > 2000) {
         http_response_code(400);
         echo json_encode(['error' => 'Content too long (max 2000 chars)']);
+        exit;
+    }
+    // 2026-10-14: 黑名单 + 违法词过滤 (检查表 9.2.2c / 9.3.3)
+    if ($isLoggedIn && guard_user_banned($username)) {
+        http_response_code(403);
+        echo json_encode(['error' => '该账号已被禁止发布内容']);
+        exit;
+    }
+    if (guard_hit($content) !== '' || guard_hit($guestName) !== '') {
+        http_response_code(400);
+        echo json_encode(['error' => '内容包含禁止发布的词汇，请修改后再试']);
         exit;
     }
     // 2026-08-16: 非管理员提交冷却 60s (个人站防刷最小方案)
@@ -221,6 +240,46 @@ if ($action === 'approve') {
     }
     http_response_code(404);
     echo json_encode(['error' => 'Comment not found']);
+    exit;
+}
+
+// --- BAN / UNBAN (admin only, 2026-10-14 检查表 9.2.2c 用户黑名单) ---
+if ($action === 'ban' || $action === 'unban') {
+    if (!$isAdmin) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Admin required']);
+        exit;
+    }
+    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $token = $input['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
+    $target = trim($input['username'] ?? '');
+    if ($target === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Username required']);
+        exit;
+    }
+    $hit = false;
+    jsonUpdate(__DIR__ . '/users.json', function (array &$users) use ($target, $action, &$hit) {
+        foreach ($users as $i => $u) {
+            if (($u['username'] ?? '') === $target) {
+                $users[$i]['banned'] = ($action === 'ban');
+                $hit = true;
+                return;
+            }
+        }
+        return false;                       // 没找到 → 不写盘
+    });
+    if (!$hit) {
+        http_response_code(404);
+        echo json_encode(['error' => '未找到该注册用户（匿名访客无法封禁）']);
+        exit;
+    }
+    echo json_encode(['success' => true]);
     exit;
 }
 

@@ -13,6 +13,7 @@
       <a href="<?= $BASE ?>/">Home</a>
       <a href="<?= $BASE ?>/projects/">Projects</a>
       <a href="<?= $BASE ?>/about.php">About</a>
+      <a href="<?= $BASE ?>/terms.php">Terms</a>
       <a href="<?= $BASE ?>/feed.xml">RSS</a>
       <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
       <a href="mailto:cola_ca0@qq.com" title="投诉举报 / Report abuse">举报</a>

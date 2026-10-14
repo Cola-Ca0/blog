@@ -9,7 +9,9 @@
 // 此前本页自己又写了一份 ini_set/session_start, 与 auth.php 两套参数容易漂移 —— 现已收口。
 // auth.php 同时提供 $isLoggedIn / $isAdmin / $csrfToken / $username(显示名, 已转义)。
 require __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/config.php';       // 2026-10-14: $BASE 单一来源 (terms 链接用)
 require_once __DIR__ . '/includes/json-store.php';   // 2026-09-28: 原子读改写
+require_once __DIR__ . '/includes/content-guard.php'; // 2026-10-14: 用户名违禁词过滤 (检查表 9.3.3)
 // ⚠️ 注意: 下文登录表单里的局部 $username 会覆盖 auth.php 的显示名变量。
 //    无害 —— 本页不 include navbar.php, 那个 $username 只用于导航栏渲染。
 //    若日后本页要用导航栏, 请把表单变量改名为 $inputUser。
@@ -200,6 +202,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error = '会话校验失败，请刷新页面重试！';
         $activeTab = 'register';
         $captcha = generateCaptcha();
+    } elseif (empty($_POST['agree_terms'])) {   // 2026-10-14: 服务协议与隐私政策须勾选同意 (检查表 9.2.1)
+        $error = '请先阅读并同意《用户服务协议与隐私政策》！';
+        $activeTab = 'register';
+        $captcha = generateCaptcha();
     } elseif (!password_verify($captchaInput, $captchaHash)) {
         $error = '人机验证答案错误，请重试！';
         $activeTab = 'register';
@@ -222,6 +228,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $captcha = generateCaptcha();
     } elseif (!preg_match('/^[a-zA-Z0-9_\x{4e00}-\x{9fa5}]+$/u', $username)) {
         $error = '用户名只能包含字母、数字、下划线和中文！';
+        $activeTab = 'register';
+        $captcha = generateCaptcha();
+    } elseif (guard_hit($username) !== '') {   // 2026-10-14: 用户名违禁词过滤 (检查表 9.3.3)
+        $error = '用户名包含禁止使用的词汇，请更换！';
         $activeTab = 'register';
         $captcha = generateCaptcha();
     } else {
@@ -583,6 +593,12 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
                             <div class="captcha-hint">点击左侧算式可刷新</div>
                         </div>
                     </div>
+                </div>
+                <div class="field" style="margin-top:2px">
+                    <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.75rem;color:var(--text-muted);cursor:pointer;font-weight:400;line-height:1.5">
+                        <input type="checkbox" name="agree_terms" value="1" required style="margin-top:3px;flex-shrink:0">
+                        <span>我已阅读并同意 <a href="<?= $BASE ?>/terms.php" target="_blank" style="color:var(--accent)">《用户服务协议与隐私政策》</a></span>
+                    </label>
                 </div>
                 <button type="submit" class="btn-submit btn-register-submit">注册 / Register并登录</button>
             </div>
