@@ -163,9 +163,10 @@ function renderMarkdown(string $text): string {
         '/```(\w*)\n(.*?)```/s',
         function ($m) use (&$placeholders, $esc) {
             $lang = $m[1] ? ' class="language-' . $esc($m[1]) . '"' : '';
+            $langName = $m[1] !== '' ? $m[1] : 'text';  // 代码块角标用：无标注时回退 text
             $code = $esc($m[2]);
             $key = '%%CODE' . count($placeholders) . '%%';
-            $placeholders[$key] = "<pre><code{$lang}>{$code}</code></pre>";
+            $placeholders[$key] = '<pre data-lang="' . $langName . '"><code' . $lang . '>' . $code . '</code></pre>';
             return $key;
         },
         $text
@@ -216,7 +217,9 @@ function renderMarkdown(string $text): string {
     $text = preg_replace_callback('/`([^`]+)`/', fn($m) => '<code>' . $esc($m[1]) . '</code>', $text);
 
     // 9. Unordered lists — group consecutive <li> into <ul>
-    $text = preg_replace_callback('/^- (.+)$/m', fn($m) => '<li>' . $m[1] . '</li>', $text);
+    //    ⚠️ 必须允许 ≤3 空格的缩进（CommonMark / Obsidian 行为），
+    //    否则笔记里缩进过的 "- xxx"（嵌套列表）在博客上会原样显示成文字。
+    $text = preg_replace_callback('/^ {0,3}- (.+)$/m', fn($m) => '<li>' . $m[1] . '</li>', $text);
     $text = preg_replace('/((?:<li>.*<\/li>\n?)+)/', '<ul>$1</ul>', $text);
     // 9b. Tables — header + |---| separator + body rows
     // (cells raw: inline transforms already applied upstream, same as paragraphs)
@@ -238,7 +241,8 @@ function renderMarkdown(string $text): string {
     );
 
     // 9c. Ordered lists — group consecutive "N. " lines into <ol>
-    $text = preg_replace_callback('/^\d+\. (.+)$/m', fn($m) => '<oli>' . $m[1] . '</oli>', $text);
+    //     同上：允许 ≤3 空格缩进
+    $text = preg_replace_callback('/^ {0,3}\d+\. (.+)$/m', fn($m) => '<oli>' . $m[1] . '</oli>', $text);
     $text = preg_replace('/((?:<oli>.*<\/oli>\n?)+)/', "<ol>\n$1</ol>", $text);
     $text = str_replace(['<oli>', '</oli>'], ['<li>', '</li>'], $text);
 

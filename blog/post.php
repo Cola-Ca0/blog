@@ -161,7 +161,7 @@ body {
   border:1px solid var(--border-glow); position:relative;
 }
 .article-body pre::before {
-  content:'TERMINAL'; position:absolute; top:8px; left:14px;
+  content:attr(data-lang); text-transform:uppercase; position:absolute; top:8px; left:14px;
   font-family:var(--font-display); font-size:0.58rem; font-weight:600;
   color:var(--text-haze); letter-spacing:0.1em;
 }
