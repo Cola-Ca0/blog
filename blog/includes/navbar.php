@@ -56,7 +56,6 @@ require_once __DIR__ . '/config.php';
         <a href="<?= $BASE ?>/login.php?action=logout" class="btn-logout">LOGOUT</a>
       <?php else: ?>
         <a href="<?= $BASE ?>/login.php" class="btn-login">SIGN IN</a>
-        <a href="<?= $BASE ?>/login.php?tab=register" class="btn-register">SIGN UP</a>
       <?php endif; ?>
     </div>
   </div>

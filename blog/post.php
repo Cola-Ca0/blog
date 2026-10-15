@@ -269,8 +269,7 @@ body {
     <?= $post['body_html'] ?>
   </div>
 
-  <!-- Comments -->
-  <?php $commentSlug = $slug; require __DIR__ . '/includes/comment-system.php'; ?>
+  <!-- 2026-10-15 备案整改: 评论区下线 (恢复见 git 历史) -->
 </main>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

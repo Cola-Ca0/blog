@@ -1,7 +1,16 @@
 <?php
 /**
  * Comments API — list, create, delete
+ *
+ * 2026-10-15 备案整改: 文章评论(交互功能)整站下线, 接口一律 404。
+ * 原实现完整保留在下方(不会执行) —— 如日后依法变更备案恢复交互功能,
+ * 删除本段闸并恢复前端入口即可。评论历史数据留存于 data/comments/。
  */
+http_response_code(404);
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode(['error' => 'Not Found']);
+exit;
+
 require __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/config.php';   // 2026-09-28: 时区(created_at 此前早 8 小时) + $BASE 单一来源
 require_once __DIR__ . '/includes/json-store.php'; // 2026-09-28: 原子读改写（并发评论会丢数据）

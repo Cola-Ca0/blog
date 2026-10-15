@@ -40,8 +40,10 @@ echo "\n=== Cola_CaO Blog Test Suite ===\n\n";
 
 require __DIR__ . '/test_auth.php';
 require __DIR__ . '/test_projects.php';
-require __DIR__ . '/test_comments.php';
-require __DIR__ . '/test_content_guard.php';   // 依赖 test_comments.php 的 commentsCall()
+// 2026-10-15 备案整改: 评论交互下线 (comments-api.php 已置 404), 相关测试暂停。
+// 日后恢复交互功能时, 连同 comments-api.php 的闸一起取消注释。
+// require __DIR__ . '/test_comments.php';
+// require __DIR__ . '/test_content_guard.php';   // 依赖 test_comments.php 的 commentsCall()
 require __DIR__ . '/test_markdown_xss.php';
 require __DIR__ . '/test_json_store.php';
 require __DIR__ . '/test_paths.php';

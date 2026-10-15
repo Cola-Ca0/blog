@@ -17,28 +17,30 @@ if (!is_dir($treeholeDir)) mkdir($treeholeDir, 0755, true);
 $error = '';
 $success = '';
 
-// ========== 提交 (只认 POST) ==========
+// ========== 提交 (只认 POST, 2026-10-15 起仅站长可发) ==========
+// 备案整改: 个人备案站点不得含访客发布功能 —— 树洞改为「站长的深海独白」,
+// 前台提交入口仅站长可见, POST 亦校验身份。历史访客数据保留在磁盘, 不再上公开面。
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+    if (!$isAdmin) {
+        http_response_code(403);
+        $error = '树洞暂时只接收来自站长的漂流瓶。';
+    } elseif (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
         $error = '会话已失效，请刷新页面重试。';
     } else {
         $nick = mb_substr(trim($_POST['nick'] ?? ''), 0, 16);
         $content = trim($_POST['content'] ?? '');
         if ($content === '' || mb_strlen($content) > 200) {
             $error = '请写点什么（1-200 字）。';
-        } elseif (guard_hit($content) !== '' || guard_hit($nick) !== '') {   // 2026-10-14: 违法词过滤 (检查表 9.3.3)
+        } elseif (guard_hit($content) !== '' || guard_hit($nick) !== '') {
             $error = '内容包含禁止发布的词汇，请修改后再试。';
-        } elseif (isset($_SESSION['treehole_last']) && time() - $_SESSION['treehole_last'] < 60) {
-            $error = '请给树洞一点安静的时间（60 秒冷却）。';
         } else {
             $id = bin2hex(random_bytes(8));
             file_put_contents(
                 $treeholeDir . $id . '.json',
-                json_encode(['content' => $content, 'nick' => $nick, 'ts' => time(), 'status' => 'pending'], JSON_UNESCAPED_UNICODE),
+                json_encode(['content' => $content, 'nick' => $nick, 'ts' => time(), 'status' => 'approved', 'by' => 'admin'], JSON_UNESCAPED_UNICODE),
                 LOCK_EX
             );
-            $_SESSION['treehole_last'] = time();
-            $success = '已投入树洞 — 审核通过后就会出现在这里。';
+            $success = '已投入树洞。';
         }
     }
 }
@@ -47,7 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $treeholes = [];
 foreach (glob($treeholeDir . '*.json') as $f) {
     $t = json_decode(file_get_contents($f), true);
-    if (is_array($t) && ($t['status'] ?? '') === 'approved') $treeholes[] = $t;
+    // 2026-10-15 备案整改: 仅展示站长发布的树洞 (历史访客留言数据保留在磁盘, 不上公开面)
+    if (is_array($t) && ($t['status'] ?? '') === 'approved' && ($t['by'] ?? '') === 'admin') $treeholes[] = $t;
 }
 usort($treeholes, function ($a, $b) { return $b['ts'] <=> $a['ts']; });
 ?>
@@ -56,7 +59,7 @@ usort($treeholes, function ($a, $b) { return $b['ts'] <=> $a['ts']; });
 <head>
 <?php
 $pageTitle = '树洞 · Cola_CaO';
-$pageDesc = '树洞 — 一位匿名倾诉者的漂流瓶。';
+$pageDesc = '树洞 — 站长的深海独白。';
 require __DIR__ . '/includes/head.php';
 ?>
 <style>
@@ -126,20 +129,22 @@ body {
   <div class="treehole-head">
     <h1>TREE HOLE / 树洞</h1>
   </div>
-  <p class="treehole-sub">有些话只想说给海听 — 投进树洞，你会被温柔地接住。</p>
+  <p class="treehole-sub">深海的独白 — 有些话，说给海听。</p>
 
   <?php if ($error): ?><div class="hole-msg error"><?= htmlspecialchars($error) ?></div>
   <?php elseif ($success): ?><div class="hole-msg ok"><?= htmlspecialchars($success) ?></div>
   <?php endif; ?>
 
+  <?php if ($isAdmin): /* 2026-10-15 备案整改: 提交入口仅站长可见 */ ?>
   <form class="hole-form" method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
     <textarea name="content" maxlength="200" placeholder="写下你想说的（1-200 字）…" required></textarea>
     <div class="hole-form-row">
-      <input type="text" name="nick" maxlength="16" placeholder="匿名署名（可留空）">
+      <input type="text" name="nick" maxlength="16" placeholder="署名（可留空）">
       <button type="submit" class="hole-submit">投进树洞</button>
     </div>
   </form>
+  <?php endif; ?>
 
   <?php if ($treeholes): ?>
     <?php foreach (array_slice($treeholes, 0, 50) as $t): ?>
@@ -152,7 +157,7 @@ body {
       </div>
     <?php endforeach; ?>
   <?php else: ?>
-    <div class="empty-hole">树洞空空的 — 等第一位倾诉者。</div>
+    <div class="empty-hole">树洞空空的 — 深海很安静。</div>
   <?php endif; ?>
 </div>
 

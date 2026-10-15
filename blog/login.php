@@ -189,90 +189,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// ========== 注册处理 ==========
+// ========== 注册处理 (2026-10-15 备案整改: 功能关闭) ==========
+// 个人备案站点取消交互功能, 不再开放访客注册; 仅保留站长登录。
+// 原注册实现(含查重/违禁词校验/自动登录)见 git 历史, 恢复交互时一并恢复。
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
-    $username = trim($_POST['reg_username'] ?? '');
-    $password = trim($_POST['reg_password'] ?? '');
-    $password2 = trim($_POST['reg_password2'] ?? '');
-    $captchaInput = trim($_POST['reg_captcha'] ?? '');
-    $captchaHash = $_SESSION['captcha_hash'] ?? '';
-    unset($_SESSION['captcha_hash']);
-
-    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
-        $error = '会话校验失败，请刷新页面重试！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (empty($_POST['agree_terms'])) {   // 2026-10-14: 服务协议与隐私政策须勾选同意 (检查表 9.2.1)
-        $error = '请先阅读并同意《用户服务协议与隐私政策》！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (!password_verify($captchaInput, $captchaHash)) {
-        $error = '人机验证答案错误，请重试！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif ($username === '' || $password === '') {
-        $error = '请填写用户名和密码！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (strlen($username) < 2 || strlen($username) > 20) {
-        $error = '用户名长度需为 2-20 个字符！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (strlen($password) < 8) {
-        $error = '密码长度至少为 8 位！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif ($password !== $password2) {
-        $error = '两次输入的密码不一致！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (!preg_match('/^[a-zA-Z0-9_\x{4e00}-\x{9fa5}]+$/u', $username)) {
-        $error = '用户名只能包含字母、数字、下划线和中文！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } elseif (guard_hit($username) !== '') {   // 2026-10-14: 用户名违禁词过滤 (检查表 9.3.3)
-        $error = '用户名包含禁止使用的词汇，请更换！';
-        $activeTab = 'register';
-        $captcha = generateCaptcha();
-    } else {
-        // 2026-09-28: 查重与追加必须在同一把锁里 —— 原来「先查后写」之间有窗口,
-        // 两人同时注册同一用户名会双双通过查重, 后写的覆盖先写的(静默丢一个账号)。
-        $dup = false; $created = false;
-        $ok = jsonUpdate($usersFile, function (array &$users) use ($username, $password, &$dup, &$created) {
-            foreach ($users as $u) {
-                if (($u['username'] ?? '') === $username) { $dup = true; return false; }
-            }
-            $users[] = [
-                'username'   => $username,
-                'password'   => password_hash($password, PASSWORD_BCRYPT),
-                'role'       => 'user',
-                'created_at' => date('Y-m-d H:i:s'),
-            ];
-            $created = true;
-        });
-
-        if ($dup) {
-            $error = '该用户名已被注册，请换一个！';
-            $activeTab = 'register';
-            $captcha = generateCaptcha();
-        } elseif (!$ok || !$created) {
-            $error = '注册写入失败，请重试。';
-            $activeTab = 'register';
-            $captcha = generateCaptcha();
-        } else {
-            session_regenerate_id(true); // 审计 §3.4: 注册并自动登录后更换 session id
-            $_SESSION['username'] = $username;
-            $_SESSION['is_admin'] = false;
-            setcookie('username', $username, [
-                'expires' => time() + 86400 * 7,
-                'path' => '/',
-                'httponly' => true,
-                'samesite' => 'Lax',
-            ]);
-            header('Location: index.php');
-            exit;
-        }
-    }
+    http_response_code(403);
+    $error = '注册功能暂未开放。';
+    $captcha = generateCaptcha();
 }
 
 // 兜底: 畸形 POST (无 action) 走到渲染时补一个算式, 避免空题
@@ -529,10 +452,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         <h1>Cola_CaO <span style="font-weight:300;color:var(--text-muted);font-size:0.7em;">&middot; Sign In</span></h1>
     </div>
 
-    <div class="tab-nav">
-        <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">登录 / Sign In</button>
-        <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">注册 / Register</button>
-    </div>
+    <!-- 2026-10-15 备案整改: 注册 tab 下线, 仅保留站长登录 -->
 
     <?php if ($error !== ''): ?>
         <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
@@ -572,46 +492,7 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         </form>
     </div>
 
-    <!-- 注册面板 -->
-    <div class="tab-panel" id="panelRegister">
-        <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
-            <input type="hidden" name="action" value="register">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-            <div class="form-group">
-                <div class="field">
-                    <label for="reg_username">用户名</label>
-                    <input type="text" id="reg_username" name="reg_username" placeholder="2-20 个字符，支持中英文" maxlength="20" required autocomplete="username">
-                </div>
-                <div class="field">
-                    <label for="reg_password">密码</label>
-                    <input type="password" id="reg_password" name="reg_password" placeholder="至少 8 位密码" required minlength="8" autocomplete="new-password">
-                </div>
-                <div class="field">
-                    <label for="reg_password2">确认密码</label>
-                    <input type="password" id="reg_password2" name="reg_password2" placeholder="再次输入密码" required autocomplete="new-password">
-                </div>
-                <div class="field">
-                    <label>人机验证</label>
-                    <div class="captcha-row">
-                        <div class="captcha-display" id="captchaDisplay2" onclick="refreshCaptcha()" title="点击刷新验证码">
-                            <?= htmlspecialchars($captcha['question']) ?>
-                        </div>
-                        <div class="captcha-field">
-                            <input type="text" name="reg_captcha" placeholder="请输入答案" required autocomplete="off">
-                            <div class="captcha-hint">点击左侧算式可刷新</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="terms-label">
-                        <input type="checkbox" name="agree_terms" value="1" required>
-                        <span>我已阅读并同意 <a href="<?= $BASE ?>/terms.php" target="_blank">《用户服务协议与隐私政策》</a></span>
-                    </label>
-                </div>
-                <button type="submit" class="btn-submit btn-register-submit">注册 / Register并登录</button>
-            </div>
-        </form>
-    </div>
+    <!-- 2026-10-15 备案整改: 注册面板下线 -->
 
     <div class="login-footer">
         「在深海的静谧中，等待你的归来。」
@@ -621,36 +502,10 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
 </div>
 
 <script>
-    // Tab 切换
-    function switchTab(tab) {
-        var loginBtn = document.getElementById('tabLoginBtn');
-        var registerBtn = document.getElementById('tabRegisterBtn');
-        var loginPanel = document.getElementById('panelLogin');
-        var registerPanel = document.getElementById('panelRegister');
-
-        if (tab === 'login') {
-            loginBtn.classList.add('active');
-            registerBtn.classList.remove('active');
-            loginPanel.classList.add('active');
-            registerPanel.classList.remove('active');
-        } else {
-            registerBtn.classList.add('active');
-            loginBtn.classList.remove('active');
-            registerPanel.classList.add('active');
-            loginPanel.classList.remove('active');
-        }
-    }
-
-    // 保持上次选中的 tab
-    <?php if ($activeTab === 'register'): ?>
-        switchTab('register');
-    <?php endif; ?>
-
-    // 刷新验证码
+    // 2026-10-15 备案整改: 注册 tab 下线, tab 切换逻辑移除
+    // 刷新验证码 (带 URL 跳转以避开 POST 重复提交; 清掉历史遗留的 tab 参数)
     function refreshCaptcha() {
-        var url = new URL(window.location.href);
-        url.searchParams.set('tab', document.getElementById('panelRegister').classList.contains('active') ? 'register' : 'login');
-        window.location.href = url.toString();
+        window.location.href = window.location.pathname;
     }
 
     // Background matches blog index.php (grid + orbs + scanlines)

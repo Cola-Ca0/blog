@@ -189,9 +189,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
   <?php endif; ?>
 </div>
 
-<div style="max-width:900px;margin:0 auto;padding:0 28px 60px">
-<?php $commentSlug = 'about'; require __DIR__ . '/includes/comment-system.php'; ?>
-</div>
+<!-- 2026-10-15 备案整改: About 页评论下线 (恢复见 git 历史) -->
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
 <?php if ($isAdmin): ?>

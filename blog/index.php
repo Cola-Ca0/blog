@@ -1014,57 +1014,7 @@ body {
         </div>
       </div>
 
-      <!-- Latest Signals — 最近已审评论 (2026-08 用户拍板; 直读 data/comments/*.json, 宪法 4.2/4.4 零缓存) -->
-      <?php
-      $shorten = function ($s, $n) {
-        $s = trim((string)$s);
-        if (preg_match('/^.{0,' . (int)$n . '}/us', $s, $m)) {
-          $out = $m[0];
-          return $out !== $s ? $out . '…' : $out;
-        }
-        return $s;
-      };
-      $signals = [];
-      if (is_dir($commentDir)) {
-        foreach (glob($commentDir . '*.json') as $cf) {
-          $cslug = basename($cf, '.json');
-          $clist = json_decode(file_get_contents($cf), true);
-          if (!is_array($clist)) continue;
-          foreach ($clist as $c) {
-            if (!is_array($c)) continue;
-            // 2026-09-29: 原写法只跳过显式 pending —— 缺 status 字段的仍会出现在首页侧栏 (fail-open)。
-            // 与 comments-api.php / treehole.php 统一: 非 approved 一律不上公开面。
-            if (($c['status'] ?? '') !== 'approved') continue;
-            $signals[] = [
-              'slug' => $cslug,
-              'name' => (string)($c['username'] ?? '访客'),
-              'text' => trim((string)($c['content'] ?? '')),
-              'time' => (string)($c['created_at'] ?? '')
-            ];
-          }
-        }
-      }
-      usort($signals, function ($a, $b) { return strcmp($b['time'], $a['time']); });
-      $signals = array_slice($signals, 0, 5);
-      ?>
-      <div class="sidebar-widget">
-        <h3 class="widget-title"><span class="diamond-sm"></span> Latest Signals / 最新信号</h3>
-        <?php if ($signals): ?>
-        <div class="signal-list">
-          <?php foreach ($signals as $sig): ?>
-          <a class="signal-item" href="<?= $sig['slug'] === 'about' ? 'about.php' : 'post.php?slug=' . rawurlencode($sig['slug']) ?>#comments">
-            <span class="signal-dot" aria-hidden="true"></span>
-            <span class="signal-body">
-              <span class="signal-meta"><?= htmlspecialchars($shorten($sig['name'], 12)) ?> · <?= htmlspecialchars($sig['time']) ?></span>
-              <span class="signal-text"><?= htmlspecialchars($shorten($sig['text'], 60)) ?></span>
-            </span>
-          </a>
-          <?php endforeach; ?>
-        </div>
-        <?php else: ?>
-        <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;padding:16px 0">No signals yet. / 暂无信号</p>
-        <?php endif; ?>
-      </div>
+      <!-- 2026-10-15 备案整改: Latest Signals (最近评论) 侧栏下线 (恢复见 git 历史) -->
 
       <!-- Dive Calendar — 当月发文热力图 (2026-08 用户拍板; glob 直读 posts/*.md, 宪法 4.4 零缓存) -->
       <?php
