@@ -75,9 +75,11 @@ test('标题/粗体/斜体/删除线/行内码 仍正常', function () {
     assertTrue(strpos(renderMarkdown('`x=1`'), '<code>x=1</code>') !== false, '行内码坏了');
 });
 
-test('代码块仍正常 (含语言标注)', function () {
+test('代码块仍正常 (含语言标注 + data-lang 角标)', function () {
     $out = renderMarkdown("```php\n\$a=1;\n```");
-    assertTrue(strpos($out, '<pre><code class="language-php">') !== false, "代码块坏了: $out");
+    assertTrue(strpos($out, '<pre data-lang="php"><code class="language-php">') !== false, "代码块坏了: $out");
+    $out2 = renderMarkdown("```\nplain\n```");
+    assertTrue(strpos($out2, '<pre data-lang="text">') !== false, "无标注代码块的回退坏了: $out2");
 });
 
 test('块引用仍正常 (入口转义把 > 变成 &gt;, 正则已同步)', function () {
