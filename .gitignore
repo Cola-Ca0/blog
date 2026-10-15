@@ -63,3 +63,6 @@ messages.json
 journal.json
 stats.json
 uploads/
+
+# 杂物 (2026-10-15): 实验残留音频, 别被 deploy.bat 的 add -A 捎上 GitHub
+/violin_only.wav
