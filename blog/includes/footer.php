@@ -19,7 +19,7 @@
       <a href="mailto:cola_ca0@qq.com" title="投诉举报 / Report abuse">举报</a>
     </div>
     <div class="footer-hud">
-      Cola_CaO // PHP · Vanilla JS · Deep Sea Station · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2026084546号-1</a>
+      Cola_CaO // PHP · Vanilla JS · Deep Sea Station · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2026084546号-1</a> · <a href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502013684" rel="noreferrer" target="_blank"><img src="<?= $BASE ?>/assets/images/gongan-beian.png" alt="公安备案">浙公网安备33010502013684号</a>
     </div>
   </div>
 </footer>
