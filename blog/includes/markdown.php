@@ -199,8 +199,18 @@ function renderMarkdown(string $text): string {
     $text = preg_replace_callback('/^&gt;\s+(.+)$/m', fn($m) => '<blockquote>' . $m[1] . '</blockquote>', $text);
 
     // 5. Images (before links — same bracket syntax)
+    // 2026-10-16: 站内图片路径规范化 —— 文章模板示例写 '/blog/assets/...'(本地 $BASE 恰为 '/blog'),
+    // 线上域名根部署 $BASE='' 时原样输出会 404。统一归一: '/blog/assets/'、'/assets/'、
+    // 'assets/'、'./assets/' 一律重写为 $BASE + '/assets/...', 本地线上两端都可写。
     $text = preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {
-        return '<img src="' . $safeUrl($m[2]) . '" alt="' . $esc($m[1]) . '" loading="lazy">';
+        $u = $safeUrl($m[2]);
+        $base = $GLOBALS['BASE'] ?? '';
+        if (str_starts_with($u, '/blog/assets/')) {
+            $u = $base . substr($u, 5);            // '/blog/assets/x' → $BASE + '/assets/x'
+        } elseif (preg_match('~^\.?/?assets/~', $u)) {
+            $u = $base . '/' . ltrim($u, './');    // 'assets/x' → $BASE + '/assets/x'
+        }
+        return '<img src="' . $u . '" alt="' . $esc($m[1]) . '" loading="lazy">';
     }, $text);
 
     // 6. Links

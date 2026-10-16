@@ -135,3 +135,34 @@ test('白名单是字面量匹配 —— 带属性的 br / blockquote 不放行'
     assertFalse(strpos($b, 'onmouseover=alert(1)>') !== false, "带事件属性的 blockquote 被放行: $b");
     assertFalse(md_hasLiveTag($b), "产出活标签: $b");
 });
+
+// ---- 站内图片路径规范化 (2026-10-16): 本地 $BASE='/blog' 与线上 $BASE='' 两端可写 ----
+
+test('图片路径: /blog/assets/ 前缀随 $BASE 归一 (线上不 404)', function () {
+    $GLOBALS['BASE'] = '';
+    $out = renderMarkdown('![x](/blog/assets/images/posts/a.jpg)');
+    assertTrue(strpos($out, 'src="/assets/images/posts/a.jpg"') !== false, "根部署应去掉 /blog 前缀: $out");
+
+    $GLOBALS['BASE'] = '/blog';
+    $out = renderMarkdown('![x](/blog/assets/images/posts/a.jpg)');
+    assertTrue(strpos($out, 'src="/blog/assets/images/posts/a.jpg"') !== false, "子目录部署应保留: $out");
+});
+
+test('图片路径: 裸 assets/ 写法自动补 $BASE', function () {
+    $GLOBALS['BASE'] = '';
+    $out = renderMarkdown('![x](assets/images/posts/b.jpg)');
+    assertTrue(strpos($out, 'src="/assets/images/posts/b.jpg"') !== false, "裸 assets 应补成 /assets: $out");
+
+    $GLOBALS['BASE'] = '/blog';
+    $out = renderMarkdown('![x](./assets/images/posts/c.jpg)');
+    assertTrue(strpos($out, 'src="/blog/assets/images/posts/c.jpg"') !== false, "./assets 应补成 /blog/assets: $out");
+
+    unset($GLOBALS['BASE']); // 还原, 不污染后续测试
+});
+
+test('图片路径: 外链与协议白名单行为不受影响', function () {
+    $out = renderMarkdown('![x](https://example.com/a.png)');
+    assertTrue(strpos($out, 'src="https://example.com/a.png"') !== false, "外链不应被动: $out");
+    $bad = renderMarkdown('![x](javascript:alert(1))');
+    assertFalse(strpos($bad, 'javascript:') !== false, "javascript: 仍须被拦截: $bad");
+});
