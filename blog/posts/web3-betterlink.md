@@ -300,5 +300,4 @@ ETH有它专门的作用
 
 鸣谢：YMSora，Deepseek
 
-Cola_CaO From HZNU
-2026.10.20
+<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.10.20</blockquote>
