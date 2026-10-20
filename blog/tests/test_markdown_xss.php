@@ -166,3 +166,40 @@ test('图片路径: 外链与协议白名单行为不受影响', function () {
     $bad = renderMarkdown('![x](javascript:alert(1))');
     assertFalse(strpos($bad, 'javascript:') !== false, "javascript: 仍须被拦截: $bad");
 });
+
+// ---- 站内文章链接归一 (2026-10-20): 本地 $BASE='/blog' 与线上 $BASE='' 两端可写 ----
+
+test('文章链接: /blog/post/ 前缀随 $BASE 归一 (线上不 404)', function () {
+    $GLOBALS['BASE'] = '';
+    $out = renderMarkdown('[x](/blog/post/PRNG)');
+    assertTrue(strpos($out, 'href="/post/PRNG"') !== false, "根部署应去掉 /blog 前缀: $out");
+
+    $GLOBALS['BASE'] = '/blog';
+    $out = renderMarkdown('[x](/blog/post/PRNG)');
+    assertTrue(strpos($out, 'href="/blog/post/PRNG"') !== false, "子目录部署应保留: $out");
+});
+
+test('文章链接: /post/ 与裸 post/ 写法自动补 $BASE', function () {
+    $GLOBALS['BASE'] = '';
+    $out = renderMarkdown('[x](/post/PRNG)');
+    assertTrue(strpos($out, 'href="/post/PRNG"') !== false, "根部署 /post 应保留: $out");
+    $out = renderMarkdown('[x](post/PRNG)');
+    assertTrue(strpos($out, 'href="/post/PRNG"') !== false, "裸 post 应补成 /post: $out");
+
+    $GLOBALS['BASE'] = '/blog';
+    $out = renderMarkdown('[x](./post/PRNG)');
+    assertTrue(strpos($out, 'href="/blog/post/PRNG"') !== false, "./post 应补成 /blog/post: $out");
+
+    unset($GLOBALS['BASE']); // 还原, 不污染后续测试
+});
+
+test('文章链接: 外链与锚点不受影响', function () {
+    $GLOBALS['BASE'] = '/blog';
+    $out = renderMarkdown('[x](https://example.com/a)');
+    assertTrue(strpos($out, 'href="https://example.com/a"') !== false, "外链不应被动: $out");
+    $out = renderMarkdown('[x](/blog/post/RSA#intro)');
+    assertTrue(strpos($out, 'href="/blog/post/RSA#intro"') !== false, "锚点应保留: $out");
+    $bad = renderMarkdown('[x](javascript:alert(1))');
+    assertFalse(strpos($bad, 'javascript:') !== false, "javascript: 仍须被拦截: $bad");
+    unset($GLOBALS['BASE']);
+});

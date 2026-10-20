@@ -45,7 +45,7 @@ Disallow: /upload/
 
 直到我把其它的路径都探完了（没错，我三天时间把除了ad?min以外的大多数路径都探了一遍），最后在ds的帮助之下，它告诉我：ad?min的?有没有可能是待补字符呢。
 
-然后尝试填入 `1`，我打了三天之后终于入门了
+然后尝试填入 `1`，我打了三天之后终于入门了TAT
 
 ```text
 # 请求链路验证
@@ -197,7 +197,7 @@ function ad1min_result(): array
 
 ## 第三节：pt.2
 
-`ad1min_backend.php`（真源码）确认：成功即 `$_SESSION['stage1'] = true`，页面出现「进入图片审核后台」按钮。
+`ad1min_backend.php` 真源码：成功即 `$_SESSION['stage1'] = true`，页面出现 进入图片审核后台 按钮。
 第二段内容需要我们进入图片审核后台（我们惊讶地发现之前403的upload现在可进了）
 因为打穿pt.1使得我们获得了PHPSESSID 让我们有权限能进/upload/了
 
@@ -358,7 +358,7 @@ def read(f, limit=5000):
 
 # 1) 列目录确认文件名
 internal = ls("/srv/upload/_internal")
-time.sleep(0.2)          # 每步之间停一下，轻手轻脚
+time.sleep(0.2)         
 
 # 2) 读第二关现行逻辑全文（就是下一小节那份 upload_backend.php）
 read("/srv/upload/_internal/upload_backend.php")

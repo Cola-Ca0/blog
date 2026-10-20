@@ -66,3 +66,8 @@ uploads/
 
 # 杂物 (2026-10-15): 实验残留音频, 别被 deploy.bat 的 add -A 捎上 GitHub
 /violin_only.wav
+
+# 调试残留 (2026-10-20): 容器拉取错误响应 / 分享详情 JSON / ws 连通性脚本, 防 add -A 捎带
+ghcr-tok.txt
+detail.json
+wstest.js

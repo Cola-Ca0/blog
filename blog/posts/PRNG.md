@@ -462,6 +462,26 @@ for i in range(624):
 - **LCG**：几个连续输出 → 解方程恢复参数/状态（条件不足时还有“截断 LCG”格攻击这一路）
 - **LFSR**：约 2n 位输出 → Berlekamp–Massey 直接还原反馈多项式
 - **MT19937**：攒 624 个连续 32 位输出 → untwist 反推整个状态；种子空间小的话连输出都不用攒——直接枚举种子
+```python
+import random
+from randcrack import RandCrack
+
+# 1. 收集 624 个 32 位整数输出(任意连续即可)
+rc = RandCrack()
+for _ in range(624):
+    # 用 getrandbits(32) 直接获取 32 位输出
+    rc.submit(random.getrandbits(32))
+  
+# 2. 状态已恢复，现在可以预测
+predicted = rc.predict_getrandbits(32)
+actual = random.getrandbits(32)
+print(f"预测值: {predicted}, 实际值: {actual}")  # 两者应相同
+
+# 也可以预测原本的 random.random()
+predicted_float = rc.predict_random()
+actual_float = random.random()
+print(f"预测浮点数: {predicted_float}, 实际浮点数: {actual_float}")
+```
 
 如果是 CSPRNG，就把它当用法问题查（熵池饥饿之类）——不过这太难了，直接逆向出 CSPRNG 的 seed？那是何方神圣。
 

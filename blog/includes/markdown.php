@@ -214,8 +214,17 @@ function renderMarkdown(string $text): string {
     }, $text);
 
     // 6. Links
+    // 2026-10-20: 站内文章链接归一 (同第 5 步图片) —— 作者从本地地址栏复制 '/blog/post/x',
+    // 线上域名根部署 $BASE='' 时原样输出 404。归一后 '/blog/post/'、'/post/'、'post/' 三写法两端通用。
     $text = preg_replace_callback('/\[([^\]]*)\]\(([^)]+)\)/', function($m) use ($esc, $safeUrl) {
-        return '<a href="' . $safeUrl($m[2]) . '">' . $esc($m[1]) . '</a>';
+        $u = $safeUrl($m[2]);
+        $base = $GLOBALS['BASE'] ?? '';
+        if (str_starts_with($u, '/blog/post/')) {
+            $u = $base . substr($u, 5);            // '/blog/post/x' → $BASE + '/post/x'
+        } elseif (preg_match('~^\.?/?post/~', $u)) {
+            $u = $base . '/' . ltrim($u, './');    // 'post/x' → $BASE + '/post/x'
+        }
+        return '<a href="' . $u . '">' . $esc($m[1]) . '</a>';
     }, $text);
 
     // 7. Bold + Italic + Strikethrough
