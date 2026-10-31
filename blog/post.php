@@ -174,18 +174,18 @@ body {
 .article-body pre:hover .code-copy-btn { opacity:1; }
 .code-copy-btn:hover { background:var(--primary); color:var(--text-primary); border-color:var(--primary); }
 .code-copy-btn.copied { background:var(--accent); color:#081828; border-color:var(--accent); }
-.article-body pre code { background:none; padding:0; color:#b8d4e8; font-size:0.82rem;
+.article-body pre code { background:none; padding:0; color:#c9e0f2; font-size:0.82rem;
   line-height:1.6; }
 /* 语法着色 (2026-10-31): 服务端 PHP 词法扫描器产出 .hl-* span —— includes/markdown.php highlightCode()。
-   调色板「冷夜·提亮一档」: 以 Tokyo Night 为底, 整体亮度 +8%。
+   调色板「冷夜·提亮两档」: 以 Tokyo Night 为底, 整体亮度 +16%（用户对比现网后判定一档仍偏暗）。
    关键字紫 / 字符串青柠 / 数字橙 / 函数蓝 / 变量粉 / 注释灰蓝斜体。
    ⚠️ 与宪法 1.3(One Accent)存在张力, 用户 2026-10-31 明确要求「和正常代码一样的五颜六色」。 */
-.article-body pre code .hl-kw  { color:#c5a8f9; }
-.article-body pre code .hl-str { color:#aad878; }
-.article-body pre code .hl-num { color:#ffae7a; }
-.article-body pre code .hl-fn  { color:#8ab2f9; }
-.article-body pre code .hl-var { color:#f98a9f; }
-.article-body pre code .hl-com { color:#67719b; font-style:italic; }
+.article-body pre code .hl-kw  { color:#cfb5fb; }
+.article-body pre code .hl-str { color:#b6e086; }
+.article-body pre code .hl-num { color:#ffbe90; }
+.article-body pre code .hl-fn  { color:#9ac2fb; }
+.article-body pre code .hl-var { color:#fb9eb0; }
+.article-body pre code .hl-com { color:#7883ad; font-style:italic; }
 /* 浅色主题: 代码块当作一块「仪器屏」保持深底 —— 原来 rgba(0,0,0,.4) 压在浅底上是灰面,
    深字压上去读不清。 */
 [data-theme="light"] .article-body pre { background:#12283c; border-color:rgba(58,128,176,0.35); }
