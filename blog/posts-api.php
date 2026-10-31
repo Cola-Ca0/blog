@@ -106,7 +106,8 @@ if ($action !== 'list') {
 }
 
 $page = max(1, intval($_GET['page'] ?? 1));
-$perPage = isset($_GET['per']) ? min(50, max(4, intval($_GET['per']))) : 6; /* 2026-08-27: 首页自适应(右栏等高用), 其余默认 6 */
+/* 2026-10-31 用户定：一页 10 条（原默认 6，且首页曾按侧栏高度自适应——两页条数不一致导致重叠） */
+$perPage = isset($_GET['per']) ? min(50, max(4, intval($_GET['per']))) : 10;
 $filterTag = $_GET['tag'] ?? null;
 $filterCat = $_GET['category'] ?? null;
 $hasCollectionParam = isset($_GET['collection']);

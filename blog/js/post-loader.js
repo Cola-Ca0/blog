@@ -39,23 +39,12 @@
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Loading transmissions... / 加载信号中...</p>';
     pagination.style.display = 'none';
 
-    // 2026-08-27 用户方案: 首页自适应页大小 — 量右栏高度, 填平才翻页 (其余页默认 6)
-    // 2026-10-31 修: 原来只在 page===1 算自适应条数, 第 2 页掉回默认 6 →
-    // 第 1 页（per=11）与第 2 页（per=6）区间重叠、总页数也跟着变。页大小必须整视图恒定。
-    // 页大小优先取 URL 上的 per（翻页链接会带上它），保证刷新/新标签页看到同一套分页。
-    var per = parseInt(urlParams.get('per')) || 0;
-    if (!per && !tag) {
-      var sidebar = document.querySelector('.sidebar');
-      if (sidebar) {
-        per = Math.ceil(sidebar.offsetHeight / 240) + 1; // 卡均高 240px, +1 保底
-        per = Math.min(50, Math.max(6, per));
-      }
-    }
+    // 2026-10-31: 取消「量右栏高度自适应页大小」——它只在第 1 页生效，第 2 页掉回默认条数，
+    // 两页区间重叠、总页数跳变。现固定一页 10 条，由后端默认值决定，前端不再传 per。
     var apiUrl = BASE + '/posts-api.php?action=list&page=' + page;
     if (tag) apiUrl += '&tag=' + encodeURIComponent(tag);
     if (activeCollection) apiUrl += '&collection=' + encodeURIComponent(activeCollection);
     if (activeCat) apiUrl += '&category=' + encodeURIComponent(activeCat);
-    if (per) apiUrl += '&per=' + per;
 
     var controller = new AbortController();
     var timeoutId = setTimeout(function() { controller.abort(); }, 10000);
@@ -118,7 +107,6 @@
           if (activeTag) qp.push('tag=' + encodeURIComponent(activeTag));
           if (activeCollection) qp.push('collection=' + encodeURIComponent(activeCollection));
           if (activeCat) qp.push('cat=' + encodeURIComponent(activeCat));
-          if (per) qp.push('per=' + per); // 新标签页打开也要用同一个页大小
           var tagParam = qp.length ? '?' + qp.join('&') : '';
           var html = '';
           if (data.page > 1) { html += '<a href="' + BASE + '/page/' + (data.page - 1) + tagParam + '">&larr;</a>'; }
@@ -226,8 +214,6 @@
       if (tagFromUrl) np.push('tag=' + encodeURIComponent(tagFromUrl));
       if (activeCollection) np.push('collection=' + encodeURIComponent(activeCollection));
       if (activeCat) np.push('cat=' + encodeURIComponent(activeCat));
-      var perFromUrl = new URL(link.href).searchParams.get('per') || '';
-      if (perFromUrl) np.push('per=' + encodeURIComponent(perFromUrl));
       if (np.length) newUrl += '?' + np.join('&');
       window.history.pushState({}, '', newUrl);
       scrollToGrid();
