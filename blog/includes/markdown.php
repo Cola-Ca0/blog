@@ -156,6 +156,135 @@ function assetBasenameIndex(): array {
     return $index;
 }
 
+/**
+ * 语法高亮的语言规格（2026-10-31）。
+ * 返回 null = 不认识的语种，原样输出（text / http / html 都走这条）。
+ */
+function hlSpec(string $lang): ?array {
+    static $S = null;
+    if ($S === null) {
+        $c = [ // C 系：C / C++ / JS / PHP / Java / Solidity 共用一个够用的关键字表
+            'line'   => ['//'],
+            'block'  => [['/*', '*/']],
+            'quotes' => ['"', "'"],
+            'kw'     => explode(' ', 'if else for while return break continue function class new let const var void int char long short float double unsigned signed struct typedef static switch case default do goto enum union extern sizeof try catch finally throw this typeof in of null true false bool string bytes import from export async await public private protected abstract final interface extends implements package include require use namespace echo print die exit contract mapping address pragma constructor modifier emit revert require'),
+        ];
+        $php = $c; $php['line'] = ['//', '#'];
+        $py = [
+            'line'   => ['#'],
+            'block'  => [['"""', '"""'], ["'''", "'''"]],
+            'quotes' => ['"', "'"],
+            'kw'     => explode(' ', 'def return if elif else for while in not and or is None True False import from as class pass break continue with try except finally raise lambda yield global nonlocal assert del print self async await'),
+        ];
+        $sh = [
+            'line'   => ['#'],
+            'block'  => [],
+            'quotes' => ['"', "'"],
+            'kw'     => explode(' ', 'if then else elif fi for while do done case esac function return in export local readonly echo cd exit set unset source alias sudo cat ls grep sed awk chmod chown mkdir rm cp mv find curl wget ssh python python3 pip git'),
+        ];
+        $asm = [
+            'line'   => [';'],
+            'block'  => [],
+            'quotes' => ['"', "'"],
+            'kw'     => explode(' ', 'mov push pop call ret jmp je jne jz jnz cmp test add sub xor and or not lea leave int syscall nop inc dec shl shr imul idiv rsp rbp rax rbx rcx rdx rsi rdi'),
+        ];
+        $json = ['line' => [], 'block' => [], 'quotes' => ['"'], 'kw' => ['true', 'false', 'null']];
+        $S = [
+            'python' => $py, 'py' => $py, 'python3' => $py,
+            'bash' => $sh, 'sh' => $sh, 'shell' => $sh, 'console' => $sh, 'zsh' => $sh, 'powershell' => $sh,
+            'asm' => $asm, 'nasm' => $asm, 'assembly' => $asm,
+            'json' => $json,
+            'php' => $php, 'c' => $c, 'cpp' => $c, 'c++' => $c, 'js' => $c, 'javascript' => $c,
+            'ts' => $c, 'typescript' => $c, 'java' => $c, 'solidity' => $c, 'sol' => $c,
+        ];
+    }
+    $key = strtolower(trim($lang));
+    return $S[$key] ?? null;
+}
+
+/**
+ * 逐字节扫描 + 着色（2026-10-31）。**输入必须是未转义的源码**，输出是安全 HTML：
+ * 每段文本都经 htmlspecialchars，输出里只有本函数自己生成的 <span>。
+ */
+function highlightCode(string $src, string $lang): string {
+    $spec = hlSpec($lang);
+    $esc = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+    if ($spec === null) return $esc($src);
+
+    $kw = array_flip($spec['kw']);
+    $out = ''; $buf = '';
+    $n = strlen($src); $i = 0;
+    $flush = function () use (&$buf, &$out, $esc) {
+        if ($buf !== '') { $out .= $esc($buf); $buf = ''; }
+    };
+    $span = function (string $cls, string $t) use (&$out, $esc) {
+        $out .= '<span class="' . $cls . '">' . $esc($t) . '</span>';
+    };
+
+    while ($i < $n) {
+        $ch = $src[$i];
+        $hit = false;
+
+        foreach ($spec['block'] as [$open, $close]) {
+            $ol = strlen($open);
+            if (substr_compare($src, $open, $i, $ol) === 0) {
+                $end = strpos($src, $close, $i + $ol);
+                $end = $end === false ? $n : $end + strlen($close);
+                $flush(); $span('hl-com', substr($src, $i, $end - $i)); $i = $end; $hit = true; break;
+            }
+        }
+        if ($hit) continue;
+
+        foreach ($spec['line'] as $m) {
+            if (substr_compare($src, $m, $i, strlen($m)) === 0) {
+                $end = strpos($src, "\n", $i);
+                $end = $end === false ? $n : $end;
+                $flush(); $span('hl-com', substr($src, $i, $end - $i)); $i = $end; $hit = true; break;
+            }
+        }
+        if ($hit) continue;
+
+        if (in_array($ch, $spec['quotes'], true)) {
+            $j = $i + 1;
+            while ($j < $n) {
+                if ($src[$j] === '\\') { $j += 2; continue; }
+                if ($src[$j] === $ch) { $j++; break; }
+                if ($src[$j] === "\n") break;          // 单行字符串不跨行（跨行的三引号走 block）
+                $j++;
+            }
+            $j = min($j, $n);
+            $flush(); $span('hl-str', substr($src, $i, $j - $i)); $i = $j; continue;
+        }
+
+        if ($ch >= '0' && $ch <= '9') {
+            $j = $i;
+            while ($j < $n && strpos('0123456789abcdefABCDEFxXoObB._', $src[$j]) !== false) $j++;
+            $flush(); $span('hl-num', substr($src, $i, $j - $i)); $i = $j; continue;
+        }
+
+        if ($ch === '$' && $i + 1 < $n && (ctype_alpha($src[$i + 1]) || $src[$i + 1] === '_')) {
+            $j = $i + 1;
+            while ($j < $n && (ctype_alnum($src[$j]) || $src[$j] === '_')) $j++;
+            $flush(); $span('hl-var', substr($src, $i, $j - $i)); $i = $j; continue;
+        }
+
+        if (ctype_alpha($ch) || $ch === '_') {
+            $j = $i;
+            while ($j < $n && (ctype_alnum($src[$j]) || $src[$j] === '_')) $j++;
+            $word = substr($src, $i, $j - $i);
+            if (isset($kw[$word])) { $flush(); $span('hl-kw', $word); $i = $j; continue; }
+            $k = $j;
+            while ($k < $n && ($src[$k] === ' ' || $src[$k] === "\t")) $k++;
+            if ($k < $n && $src[$k] === '(') { $flush(); $span('hl-fn', $word); $i = $j; continue; }
+            $buf .= $word; $i = $j; continue;
+        }
+
+        $buf .= $ch; $i++;
+    }
+    $flush();
+    return $out;
+}
+
 function renderMarkdown(string $text): string {
     $text = str_replace("\r\n", "\n", $text);
 
@@ -191,7 +320,9 @@ function renderMarkdown(string $text): string {
         function ($m) use (&$placeholders, $esc) {
             $lang = $m[1] ? ' class="language-' . $esc($m[1]) . '"' : '';
             $langName = $m[1] !== '' ? $m[1] : 'text';  // 代码块角标用：无标注时回退 text
-            $code = $esc($m[2]);
+            // 2026-10-31 语法着色：入口已整体转义，这里先解回转义前源码交给词法扫描器，
+            // 由 highlightCode 逐段重新转义（它有自己的 $esc），安全性质不变。
+            $code = highlightCode(htmlspecialchars_decode($m[2], ENT_QUOTES), $langName);
             $key = '%%CODE' . count($placeholders) . '%%';
             $placeholders[$key] = '<pre data-lang="' . $langName . '"><code' . $lang . '>' . $code . '</code></pre>';
             return $key;

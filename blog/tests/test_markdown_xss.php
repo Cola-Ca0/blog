@@ -19,7 +19,8 @@ function md_hasLiveTag(string $html): bool {
         '<\/?(?:p|br|strong|em|del|pre|blockquote|hr|ul|ol|li|table|thead|tbody|tr|td|h[1-6])>'
       . '|<code(?: class="language-[^"]*")?>|<\/code>'
       . '|<a href="[^"]*">|<\/a>'
-      . '|<img src="[^"]*" alt="[^"]*" loading="lazy">';
+      . '|<img src="[^"]*" alt="[^"]*" loading="lazy">'
+      . '|<span class="hl-(?:kw|str|num|fn|var|com)">|</span>';
     $stripped = preg_replace('#(?:' . $allowed . ')#', '', $html);
     return strpos($stripped, '<') !== false;
 }
@@ -88,6 +89,27 @@ test('wikilink: 找不到的图保留原文，不静默吞掉', function () {
 test('wikilink: 路径遍历被拒（只取 basename 查表）', function () {
     $out = renderMarkdown('![[../../users.json]]');
     assertFalse(strpos($out, '<img') !== false, "不得生成 img: $out");
+});
+
+// ---- 语法着色 (2026-10-31): highlightCode 逐段转义, 只产出白名单 span ----
+
+test('语法着色: 关键字 / 字符串 / 注释各自成 span', function () {
+    $out = renderMarkdown("```python\n# 注释\ndef f(x):\n    return \"a#b\"\n```");
+    assertTrue(strpos($out, '<span class="hl-com"># 注释</span>') !== false, "注释没着色: $out");
+    assertTrue(strpos($out, '<span class="hl-kw">def</span>') !== false, "关键字没着色: $out");
+    assertTrue(strpos($out, '&quot;a#b&quot;') !== false, "字符串内容没保住: $out");
+    assertFalse(strpos($out, '<span class="hl-com">#b') !== false, "字符串里的 # 被误判成注释: $out");
+});
+
+test('语法着色: 代码块里的 <script> 仍是实体', function () {
+    $out = renderMarkdown("```html\n<script>alert(1)</script>\n```");
+    assertFalse(strpos($out, '<script>') !== false, "代码块里出现活标签: $out");
+    assertTrue(strpos($out, '&lt;script&gt;') !== false, "应保持实体: $out");
+});
+
+test('语法着色: 未标注语种不着色', function () {
+    $out = renderMarkdown("```\nplain text\n```");
+    assertFalse(strpos($out, '<span') !== false, "未标注语种不该产生 span: $out");
 });
 
 test('正文里的裸 < > 显示为文本而非标签', function () {

@@ -226,6 +226,10 @@
 
   window.filterByTag = function(tag) {
     activeTag = tag;
+    // 2026-10-31 修：标签是全局筛选。此前在 ?collection= 页面点标签会把合集条件一起带上，
+    // 变成 tag AND collection，几乎必然 0 条 —— 表现就是「点 Web3 筛不出东西」。
+    activeCollection = '';
+    activeCat = '';
     currentPage = 1;
     loadPosts(1, tag);
     var newUrl = BASE + '/';
