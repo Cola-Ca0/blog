@@ -475,6 +475,8 @@ body {
 .content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: stretch; } /* 2026-08-27 用户: 左右栏等高 */
 .posts-column { display: flex; flex-direction: column; }
 .posts-grid { flex: 1; } /* 文章区吃满高度, pagination 落底, 与侧栏对齐 */
+/* 2026-10-31: 原生 #postsGrid 锚点跳转要给固定导航(66px)让位, 否则第一张卡被压在导航下面 */
+#postsGrid { scroll-margin-top: 82px; }
 
 /* Posts Header */
 .posts-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }

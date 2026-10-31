@@ -34,7 +34,7 @@
     return escapeHtml(str).replace(/"/g, '&quot;');
   }
 
-  function loadPosts(page, tag) {
+  function loadPosts(page, tag, andScroll) {
     if (typeof tag === 'undefined') tag = activeTag;
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Loading transmissions... / 加载信号中...</p>';
     pagination.style.display = 'none';
@@ -122,6 +122,9 @@
 
         currentPage = data.page;
         activeTag = tag;
+        // 2026-10-31: 必须等卡片渲染完再滚 —— 此前在请求发出时就滚，
+        // 那一刻网格只剩一行「加载中」，文档变矮，scrollTo 被截断到顶部（hero）。
+        if (andScroll) scrollToGrid();
       })
       .catch(function() {
         clearTimeout(timeoutId);
@@ -193,8 +196,13 @@
       });
   }
 
+  // 用 getBoundingClientRect 而不是 offsetTop —— offsetTop 是相对 offsetParent 的，
+  // 中间任何一层加了 position 就会算错。减 82 = 固定导航 66px + 16px 留白。
   function scrollToGrid() {
-    window.scrollTo({ top: document.getElementById('postsGrid').offsetTop - 100, behavior: 'smooth' });
+    var el = document.getElementById('postsGrid');
+    if (!el) return;
+    var top = el.getBoundingClientRect().top + window.pageYOffset - 82;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
   if (activeCollection && !activeCat) loadCollectionView();
@@ -208,7 +216,7 @@
       e.preventDefault();
       var page = parseInt(match[1]);
       var tagFromUrl = new URL(link.href).searchParams.get('tag') || '';
-      loadPosts(page, tagFromUrl);
+      loadPosts(page, tagFromUrl, true); // 滚动画在渲染之后，见 loadPosts 尾部
       var newUrl = BASE + '/page/' + page;
       var np = [];
       if (tagFromUrl) np.push('tag=' + encodeURIComponent(tagFromUrl));
@@ -216,7 +224,6 @@
       if (activeCat) np.push('cat=' + encodeURIComponent(activeCat));
       if (np.length) newUrl += '?' + np.join('&');
       window.history.pushState({}, '', newUrl);
-      scrollToGrid();
     }
   });
 
@@ -227,11 +234,10 @@
     activeCollection = '';
     activeCat = '';
     currentPage = 1;
-    loadPosts(1, tag);
+    loadPosts(1, tag, true);
     var newUrl = BASE + '/';
     if (tag) newUrl += '?tag=' + encodeURIComponent(tag);
     window.history.pushState({}, '', newUrl);
-    scrollToGrid();
   };
 
   // Load dynamic tag cloud
