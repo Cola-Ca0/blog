@@ -1,15 +1,15 @@
 ---
 title: QCTFweek1老叟洗完头WP
 date: 2026-10-08
-category: CTF
+category: Web
 tags:
   - CTF
   - Writeup
   - web
 summary: 这道题分明是老叟戏顽童，你连一点拿flag的机会都没有
-draft: true
+draft: false
+collection: QCTF2026
 ---
-
 # QCTFweek1老叟洗完头WP
 
 > 这道题真的是太阴间了我打了整整三天才打出来。

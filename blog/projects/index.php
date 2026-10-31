@@ -188,12 +188,17 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
       </h3>
       <p><?= htmlspecialchars($proj['description']) ?></p>
       <div class="tags">
-        <?php foreach ($proj['tags'] as $tag): ?>
+        <?php foreach (($proj['tags'] ?? []) as $tag): ?>
           <span><?= htmlspecialchars($tag) ?></span>
         <?php endforeach; ?>
       </div>
       <div class="files-row">
-        <?php foreach ($proj['files'] as $file): ?>
+        <?php if (!empty($proj['url'])): ?>
+          <a href="<?= htmlspecialchars($proj['url']) ?>" target="_blank" rel="noopener noreferrer" class="file-link">&#8599; View on GitHub</a>
+        <?php elseif (!empty($proj['note'])): ?>
+          <span class="file-link locked"><?= htmlspecialchars($proj['note']) ?></span>
+        <?php endif; ?>
+        <?php foreach (($proj['files'] ?? []) as $file): ?>
           <?php if ($isLoggedIn): ?>
             <a href="?project=<?= urlencode($proj['id']) ?>&view=<?= urlencode($file) ?>#code" class="file-link">&#9998; <?= htmlspecialchars($file) ?></a>
           <?php else: ?>
@@ -201,7 +206,7 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
           <?php endif; ?>
         <?php endforeach; ?>
         <?php if ($isLoggedIn): ?>
-          <?php foreach ($proj['files'] as $file): ?>
+          <?php foreach (($proj['files'] ?? []) as $file): ?>
             <a href="?project=<?= urlencode($proj['id']) ?>&download=<?= urlencode($file) ?>" class="file-link dl">&#11015; 下载 <?= htmlspecialchars($file) ?></a>
           <?php endforeach; ?>
         <?php endif; ?>

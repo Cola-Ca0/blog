@@ -68,14 +68,14 @@ robots本身是君子协议，写着网页的防爬清单，一般比如做大�
 
 **备份文件名字典**（名字 × 后缀交叉爆破）：
 
-| 类别 | 常见名 |
-| --- | --- |
-| 目录名系 | www / web / wwwroot / htdocs / html / webroot / public / app |
+| 类别    | 常见名                                                                                                          |
+| ----- | ------------------------------------------------------------------------------------------------------------ |
+| 目录名系  | www / web / wwwroot / htdocs / html / webroot / public / app                                                 |
 | 功能语义系 | backup / bak / site / website / source / src / code / dist / release / deploy / 1 / new / old / test / final |
-| 域名系 | example.com.zip（按目标域名换，精确制导） |
-| 带日期系 | backup-20250101 / site-2024-01-01 |
-| 后缀系 | .zip / .rar / .tar.gz / .7z / .tgz |
-| 数据库连带 | db.sql / database.sql / dump.sql（也是残留大户） |
+| 域名系   | example.com.zip（按目标域名换，精确制导）                                                                                 |
+| 带日期系  | backup-20250101 / site-2024-01-01                                                                            |
+| 后缀系   | .zip / .rar / .tar.gz / .7z / .tgz                                                                           |
+| 数据库连带 | db.sql / database.sql / dump.sql（也是残留大户）                                                                     |
 
 先线索后穷举：目标域名、页面标题、报错信息里先捡文件名，字典是最后的穷举手段。
 

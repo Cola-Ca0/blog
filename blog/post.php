@@ -15,16 +15,16 @@ if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
     exit;
 }
 
-// Load post
-$postPath = __DIR__ . '/posts/' . $slug . '.md';
-$post = parsePost($postPath);
+// Load post —— 允许子目录，按 slug 查表而不是拼路径（宪法 3.2）
+$postPath = findPostPath(__DIR__ . '/posts/', $slug);
+$post = $postPath !== null ? parsePost($postPath) : null;
 
 // 深海密件区 (2026-09-10): 公海未命中 → 查私区; 仅站长可见。
 // 未登录/非站长一律落到下方 404「信号丢失」, 不暴露私文存在性 (宪法 3.5 默认拒绝)。
 $isPrivatePost = false;
 if (($post === null || $post['draft']) && $isAdmin) {
-    $privatePath = __DIR__ . '/posts-private/' . $slug . '.md';
-    $privatePost = parsePost($privatePath);
+    $privatePath = findPostPath(__DIR__ . '/posts-private/', $slug);
+    $privatePost = $privatePath !== null ? parsePost($privatePath) : null;
     if ($privatePost !== null && !$privatePost['draft']) {
         $post = $privatePost;
         $postPath = $privatePath;
@@ -231,7 +231,14 @@ body {
 
 <div class="reading-progress" id="readingProgress"></div>
 
-<a href="<?= $BASE ?>/" class="article-back">&larr; Return to Surface / 返回水面</a>
+<?php
+  // 返回列表而不是页首 hero（2026-10-28）：合集文章回到它所在的合集，散篇回到首页列表。
+  // 只加 #postsGrid 锚点不够——首页列表是 JS 渲染的，回到页面顶部会看到 hero 大图。
+  $backHref = !empty($post['collection'])
+    ? $BASE . '/?collection=' . urlencode($post['collection']) . '#postsGrid'
+    : $BASE . '/#postsGrid';
+?>
+<a href="<?= $backHref ?>" class="article-back">&larr; Return to Surface / 返回水面</a>
 
 <main class="article-page">
 

@@ -1,13 +1,36 @@
 [
   {
-    "id": "demo-web-app",
-    "title": "Demo Web App",
-    "description": "A simple PHP web application demonstrating login, session management, and database CRUD operations.",
-    "tags": ["PHP", "Auth", "JSON"],
-    "date": "2026-07",
+    "id": "cyber-toolkit",
+    "title": "Cyber Toolkit",
+    "description": "SRC 信息收集 + CTF 编码/密码/混淆，纯 Python 标准库零依赖。Web 界面与 CLI 双入口。",
+    "tags": ["Python", "SRC", "CTF", "Zero-dep"],
+    "date": "2026-09",
     "status": "completed",
     "featured": true,
-    "files": ["auth.php", "README.md"],
-    "readme": "README.md"
+    "url": "https://github.com/Cola-Ca0/cyber-toolkit",
+    "files": []
+  },
+  {
+    "id": "lighthouse",
+    "title": "Lighthouse · 灯塔",
+    "description": "桌面 AI 助手：一个聊天窗口就能处理 Word / Excel / PPT / 图片，原文件永不改动，产物落在工作区的「成品」目录。",
+    "tags": ["Desktop", "AI", "Document"],
+    "date": "2026-09",
+    "status": "completed",
+    "featured": true,
+    "url": "https://github.com/Cola-Ca0/lighthouse",
+    "files": []
+  },
+  {
+    "id": "misc-dashouzi",
+    "title": "misc 大手子",
+    "description": "单文件 CTF misc 分析工具：图像 / 音频 / PCAP 三类载体深挖——位平面、隐写、ID3、流量重组，可接本地工具桥（zsteg / binwalk / exiftool / steghide / bkcrack）。",
+    "tags": ["CTF", "misc", "Single-file"],
+    "date": "2026-10",
+    "status": "completed",
+    "featured": true,
+    "url": "",
+    "note": "本地工具 · 未公开",
+    "files": []
   }
 ]

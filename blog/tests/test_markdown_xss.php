@@ -60,6 +60,36 @@ test('链接/图片的 javascript: 与 data: 协议被拦', function () {
     assertFalse(strpos($b, 'data:') !== false, "data: 未拦: $b");
 });
 
+// --- Obsidian wikilink 图片（2026-10-28）---
+
+test('wikilink: 命中 assets 即渲染，路径走 $BASE', function () {
+    $GLOBALS['BASE'] = '/blog';
+    $name = array_key_first(assetBasenameIndex());
+    assertTrue($name !== null, 'assets 索引为空，无法测试');
+    $out = renderMarkdown('![[' . $name . ']]');
+    assertTrue(strpos($out, '<img src="/blog/assets/') !== false, "应渲染成 assets 路径: $out");
+    assertTrue(strpos($out, 'loading="lazy"') !== false, "应带懒加载: $out");
+    unset($GLOBALS['BASE']);
+});
+
+test('wikilink: 宽度参数转成 width 属性', function () {
+    $GLOBALS['BASE'] = '/blog';
+    $name = array_key_first(assetBasenameIndex());
+    $out = renderMarkdown('![[' . $name . '|320]]');
+    assertTrue(strpos($out, 'width="320"') !== false, "应带宽度: $out");
+    unset($GLOBALS['BASE']);
+});
+
+test('wikilink: 找不到的图保留原文，不静默吞掉', function () {
+    $out = renderMarkdown('![[definitely-no-such-asset-xyz.png]]');
+    assertTrue(strpos($out, '![[definitely-no-such-asset-xyz.png]]') !== false, "应保留原文: $out");
+});
+
+test('wikilink: 路径遍历被拒（只取 basename 查表）', function () {
+    $out = renderMarkdown('![[../../users.json]]');
+    assertFalse(strpos($out, '<img') !== false, "不得生成 img: $out");
+});
+
 test('正文里的裸 < > 显示为文本而非标签', function () {
     $out = renderMarkdown('比较 a < b 且 c > d');
     assertTrue(strpos($out, 'a &lt; b') !== false, "应实体化, 得到: $out");

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "QCTF2026",
+    "title": "QCTF 2026 · WP 合集",
+    "description": "按方向归档的 QCTF 2026 题解：misc / web / crypto / re / pwn，逐题记录思路、坑和脚本。",
+    "date": "2026-10",
+    "tags": ["CTF", "WP", "QCTF"]
+  }
+]

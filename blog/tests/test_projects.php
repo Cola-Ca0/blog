@@ -16,9 +16,13 @@ echo "[Seam 5] Project File Path Safety\n";
 
 require_once __DIR__ . '/../includes/path-safe.php';
 
-$testDir = realpath(__DIR__ . '/../projects/');
+// 用自己的临时目录做夹具：既不依赖仓库里恰好有什么文件，也绝不往真实 projects/ 里写东西
+$projTmp = sys_get_temp_dir() . '/mdz-proj-' . bin2hex(random_bytes(4));
+@mkdir($projTmp, 0777, true);
+$testDir = realpath($projTmp);
 $demoDir = $testDir . '/demo-web-app';
-if (!is_dir($demoDir)) mkdir($demoDir, 0777, true);
+@mkdir($demoDir, 0777, true);
+file_put_contents($demoDir . '/auth.php', "<?php\n");
 
 test('basename 不是防遍历手段（原测试漏掉的致命反例）', function () {
     // 这两个断言证明「用 basename 防穿越」这个假设是错的
@@ -80,5 +84,10 @@ test('兄弟目录逃逸被拒', function () use ($testDir) {
     @rmdir($dirB);
     @rmdir($dirA);
 });
+
+// 清理临时夹具
+foreach (glob($demoDir . '/*') ?: [] as $f) @unlink($f);
+@rmdir($demoDir);
+@rmdir($testDir);
 
 echo "\n";

@@ -21,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['_delete'])) {
     }
     $delSlug = $_GET['slug'] ?? '';
     if (preg_match('/^[a-zA-Z0-9\-]+$/', $delSlug)) {
-        $delPath = $postsDir . $delSlug . '.md';
-        if (file_exists($delPath)) unlink($delPath);
+        $delPath = findPostPath($postsDir, $delSlug);
+        if ($delPath !== null) unlink($delPath);
         $commentFile = __DIR__ . '/../data/comments/' . $delSlug . '.json';
         if (file_exists($commentFile)) unlink($commentFile);
     }
@@ -36,7 +36,11 @@ $existingPost = null;
 
 if ($isEdit) {
     if (!preg_match('/^[a-zA-Z0-9\-]+$/', $editSlug)) $error = 'Invalid slug.';
-    else { $existingPost = parsePost($postsDir . $editSlug . '.md'); if ($existingPost === null) $error = 'Article not found.'; }
+    else {
+        $editPath = findPostPath($postsDir, $editSlug);
+        $existingPost = $editPath !== null ? parsePost($editPath) : null;
+        if ($existingPost === null) $error = 'Article not found.';
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -62,8 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $md .= "category: $category\ntags: $tagsJson\nsummary: \"" . addcslashes($summary, '"') . "\"\n";
         if ($cover !== '') $md .= "cover: $cover\n";
         $md .= "draft: $draft\n---\n\n$body";
-        $filePath = $postsDir . $slug . '.md';
-        if ($isEdit && $editSlug !== $slug && file_exists($postsDir . $editSlug . '.md')) unlink($postsDir . $editSlug . '.md');
+        // 文章可能在子目录里：slug 没变就原地写回，变了才落到根目录
+        $existingPath = $isEdit ? findPostPath($postsDir, $editSlug) : null;
+        $filePath = ($isEdit && $editSlug === $slug && $existingPath !== null)
+            ? $existingPath
+            : $postsDir . $slug . '.md';
+        if ($isEdit && $editSlug !== $slug && $existingPath !== null) @unlink($existingPath);
         if (file_put_contents($filePath, $md, LOCK_EX)) {
             $saved = true; $isEdit = true; $editSlug = $slug; $existingPost = parsePost($filePath);
         } else $error = 'Failed to write file.';

@@ -14,12 +14,60 @@ $commentsDir = __DIR__ . '/data/comments/';
 if ($action === 'tags') {
     $tagCounts = [];
     foreach (getPublishedPosts($postsDir) as $post) {
+        if (($post['collection'] ?? '') !== '') continue; // 合集文章不进首页标签云，与默认列表同口径
         foreach ($post['tags'] as $tag) {
             $tagCounts[$tag] = ($tagCounts[$tag] ?? 0) + 1;
         }
     }
     arsort($tagCounts);
     echo json_encode(['tags' => $tagCounts], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// --- COLLECTIONS ---
+/**
+ * 合集卡：文章 frontmatter 里写 collection: <id> 即归入；
+ * 展示用 metadata 在 collections.json（缺省则用 id 当标题）。
+ */
+function buildCollectionCards(string $postsDir): array {
+    $meta = [];
+    $metaFile = __DIR__ . '/collections.json';
+    if (file_exists($metaFile)) {
+        $m = json_decode(file_get_contents($metaFile), true);
+        if (is_array($m)) foreach ($m as $c) if (!empty($c['id'])) $meta[$c['id']] = $c;
+    }
+    $groups = [];
+    foreach (getPublishedPosts($postsDir) as $post) {
+        $id = $post['collection'] ?? '';
+        if ($id === '') continue;
+        $groups[$id] ??= ['total' => 0, 'categories' => [], 'latest' => ''];
+        $groups[$id]['total']++;
+        $cat = $post['category'] !== '' ? $post['category'] : 'Other';
+        $groups[$id]['categories'][$cat] = ($groups[$id]['categories'][$cat] ?? 0) + 1;
+        if ($post['date'] > $groups[$id]['latest']) $groups[$id]['latest'] = $post['date'];
+    }
+    $out = [];
+    foreach ($groups as $id => $g) {
+        $m = $meta[$id] ?? [];
+        arsort($g['categories']);
+        $cats = [];
+        foreach ($g['categories'] as $name => $n) $cats[] = ['name' => $name, 'count' => $n];
+        $out[] = [
+            'id'          => $id,
+            'title'       => $m['title'] ?? $id,
+            'description' => $m['description'] ?? '',
+            'date'        => $m['date'] ?? $g['latest'],
+            'tags'        => $m['tags'] ?? [],
+            'total'       => $g['total'],
+            'categories'  => $cats,
+        ];
+    }
+    usort($out, fn($a, $b) => strcmp($b['date'], $a['date']));
+    return $out;
+}
+
+if ($action === 'collections') {
+    echo json_encode(['collections' => buildCollectionCards($postsDir)], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -61,9 +109,17 @@ $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = isset($_GET['per']) ? min(50, max(4, intval($_GET['per']))) : 6; /* 2026-08-27: 首页自适应(右栏等高用), 其余默认 6 */
 $filterTag = $_GET['tag'] ?? null;
 $filterCat = $_GET['category'] ?? null;
+$hasCollectionParam = isset($_GET['collection']);
+$filterCollection = $_GET['collection'] ?? '';
 
 // Get published posts, apply optional filters
 $allPosts = getPublishedPosts($postsDir);
+// 首页默认只看散篇；合集文章统一走合集页（?collection=<id> 才取）
+if ($hasCollectionParam) {
+    $allPosts = array_filter($allPosts, fn($p) => ($p['collection'] ?? '') === $filterCollection);
+} else {
+    $allPosts = array_filter($allPosts, fn($p) => ($p['collection'] ?? '') === '');
+}
 if ($filterTag) {
     $allPosts = array_filter($allPosts, fn($p) => in_array($filterTag, $p['tags']));
 }
@@ -98,8 +154,11 @@ $result = array_map(function($p) use ($commentsDir) {
 }, $pagePosts);
 
 echo json_encode([
-    'posts'      => $result,
-    'total'      => $total,
-    'page'       => $page,
-    'totalPages' => $totalPages,
+    'posts'       => $result,
+    'total'       => $total,
+    'page'        => $page,
+    'totalPages'  => $totalPages,
+    // 首页默认视图（无筛选）时由前端渲染成合集入口卡
+    'collections' => (!$hasCollectionParam && !$filterTag && !$filterCat && $page === 1)
+        ? buildCollectionCards($postsDir) : [],
 ], JSON_UNESCAPED_UNICODE);

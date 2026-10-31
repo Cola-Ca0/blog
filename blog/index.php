@@ -905,7 +905,11 @@ body {
 
   <!-- Quick Stats — real metrics -->
   <?php
-    $postCount = count(glob(__DIR__ . '/posts/*.md'));
+    // 与列表页同口径：只算真正发布的散篇（跳过 draft: true 的草稿/模板与合集文章），否则卡片会多数
+    $postCount = count(array_filter(
+      getPublishedPosts(__DIR__ . '/posts/'),
+      fn($p) => ($p['collection'] ?? '') === ''
+    ));
     $projectsData = json_decode(file_exists(__DIR__ . '/projects.json') ? file_get_contents(__DIR__ . '/projects.json') : '[]', true) ?: [];
     $projectCount = count($projectsData);
     $commentCount = 0;
@@ -966,8 +970,12 @@ body {
       $seas = $ambience['seas'] ?? [];
       $sea = $seas ? $seas[crc32(date('Ymd')) % count($seas)] : ['name' => '平静', 'adv' => ''];
       $weekStart = strtotime('monday this week');
+      // 按 frontmatter 的 date 算，不要用 filemtime——否则改一次文章就会把它挪到本周
       $weekDives = 0;
-      foreach (glob(__DIR__ . '/posts/*.md') as $pf) { if (filemtime($pf) >= $weekStart) $weekDives++; }
+      foreach (getPublishedPosts(__DIR__ . '/posts/') as $p) {
+        $pts = strtotime($p['date']);
+        if ($pts !== false && $pts >= $weekStart) $weekDives++;
+      }
       $weekText = ($ambience['weekly'] ?? [])[$weekDives === 0 ? 0 : ($weekDives <= 2 ? 1 : 2)]['text'] ?? '';
       $mission = $ambience['mission'] ?? ['label' => '任务', 'done' => 0, 'total' => 1, 'unit' => ''];
       $pct = $mission['total'] > 0 ? round($mission['done'] / $mission['total'] * 100) : 0;
@@ -1020,9 +1028,12 @@ body {
       <?php
       $calYear = (int)date('Y'); $calMonth = (int)date('n');
       $postDays = [];
-      foreach (glob(__DIR__ . '/posts/*.md') as $pf) { // 只统计当月, 防跨月同日污染 (2026-08-27 审查)
-        if ((int)date('n', filemtime($pf)) !== $calMonth) continue;
-        $pd = (int)date('j', filemtime($pf));
+      // 按 frontmatter 的 date 落格（不是 filemtime：改文章不该移动历史记录），草稿自动排除
+      foreach (getPublishedPosts(__DIR__ . '/posts/') as $p) {
+        $ts = strtotime($p['date']);
+        if ($ts === false) continue;
+        if ((int)date('Y', $ts) !== $calYear || (int)date('n', $ts) !== $calMonth) continue;
+        $pd = (int)date('j', $ts);
         $postDays[$pd] = ($postDays[$pd] ?? 0) + 1;
       }
       $daysInMonth = (int)date('t', mktime(0, 0, 0, $calMonth, 1, $calYear));

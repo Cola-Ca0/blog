@@ -24,6 +24,7 @@ function parsePostMeta(string $filePath): ?array {
         'draft'    => false,
         'updated'  => null,
         'cover'    => null,
+        'collection' => '',
         'slug'     => '',
         'body'     => '',
     ];
@@ -100,6 +101,9 @@ function _parseFrontMatter(string $fmRaw, array &$post): void {
             case 'category':
                 $post['category'] = trim($val, '"\'');
                 break;
+            case 'collection': // 合集 id：填了就归入某个合集，不进首页默认列表
+                $post['collection'] = trim($val, '"\'');
+                break;
             case 'summary':
                 $post['summary'] = trim($val, '"\'');
                 break;
@@ -129,6 +133,29 @@ function _parseFrontMatter(string $fmRaw, array &$post): void {
  * Convert Markdown text to HTML with proper escaping.
  * Order matters: code blocks first (protect), then block elements, then inline.
  */
+/**
+ * blog/assets/ 下所有文件的 basename → 相对路径索引（每次请求构建一次）。
+ *
+ * 只用来「按文件名查表」，绝不把用户输入拼进路径 —— 天然免疫路径遍历（宪法 3.2）。
+ */
+function assetBasenameIndex(): array {
+    static $index = null;
+    if ($index !== null) return $index;
+    $index = [];
+    $root = realpath(__DIR__ . '/../assets');
+    if ($root !== false && is_dir($root)) {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
+        );
+        foreach ($it as $f) {
+            if (!$f->isFile()) continue;
+            $rel = str_replace('\\', '/', substr($f->getPathname(), strlen($root) + 1));
+            $index[$f->getFilename()] ??= $rel;
+        }
+    }
+    return $index;
+}
+
 function renderMarkdown(string $text): string {
     $text = str_replace("\r\n", "\n", $text);
 
@@ -213,6 +240,20 @@ function renderMarkdown(string $text): string {
         return '<img src="' . $u . '" alt="' . $esc($m[1]) . '" loading="lazy">';
     }, $text);
 
+    // 5b. Obsidian wikilink 图片：![[name.png]] / ![[name.png|300]]
+    // 2026-10-28 用户拍板：直接在 Obsidian 里写双链，不用手工转标准 markdown。
+    // 只按文件名到 blog/assets/ 查表；查不到就保留原文（不静默吞掉，方便发现漏图）。
+    $text = preg_replace_callback('/!\[\[([^\]|]+)(?:\|([^\]]*))?\]\]/', function($m) use ($esc) {
+        $name = basename(str_replace('\\', '/', trim($m[1]))); // 只取文件名，杜绝 ../
+        $index = assetBasenameIndex();
+        if (!isset($index[$name])) return $m[0];
+        $base = $GLOBALS['BASE'] ?? '';
+        $w = trim($m[2] ?? '');
+        $attr = preg_match('/^\d{1,4}$/', $w) ? ' width="' . $w . '"' : '';
+        return '<img src="' . $base . '/assets/' . $index[$name] . '" alt="'
+            . $esc(pathinfo($name, PATHINFO_FILENAME)) . '"' . $attr . ' loading="lazy">';
+    }, $text);
+
     // 6. Links
     // 2026-10-20: 站内文章链接归一 (同第 5 步图片) —— 作者从本地地址栏复制 '/blog/post/x',
     // 线上域名根部署 $BASE='' 时原样输出 404。归一后 '/blog/post/'、'/post/'、'post/' 三写法两端通用。
@@ -287,14 +328,45 @@ function renderMarkdown(string $text): string {
  * Scan posts directory, return all published posts sorted by date desc.
  * Uses parsePostMeta — no wasted Markdown rendering.
  */
+/**
+ * 列出文章目录下所有 .md（递归，2026-10-29）：允许把同一批 WP 收进子目录，
+ * 免得 blog-posts/ 根目录被几十篇刷屏。slug 仍取文件名，与所在层级无关。
+ */
+function postMarkdownFiles(string $postsDir): array {
+    $files = [];
+    if (!is_dir($postsDir)) return $files;
+    $it = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($postsDir, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($it as $f) {
+        if ($f->isFile() && strtolower($f->getExtension()) === 'md') {
+            $files[] = $f->getPathname();
+        }
+    }
+    sort($files);
+    return $files;
+}
+
+/**
+ * 按 slug 找到文章文件（可能在任意子目录）。
+ *
+ * ⚠️ 只拿扫描结果做「文件名等于 slug」的比对，**从不把 slug 拼进路径**，
+ * 所以哪怕 slug 里混进 `../` 也只会匹配不到（宪法 3.2）。
+ */
+function findPostPath(string $postsDir, string $slug): ?string {
+    if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) return null;
+    foreach (postMarkdownFiles($postsDir) as $f) {
+        if (basename($f, '.md') === $slug) return $f;
+    }
+    return null;
+}
+
 function getPublishedPosts(string $postsDir): array {
     $posts = [];
-    if (is_dir($postsDir)) {
-        foreach (glob($postsDir . '*.md') as $file) {
-            $post = parsePostMeta($file);
-            if ($post === null || $post['draft']) continue;
-            $posts[] = $post;
-        }
+    foreach (postMarkdownFiles($postsDir) as $file) {
+        $post = parsePostMeta($file);
+        if ($post === null || $post['draft']) continue;
+        $posts[] = $post;
     }
     usort($posts, function ($a, $b) { return strcmp($b['date'], $a['date']); });
     return $posts;
