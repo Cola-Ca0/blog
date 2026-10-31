@@ -13,7 +13,10 @@
   if (!grid) return;
 
   var urlParams = new URLSearchParams(window.location.search);
-  var currentPage = parseInt(urlParams.get('page')) || 1;
+  // 分页地址栏是 /page/N（.htaccess 内部重写到 index.php?page=N），location.search 里读不到，
+  // 原来的 urlParams.get('page') 永远拿不到值 —— 在 /page/2 上刷新或按后退会掉回第 1 页。
+  var pathPage = (window.location.pathname.match(/\/page\/(\d+)/) || [])[1];
+  var currentPage = parseInt(urlParams.get('page')) || parseInt(pathPage) || 1;
   var activeTag = urlParams.get('tag') || '';
   // 合集：?collection=<id> 看分类，&cat=<分类> 看该分类下的文章（三层复用同一套卡片）
   var activeCollection = urlParams.get('collection') || '';
@@ -37,18 +40,22 @@
     pagination.style.display = 'none';
 
     // 2026-08-27 用户方案: 首页自适应页大小 — 量右栏高度, 填平才翻页 (其余页默认 6)
+    // 2026-10-31 修: 原来只在 page===1 算自适应条数, 第 2 页掉回默认 6 →
+    // 第 1 页（per=11）与第 2 页（per=6）区间重叠、总页数也跟着变。页大小必须整视图恒定。
+    // 页大小优先取 URL 上的 per（翻页链接会带上它），保证刷新/新标签页看到同一套分页。
+    var per = parseInt(urlParams.get('per')) || 0;
+    if (!per && !tag) {
+      var sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        per = Math.ceil(sidebar.offsetHeight / 240) + 1; // 卡均高 240px, +1 保底
+        per = Math.min(50, Math.max(6, per));
+      }
+    }
     var apiUrl = BASE + '/posts-api.php?action=list&page=' + page;
     if (tag) apiUrl += '&tag=' + encodeURIComponent(tag);
     if (activeCollection) apiUrl += '&collection=' + encodeURIComponent(activeCollection);
     if (activeCat) apiUrl += '&category=' + encodeURIComponent(activeCat);
-    if (!tag && page === 1) {
-      var sidebar = document.querySelector('.sidebar');
-      if (sidebar) {
-        var per = Math.ceil(sidebar.offsetHeight / 240) + 1; // 卡均高 240px, +1 保底
-        per = Math.min(50, Math.max(6, per));
-        apiUrl += '&per=' + per;
-      }
-    }
+    if (per) apiUrl += '&per=' + per;
 
     var controller = new AbortController();
     var timeoutId = setTimeout(function() { controller.abort(); }, 10000);
@@ -111,6 +118,7 @@
           if (activeTag) qp.push('tag=' + encodeURIComponent(activeTag));
           if (activeCollection) qp.push('collection=' + encodeURIComponent(activeCollection));
           if (activeCat) qp.push('cat=' + encodeURIComponent(activeCat));
+          if (per) qp.push('per=' + per); // 新标签页打开也要用同一个页大小
           var tagParam = qp.length ? '?' + qp.join('&') : '';
           var html = '';
           if (data.page > 1) { html += '<a href="' + BASE + '/page/' + (data.page - 1) + tagParam + '">&larr;</a>'; }
@@ -218,6 +226,8 @@
       if (tagFromUrl) np.push('tag=' + encodeURIComponent(tagFromUrl));
       if (activeCollection) np.push('collection=' + encodeURIComponent(activeCollection));
       if (activeCat) np.push('cat=' + encodeURIComponent(activeCat));
+      var perFromUrl = new URL(link.href).searchParams.get('per') || '';
+      if (perFromUrl) np.push('per=' + encodeURIComponent(perFromUrl));
       if (np.length) newUrl += '?' + np.join('&');
       window.history.pushState({}, '', newUrl);
       scrollToGrid();
