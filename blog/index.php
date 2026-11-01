@@ -166,8 +166,8 @@ body {
   letter-spacing: 0.03em;
   line-height: 1.5;            /* §4.1: italic descender clearance for y/p/g/j/q */
   padding-bottom: 4px;         /* reserve space so descenders don't clip */
-  color: rgba(180,210,235,0.68);  /* 2026-08-21 审查: 0.58→0.68 可读性 (对比 ~2.5→3.4:1) */
-  text-shadow: 0 1px 12px rgba(0,0,0,0.4);
+  color: rgba(216,234,248,1);  /* 2026-11-01 用户选定「亮字+深影」: 壁纸偏亮, 0.68 透明度糊在图上 */
+  text-shadow: 0 2px 6px rgba(8,24,40,0.85), 0 0 2px rgba(8,24,40,0.7);  /* 阴影用 Void Ink 而非纯黑 */
   animation: hero-text-in 1.4s ease-out;
 }
 [data-theme="light"] .hero-text-center .hero-line2 { color: rgba(26,48,64,0.72); }
