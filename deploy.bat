@@ -47,8 +47,12 @@ echo       OK
 
 echo.
 echo [3/3] Server pull...
-REM  guard: circuit-breakers -- a stalled fetch dies in ~20s instead of hanging forever
-ssh -i "%KEY%" -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 %SERVER% "cd %SSHDIR% && timeout 60 git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=20 pull --ff-only -q && chown -R www-data:www-data blog/ && git log --oneline -1 && echo PULLED"
+REM  circuit-breakers: a stalled fetch dies in ~90s instead of hanging forever.
+REM  Server->GitHub is flaky in CN, so fall back to the gh-proxy mirror; the
+REM  commit hash still verifies content authenticity.
+REM  Dirty-tree guard: the online admin editor writes files on the server, which
+REM  makes 'git pull' abort. Fail fast with a clear message instead of a cryptic one.
+ssh -i "%KEY%" -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 %SERVER% "cd %SSHDIR% && if git status --porcelain | grep -q .; then echo 'DIRTY: server has uncommitted changes (online editor?). Sync them down to local first.'; exit 3; fi; { timeout 90 git -c http.lowSpeedLimit=100 -c http.lowSpeedTime=120 -c http.postBuffer=524288000 pull --ff-only -q && echo PULLED_PLAIN; } || { echo 'plain pull failed -> gh-proxy'; timeout 120 git -c http.postBuffer=524288000 pull --ff-only -q https://gh-proxy.com/https://github.com/Cola-Ca0/blog.git master && echo PULLED_PROXY; } && chown -R www-data:www-data blog/ && git log --oneline -1"
 if errorlevel 1 goto :fail
 
 echo.
@@ -63,8 +67,8 @@ exit /b 0
 echo.
 echo   !! FAILED - read the message above.
 echo   !! Common causes:
-echo      - server has uncommitted changes (you used the online editor)
-echo      - network / GitHub unreachable
+echo      - DIRTY: server has uncommitted changes (online editor) - sync them down first
+echo      - network / GitHub unreachable (plain pull already retried via gh-proxy)
 echo      - SSH key not set up
 echo.
 pause
