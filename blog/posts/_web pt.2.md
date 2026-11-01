@@ -6,7 +6,7 @@ tags:
   - CTF
   - Writeup
   - web
-summary: 一句话摘要，会显示在文章卡片和搜索结果里（必填，不然卡片空荡荡）。
+summary: PHP命令执行（理论来说处于篇幅考虑这篇只是一部分吧）
 draft: true
 ---
 
@@ -251,7 +251,7 @@ if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(|\:|\"|\<|
 ?c=include$_GET[a]?>&a=php://filter/convert.base64-encode/resource=flag.php
 ```
 
-注意GET里的a理论上是要用 `'a'` 引起来的（不引起来就不会把这个a当作后面参数a，它只会作为一个常量a来用），因为PHP8环境下不引起来会被当作常量，但是因为这道题的环境是PHP7（恰好兼容）不是PHP8导致恰好可以用纯的 `a` ，而引号题目又不给用，我觉得可能是出题者故意为之...
+注意GET里的 a 理论上是要用 `'a'` 引起来的（不引起来就不会把这个a当作后面参数a，它只会作为一个常量a来用），因为PHP8环境下不引起来会被当作常量，但是因为这道题的环境是PHP7（恰好兼容）不是PHP8导致恰好可以用纯的 `a` ，而引号题目又不给用，我觉得可能是出题者故意为之...
 
 
 ### pt.2.1
@@ -329,3 +329,58 @@ data://text/plain;base64,PD9waHAg...
 此外，编码方式有且只有base64可以选，这是由 data:// 协议遵循的 RFC2397 标准决定的（感兴趣可以去看看[RFC 2397: The "data" URL scheme | RFC Editor](https://www.rfc-editor.org/info/rfc2397/)）要么base64编码，要么原文
 
 那么接下来的事情就由繁化简了，我们只要考虑base64里面的payload怎么写就行了
+>include会把流的内容当作php文件来解析，而语法规则和.php文件完全一样
+
+那我们直接在后面写上`<?php system("tac flag.php");?>`的base64作为负载就行了
+
+```php
+/?c=data://text/plain;base64,PD9waHAgc3lzdGVtKCJ0YWMgZmxhZy5waHAiKTs/Pg==
+```
+即可
+
+然后这里因为讲到了 `data://` 和 `php://filter` 。所以我们来看看他们的区别在哪
+
+|                     | `php://filter` | `data://`           |
+| ------------------- | -------------- | ------------------- |
+| 后面的负载是面对哪里          | 必须是服务器的文件      | 自己写的内容在服务器上（php则执行） |
+| 目的                  | 读资源            | 执行/输出你写的内容          |
+| 需要后面有resource       | Y              | N                   |
+| 需要allow_url_include | N              | Y                   |
+| 经典用处                | 读源码、绕解析        | PHP代码执行             |
+
+
+下一关就算是
+```php
+if(!preg_match("/flag|php|file/i", $c))
+```
+我们也可以打过
+
+你发现我们用的是data而不是file所以也可以过，顺便这里提到了file那就讲讲file
+>file:// 数据来源必须是不能加工过的原样的完整服务器本地路径，但是这种东西你一看不能加工就知道了依托答辩，这样的方式但凡有点防护都不可能让你过了。
+
+所以记住file://的功能是 ⊂ php://filter 的
+
+且这两者是等价的
+```php
+include "file://var/www/html/flag.php";
+include "var/www/html/flag.php";
+```
+
+### pt2.2
+
+阴的来了，我们来看改动
+```php
+    if(!preg_match("/flag/i", $c)){  
+        include($c.".php");
+```
+如果把.php单独拎出来，阁下该如何应对呢？
+
+之前的那个payload肯定是不行了，因为base64后面跟了个.php就无法解码了，那我们换一个策略，直接明文，然后**冷暴力**后面的.php，因为当我们前面的语句是完整php语言的时候，后面就算是.php也只能按照文本输出，这就是这道题的小巧思
+
+payload如下
+
+```php
+/?c=data://text/plain,<?php%20system(%27tac%20fla*%27);?>
+// 其实 /?c=data://text/plain,<?php system('tac fla*');?> 也可以只不过会URL解析成上面那种形式
+```
+你会发现，就算是.php了，也是`/?c=data://text/plain,<?php%20system(%27tac%20fla*%27);?>.php`，在完整php语言的后面可以说这个.php一点卵用没有

@@ -701,7 +701,19 @@ body {
 
   <div class="hero-text-center">
     <h1 class="hero-line1"><span class="en">Hello</span><br><span class="en-sub">Welcome to Cola's blog</span></h1>
-    <p class="hero-line2 typewriter">"今天也要向深海，发一条温柔的信号。" <span style="font-style:normal;">— 深海研究站日志</span></p>
+    <?php
+    // 首页主标语 — 六句轮换池，每次刷新随机一句 (2026-11-01 用户提供)
+    $heroLines = [
+      ['text' => '“Coz your broken heart has frozen mine”', 'from' => 'Frozen'],
+      ['text' => '“手と手繋いだ帰り道 茜染まる渚”', 'from' => 'Dear Moments'],
+      ['text' => '“Не остаться в этой траве Не остаться в этой траве”', 'from' => 'Группа крови'],
+      ['text' => '“Let me go~ I\'m making the calls~”', 'from' => 'Let Me Go'],
+      ['text' => '“だんご だんご 大家族”', 'from' => 'だんご大家族'],
+      ['text' => '“like you say a new day will bring us tomorrow...”', 'from' => 'Luv (Sic) pt.1'],
+    ];
+    $heroLine = $heroLines[array_rand($heroLines)];
+    ?>
+    <p class="hero-line2"><span class="typewriter"><?= htmlspecialchars($heroLine['text']) ?></span> <span style="font-style:normal;">— <?= htmlspecialchars($heroLine['from']) ?></span></p>
   </div>
 
 </section>
@@ -761,7 +773,7 @@ body {
       </div>
       <h2 class="blog-hero-title section-reveal" style="transition-delay:100ms">深海之下，别有洞天</h2>
       <p class="blog-hero-subtitle section-reveal" style="transition-delay:200ms">
-        潜入代码的深海，在寂静中寻找思维的涟漪。这里是可乐的水下基地——每一行代码都是一次深潜。
+        恭喜你发现了可乐的秘密基地馁…里面汇集了可乐的各种知识内容的总结以及可能有碎碎念…可以往下翻翻看喔
       </p>
 
       <!-- 社交入口 — 2026-10-02 从右栏 hero-panel 搬到左栏 (填副标题与深海图库之间的空档), 放大成胶囊 -->
@@ -1016,7 +1028,7 @@ body {
             <span>// 可乐</span>
           </div>
         </div>
-        <p class="about-bio">杭州师范大学 · CS 2026级新生。方向：网络空间安全，CTF + SRC 漏洞挖掘。热爱二次元文化，在 Obsidian 中构建知识库，用代码探索世界的底层逻辑。</p>
+        <p class="about-bio">杭州师范大学 · 2026级 CS。方向：网络空间安全 Web + Crypto。稀饭二次元，工作栈以 Python + PHP 为主。</p>
         <div class="about-hud-mini">
           <div><strong>CTF</strong> TRAINING</div>
           <div><strong>SRC</strong> HUNTING</div>

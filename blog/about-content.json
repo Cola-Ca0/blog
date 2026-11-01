@@ -2,36 +2,36 @@
     "name": "Cola_CaO / 可乐",
     "title": "CS @ 杭师大 · 网络安全方向 · CTF & SRC",
     "avatar": "assets/images/my-avatar.jpg",
-    "bio": "杭州师范大学计算机科学与技术专业 2026 级新生。\n\n方向明确：网络空间安全。计划本科期间走 CTF + SRC 漏洞挖掘路线，在实战中积累攻防经验。\n\n当前正在学习：Java、PHP、Web 安全、Kali Linux、Burp Suite。已了解 XSS、SQL 注入、JWT、Cookie/Session/Token 等基础安全概念，正尝试抓包分析。\n\n工具栈：Laragon + VS Code + Continue (DeepSeek API)，Obsidian 做知识库。天选 4 游戏本跑主力开发，计划添置轻薄本跑 Kali。\n\n性格上喜欢系统性拆解问题（'调试思维'），对底层原理有好奇心，不满足于表面答案。\n\n这个博客是深海研究站——安静、专注、记录每一段探索的航迹。",
+    "bio": "杭州师范大学计算机科学与技术专业 2026 级。\n目前正在开始接触CTF，主要方向为web和crypto\n当前正在学习：PHP、Web 安全、Kali Linux、初等数论、Crypto。\n因为刚刚开始学习所以也没有什么成就啦\nSUSCTF2026 校外赛道（不含本校生）总榜第三 🥉\n钻研一个困难问题总是让我非常开心。\n沉浸式钻研总是兴奋的。\n数学是优雅的，数学是美的...\n也喜欢听各种各样的歌，玩各种各样的游戏（说了好像和没说差不多\nAnd you don't seem to understand.\n欢迎各位来找可乐玩~\n\n\n",
     "skills": [
         {
             "name": "Python",
-            "level": 71,
+            "level": 73,
             "icon": "🐍"
         },
         {
             "name": "C/C++",
-            "level": 10,
+            "level": 17,
             "icon": "⚙️"
         },
         {
             "name": "Java",
-            "level": 14,
+            "level": 13,
             "icon": "☕"
         },
         {
             "name": "PHP",
-            "level": 23,
+            "level": 25,
             "icon": "🐘"
         },
         {
             "name": "Web Security",
-            "level": 22,
+            "level": 26,
             "icon": "🛡️"
         },
         {
             "name": "Kali Linux",
-            "level": 15,
+            "level": 21,
             "icon": "🐉"
         }
     ],
