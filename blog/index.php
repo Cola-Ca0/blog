@@ -710,6 +710,12 @@ body {
       ['text' => '“Let me go~ I\'m making the calls~”', 'from' => 'Let Me Go'],
       ['text' => '“だんご だんご 大家族”', 'from' => 'だんご大家族'],
       ['text' => '“like you say a new day will bring us tomorrow...”', 'from' => 'Luv (Sic) pt.1'],
+      ['text' => '“Sing for me, let me feel released. Let me learn from my mistakes”', 'from' => 'Worry'],
+      ['text' => '“Lay down your pieces. And let\'s begin OBJECT CREATION”', 'from' => 'world.execute(me)'],
+      ['text' => '“Surrender, come alive. Envision it freely. Embers of my psyche. Like me”', 'from' => 'embers'],
+      ['text' => '“また夜が明ければお別れ　夢は遠きまぼろしに”', 'from' => 'Shiki No Uta'],
+      ['text' => '“I see the crystal raindrops fall. And the beauty of it all.”', 'from' => 'Just The Two Of Us'],
+      ['text' => '“你说你不想在这里  我也不想在这里  但天黑的太快想走早就来不及”', 'from' => '但'],
     ];
     $heroLine = $heroLines[array_rand($heroLines)];
     ?>
@@ -773,7 +779,7 @@ body {
       </div>
       <h2 class="blog-hero-title section-reveal" style="transition-delay:100ms">深海之下，别有洞天</h2>
       <p class="blog-hero-subtitle section-reveal" style="transition-delay:200ms">
-        恭喜你发现了可乐的秘密基地馁…里面汇集了可乐的各种知识内容的总结以及可能有碎碎念…可以往下翻翻看喔
+        恭喜你发现了可乐的秘密基地馁…里面汇集了可乐的各种知识内容的总结以及可能有碎碎念…可以往下翻翻看喔…只是一个小白啦如果知识内容有错误还请多多包涵馁…
       </p>
 
       <!-- 社交入口 — 2026-10-02 从右栏 hero-panel 搬到左栏 (填副标题与深海图库之间的空档), 放大成胶囊 -->
