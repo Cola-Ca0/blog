@@ -9,6 +9,7 @@ blog/assets/music/*.lrc
 blog/assets/images/wallpaper.jpg
 blog/assets/images/my-avatar.jpg
 blog/assets/images/gura-avatar.jpg
+blog/assets/images/wallpaper-lain.png
 
 # User content (personal data)
 blog/users.json

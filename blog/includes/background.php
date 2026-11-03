@@ -16,3 +16,8 @@
   <div class="bg-warmglow"></div>
   <div class="scanlines"></div>
 </div>
+
+<!-- 隐藏场景 Lain 图层 (2026-11-02; 仅 scene=lain 时可见, 其余场景不显示) -->
+<div class="lain-atmo" aria-hidden="true"></div>
+<div class="lain-wires" aria-hidden="true"></div>
+<div class="lain-crt" aria-hidden="true"></div>

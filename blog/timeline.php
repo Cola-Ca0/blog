@@ -8,11 +8,50 @@ require __DIR__ . '/includes/markdown.php';
 
 $posts = getPublishedPosts(__DIR__ . '/posts/');
 
-// 按年份分组 (posts 已按日期倒序)
-$timeline = [];
+// 合集元数据 (collections.json; 缺省用 id 当标题)
+$collectionMeta = [];
+$collectionFile = __DIR__ . '/collections.json';
+if (is_file($collectionFile)) {
+    $rawCollections = json_decode((string) file_get_contents($collectionFile), true);
+    if (is_array($rawCollections)) {
+        foreach ($rawCollections as $c) {
+            if (!empty($c['id'])) $collectionMeta[$c['id']] = $c;
+        }
+    }
+}
+
+// 合集文章归并为一个事件; 散篇保持逐篇 (2026-11-03 用户拍板)
+$collectionGroups = [];
+$events = [];
 foreach ($posts as $p) {
-    $year = strtotime($p['date']) ? date('Y', strtotime($p['date'])) : '未知';
-    $timeline[$year][] = $p;
+    $cid = $p['collection'] ?? '';
+    if ($cid !== '') {
+        $collectionGroups[$cid][] = $p;
+    } else {
+        $events[] = ['type' => 'post', 'date' => $p['date'], 'post' => $p];
+    }
+}
+foreach ($collectionGroups as $cid => $cposts) {
+    $meta = $collectionMeta[$cid] ?? [];
+    $latest = $cposts[0]['date'] ?? ($meta['date'] ?? '');
+    $events[] = [
+        'type'        => 'collection',
+        'date'        => $latest,
+        'id'          => $cid,
+        'title'       => $meta['title'] ?? $cid,
+        'description' => $meta['description'] ?? '',
+        'count'       => count($cposts),
+    ];
+}
+usort($events, function ($a, $b) {
+    return strtotime($b['date']) <=> strtotime($a['date']);
+});
+
+// 按年份分组 (事件已按日期倒序)
+$timeline = [];
+foreach ($events as $e) {
+    $year = strtotime($e['date']) ? date('Y', strtotime($e['date'])) : '未知';
+    $timeline[$year][] = $e;
 }
 ?>
 <!DOCTYPE html>
@@ -68,6 +107,9 @@ body {
 .tl-summary { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; }
 .tl-tag { display: inline-block; margin-left: 8px; font-size: 0.65rem; color: var(--primary);
   background: rgba(91,160,224,0.08); border: 1px solid rgba(91,160,224,0.18); border-radius: 50px; padding: 1px 8px; }
+/* 合集事件: 菱形节点 + 标签描边, 与逐篇文章区分 (2026-11-03) */
+.tl-item.is-collection::before { border-radius: 2px; transform: rotate(45deg); }
+.tl-item.is-collection .tl-tag { color: var(--accent); border-color: var(--border-glow-strong); }
 </style>
 </head>
 <body>
@@ -77,13 +119,24 @@ body {
 
 <div class="timeline-hero">
   <h1>DIVE LOG / 潜航时间线</h1>
-  <p>一路下潜的记录 — 每一篇都是一次抵达。</p>
+  <p>一路下潜的记录 — 每一份提交都是一次抵达。</p>
 </div>
 
 <div class="timeline-wrap">
-  <?php foreach ($timeline as $year => $yearPosts): ?>
+  <?php foreach ($timeline as $year => $yearEvents): ?>
     <div class="tl-year"><?= $year ?></div>
-    <?php foreach ($yearPosts as $p): ?>
+    <?php foreach ($yearEvents as $e): ?>
+      <?php if ($e['type'] === 'collection'): ?>
+      <div class="tl-item is-collection section-reveal">
+        <div class="tl-date"><?= htmlspecialchars($e['date']) ?></div>
+        <a class="tl-title-link" href="<?= $BASE ?>/?collection=<?= urlencode($e['id']) ?>#postsGrid">
+          <div class="tl-title"><?= htmlspecialchars($e['title']) ?>
+            <span class="tl-tag">合集 · <?= (int) $e['count'] ?> 篇</span>
+          </div>
+        </a>
+        <div class="tl-summary"><?= htmlspecialchars($e['description'] ?: ('共 ' . (int) $e['count'] . ' 篇 WP，一次性归档。')) ?></div>
+      </div>
+      <?php else: $p = $e['post']; ?>
       <div class="tl-item section-reveal">
         <div class="tl-date"><?= htmlspecialchars($p['date']) ?></div>
         <a class="tl-title-link" href="<?= $BASE ?>/post/<?= htmlspecialchars($p['slug']) ?>">
@@ -93,6 +146,7 @@ body {
         </a>
         <div class="tl-summary"><?= htmlspecialchars($p['summary']) ?></div>
       </div>
+      <?php endif; ?>
     <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if (!$posts): ?>

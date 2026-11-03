@@ -37,6 +37,8 @@ $cssV = fn (string $f): string => $BASE . '/includes/' . $f . '?v=' . filemtime(
 ?>
 <link rel="stylesheet" href="<?= $cssV('tokens.css') ?>">
 <link rel="stylesheet" href="<?= $cssV('shared.css') ?>">
+<!-- 隐藏场景 Lain (data-scene="lain" 时生效; 其余场景零影响) -->
+<link rel="stylesheet" href="<?= $cssV('lain.css') ?>">
 <?php if (!empty($editorCss)): ?>
 <link rel="stylesheet" href="<?= $cssV('editor-shared.css') ?>">
 <?php endif; ?>
