@@ -12,7 +12,7 @@
 (function() {
   var html = document.documentElement;
   var SCENES = ['deepsea', 'daylight', 'rain'];
-  var SCENE_NAMES = { deepsea: '深海', daylight: '浅海', rain: '雨窗', lain: 'Wired' };
+  var SCENE_NAMES = { deepsea: '深海', daylight: '浅海', rain: '雨窗', lain: 'Phosphor' };
 
   var saved = localStorage.getItem('scene');
   if (saved !== 'lain' && SCENES.indexOf(saved) === -1) {
@@ -23,6 +23,21 @@
   html.setAttribute('data-scene', saved);
   if (saved === 'daylight' || saved === 'rain') html.setAttribute('data-theme', 'light');
   else html.removeAttribute('data-theme');
+
+  /* 自托管中文等宽字体只在 Lain 场景下加载。
+     index.css 有 89KB (97 条 unicode-range), 不能让其他三个场景陪跑;
+     在这里同步插入 <link>, 可与 lain.css 并行下载, 不额外阻塞渲染。 */
+  var LAIN_FONT = '<?= $BASE ?>/assets/fonts/sarasa-mono/index.css';
+  function loadLainFont() {
+    if (document.getElementById('lainFont')) return;
+    var l = document.createElement('link');
+    l.id = 'lainFont';
+    l.rel = 'stylesheet';
+    l.href = LAIN_FONT;
+    document.head.appendChild(l);
+  }
+  window.loadLainFont = loadLainFont;
+  if (saved === 'lain') loadLainFont();
 
   window.toggleTheme = function() {
     var cur = html.getAttribute('data-scene') || 'deepsea';
@@ -41,18 +56,22 @@
     localStorage.setItem('scene', s);
     if (s === 'daylight' || s === 'rain') html.setAttribute('data-theme', 'light');
     else html.removeAttribute('data-theme');
+    if (s === 'lain') loadLainFont();
 
-    /* 切离 Lain 时收掉未播完的闪屏 */
-    if (s !== 'lain' && html.classList.contains('lain-booting')) {
-      html.classList.remove('lain-booting');
-      if (window.cancelLainBoot) window.cancelLainBoot();
+    /* 切离 Lain 时收掉未播完的闪屏, 并还原被解码改写的 Hero 标题 */
+    if (s !== 'lain') {
+      if (html.classList.contains('lain-booting')) {
+        html.classList.remove('lain-booting');
+        if (window.cancelLainBoot) window.cancelLainBoot();
+      }
+      if (window.restoreLainHero) window.restoreLainHero();
     }
 
     var btn = document.querySelector('.theme-toggle');
     if (btn) {
       if (s === 'lain') {
-        btn.setAttribute('aria-label', '退出隐藏场景 / Leave Wired');
-        btn.title = '退出隐藏场景 / Leave Wired';
+        btn.setAttribute('aria-label', '退出隐藏场景 / Leave Phosphor');
+        btn.title = '退出隐藏场景 / Leave Phosphor';
       } else {
         var next = SCENES[(SCENES.indexOf(s) + 1) % SCENES.length];
         btn.setAttribute('aria-label', '切换场景 / Scene: ' + SCENE_NAMES[s]);

@@ -445,6 +445,10 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
     <div class="orb orb-c"></div>
 </div>
 <div class="scanlines"></div>
+<!-- PHOSPHOR 代码雨 (仅 lain 场景绘制) -->
+<canvas class="lain-rain" id="lainRain" aria-hidden="true"></canvas>
+<div class="lain-hud" aria-hidden="true">LAYER 07 · 0x7F3A · <b id="lainHudClock">--:--:--</b> · <i>LINK STABLE</i></div>
+<script src="<?= $BASE ?>/js/lain-rain.js" defer></script>
 
 <div class="login-container">
     <div class="login-header">

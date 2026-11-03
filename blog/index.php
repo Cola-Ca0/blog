@@ -9,6 +9,30 @@ require __DIR__ . '/includes/markdown.php'; // 深海密件区列表 (2026-09-10
 // Load skills from about-content.json for radar chart
 $aboutJson = json_decode(file_get_contents(__DIR__ . '/about-content.json'), true) ?: [];
 $radarSkills = $aboutJson['skills'] ?? [];
+
+/* 首页口径统计 (2026-11-03 上提到 <head> 之前: hero 里的 PHOSPHOR 系统自检屏要用) */
+$publishedAll = getPublishedPosts(__DIR__ . '/posts/');
+$postCount = count(array_filter($publishedAll, fn($p) => ($p['collection'] ?? '') === ''));
+$lainLatest = '';
+foreach ($publishedAll as $lp) { $ld = $lp['date'] ?? ''; if ($ld > $lainLatest) $lainLatest = $ld; }
+$projectsData = json_decode(file_exists(__DIR__ . '/projects.json') ? file_get_contents(__DIR__ . '/projects.json') : '[]', true) ?: [];
+$projectCount = count($projectsData);
+$commentCount = 0;
+$commentDir = __DIR__ . '/data/comments/';
+if (is_dir($commentDir)) {
+  foreach (glob($commentDir . '*.json') as $cf) {
+    $c = json_decode(file_get_contents($cf), true);
+    if (is_array($c)) $commentCount += count($c);
+  }
+}
+/* PHOSPHOR 侧栏「最近作品」: 按 date 倒序取三件 */
+$lainWorks = $projectsData;
+usort($lainWorks, fn($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
+$lainWorks = array_slice($lainWorks, 0, 3);
+$lainUpDays = max(0, (int)floor((time() - strtotime('2026-08-06')) / 86400));
+/* 本地跑时 SITE_URL 是 localhost, 面板里换成叙事地址, 线上仍显示真实域名 */
+$lainHost = parse_url($SITE_URL, PHP_URL_HOST) ?: '';
+if ($lainHost === '' || $lainHost === '127.0.0.1' || stripos($lainHost, 'localhost') !== false) $lainHost = 'wired://0x7F3A';
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -798,7 +822,7 @@ body {
            站长视图多一枚小按钮切到深海密件, 访客/审核员只有图片。
            下线音频在 本地 .scratch/music-offline/ · 服务器 /var/www/music-offline/ -->
       <?php if ($slides): ?>
-      <div class="hero-viewport section-reveal reveal-left" id="heroViewport" style="transition-delay:350ms">
+      <div class="hero-viewport section-reveal reveal-left lain-hide" id="heroViewport" style="transition-delay:350ms">
         <div class="viewport-head">
           <span class="diamond-sm"></span>
           <span id="viewportTitle">Deep Sea Gallery / 深海图库</span>
@@ -830,6 +854,47 @@ body {
         <?php endif; ?>
       </div>
       <?php endif; ?>
+
+      <!-- PHOSPHOR 系统自检屏 (2026-11-03) — 隐藏场景里顶替深海观测窗。
+           其他场景 display:none, 图库照旧。尺寸与 .viewport-frame 同族, 不撑高 hero 行。 -->
+      <div class="lain-fetch" id="lainFetch">
+        <div class="viewport-head">
+          <span class="diamond-sm"></span>
+          <span>System / 系统自检</span>
+          <span class="viewport-count">0x7F3A</span>
+        </div>
+        <div class="lf-body">
+          <div class="lf-logo" aria-hidden="true">
+            <!-- 圆环 + 三节点 (Ubuntu 语言), 外圈虚线刻度当瞄准环 -->
+            <svg viewBox="0 0 100 100" role="img">
+              <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="1" opacity=".28" stroke-dasharray="3 5"/>
+              <circle cx="50" cy="50" r="34" fill="none" stroke="currentColor" stroke-width="3.5" opacity=".85"/>
+              <circle cx="50" cy="16" r="8.5" fill="currentColor"/>
+              <circle cx="20.6" cy="67" r="8.5" fill="currentColor"/>
+              <circle cx="79.4" cy="67" r="8.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="lf-info">
+          <dl class="lf-rows">
+            <div><dt>user</dt><dd>cola@wired</dd></div>
+            <div><dt>host</dt><dd>deep-sea-station</dd></div>
+            <div><dt>os</dt><dd>phosphor 07 / 深海研究站</dd></div>
+            <div><dt>kernel</dt><dd>0x7F3A-phosphor</dd></div>
+            <div><dt>uptime</dt><dd><?= $lainUpDays ?>d</dd></div>
+            <div><dt>posts</dt><dd><?= $postCount ?></dd></div>
+            <div><dt>works</dt><dd><?= $projectCount ?></dd></div>
+            <div><dt>gallery</dt><dd><?= count($allImages) ?> 帧</dd></div>
+            <div><dt>last</dt><dd><?= htmlspecialchars($lainLatest) ?></dd></div>
+            <div><dt>uplink</dt><dd><?= htmlspecialchars($lainHost) ?></dd></div>
+            <div><dt>shell</dt><dd>/bin/cola</dd></div>
+            <div><dt>time</dt><dd><b id="lainFetchClock">--:--:--</b></dd></div>
+          </dl>
+            <div class="lf-palette" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="blog-hero-right">
@@ -923,24 +988,7 @@ body {
     </div>
   </section>
 
-  <!-- Quick Stats — real metrics -->
-  <?php
-    // 与列表页同口径：只算真正发布的散篇（跳过 draft: true 的草稿/模板与合集文章），否则卡片会多数
-    $postCount = count(array_filter(
-      getPublishedPosts(__DIR__ . '/posts/'),
-      fn($p) => ($p['collection'] ?? '') === ''
-    ));
-    $projectsData = json_decode(file_exists(__DIR__ . '/projects.json') ? file_get_contents(__DIR__ . '/projects.json') : '[]', true) ?: [];
-    $projectCount = count($projectsData);
-    $commentCount = 0;
-    $commentDir = __DIR__ . '/data/comments/';
-    if (is_dir($commentDir)) {
-      foreach (glob($commentDir . '*.json') as $cf) {
-        $c = json_decode(file_get_contents($cf), true);
-        if (is_array($c)) $commentCount += count($c);
-      }
-    }
-  ?>
+  <!-- Quick Stats — real metrics (口径见文件头部的预取块, 与列表页一致: 只算散篇) -->
   <section class="char-showcase">
     <div class="section-label">
       <span class="diamond-dec"></span>
@@ -1089,8 +1137,8 @@ body {
         </div>
       </div>
 
-      <!-- Mini Gallery Preview -->
-      <div class="sidebar-widget">
+      <!-- Mini Gallery Preview (PHOSPHOR 下让位给「最近作品」, 入口并入下一块) -->
+      <div class="sidebar-widget lain-hide">
         <h3 class="widget-title"><span class="diamond-sm"></span> Gallery / 图库</h3>
         <?php $preview = array_slice($slides, 0, 4); ?>
         <?php if (count($allImages) > 0): ?>
@@ -1107,6 +1155,23 @@ body {
         <?php else: ?>
         <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;padding:20px 0">Drop images into assets/images/gallery/</p>
         <?php endif; ?>
+      </div>
+
+      <!-- PHOSPHOR 最近作品 (2026-11-03) — 隐藏场景不展示图库缩略图,
+           改为最近三件作品, 底部保留通往图库的入口 -->
+      <div class="sidebar-widget lain-works">
+        <h3 class="widget-title"><span class="diamond-sm"></span> Recent Work / 最近作品</h3>
+        <ul class="lw-list">
+          <?php foreach ($lainWorks as $w): $wExt = !empty($w['url']); ?>
+          <li>
+            <a href="<?= htmlspecialchars($wExt ? $w['url'] : $BASE . '/projects/') ?>"<?= $wExt ? ' target="_blank" rel="noopener"' : '' ?>>
+              <span class="lw-title"><?= htmlspecialchars($w['title'] ?? '') ?></span>
+              <span class="lw-date"><?= htmlspecialchars($w['date'] ?? '') ?></span>
+            </a>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+        <a class="lw-port" href="<?= $BASE ?>/gallery.php">GALLERY ▸ <?= count($allImages) ?> 帧</a>
       </div>
 
       <!-- Site running time -->

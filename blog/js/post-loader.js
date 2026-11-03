@@ -136,7 +136,7 @@
   function collectionCardHtml(c) {
     var href = BASE + '/?collection=' + encodeURIComponent(c.id) + '#postsGrid';
     var tagsHtml = (c.tags || []).map(function(t) { return '<span>' + escapeHtml(t) + '</span>'; }).join('');
-    return '<article class="article-card">' +
+    return '<article class="article-card is-collection">' +
       '<div class="card-body">' +
       '<div class="card-glow-line"></div>' +
       '<div class="card-meta">' +

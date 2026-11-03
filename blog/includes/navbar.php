@@ -194,33 +194,27 @@ window.toggleMobileNav = function() {
 </script>
 
 <!-- ============================================================
-     Lain 隐藏场景 · 启动闪屏 (2026-11-02)
-     只在搜索框输入口令时触发; 普通页面加载不播
+     Lain 隐藏场景 · 启动闪屏 RASTER LOCK (2026-11-03 PHOSPHOR)
+     只在搜索框按 Enter 命中口令时触发; 普通页面加载不播
      ============================================================ -->
 <div class="lain-boot" id="lainBoot" aria-hidden="true">
-  <div class="lb-shutter lb-shutter-top"></div>
-  <div class="lb-shutter lb-shutter-bottom"></div>
-  <div class="lb-flash"></div>
-  <div class="lb-bloom"></div>
-  <div class="lb-beam"></div>
-  <div class="lb-sweep"></div>
-  <div class="lb-seam"></div>
+  <div class="lb-field"></div>
+  <div class="lb-raster"></div>
+  <div class="lb-band"></div>
   <div class="lb-term" aria-hidden="true">
-    <div class="lb-term-head"><span>LAIN@WIRED</span><span>NODE 04</span></div>
+    <div class="lb-term-head"><span>WIRED://BOOT</span><span>NODE 04</span></div>
     <div class="lb-line lb-cmd"><span class="lb-prompt">lain@wired:~$</span> <span class="lb-cmd-text">connect --node wired --user lain</span><span class="lb-caret">▌</span></div>
-    <div class="lb-line lb-out" style="--i:0"><span class="lb-ok">[  OK  ]</span> load image /wired/kernel.img</div>
-    <div class="lb-line lb-out" style="--i:1"><span class="lb-ok">[  OK  ]</span> handshake / 0x0A</div>
-    <div class="lb-line lb-out" style="--i:2"><span class="lb-ok">[  OK  ]</span> mount /dev/soul</div>
-    <div class="lb-line lb-out" style="--i:3"><span class="lb-ok">[  OK  ]</span> mount /dev/memory</div>
-    <div class="lb-line lb-out" style="--i:4"><span class="lb-ok">[  OK  ]</span> route neural link</div>
-    <div class="lb-line lb-out" style="--i:5"><span class="lb-ok">[  OK  ]</span> calibrate 14.7MHz</div>
-    <div class="lb-line lb-out" style="--i:6"><span class="lb-ok">[  OK  ]</span> decrypt identity</div>
-    <div class="lb-line lb-out" style="--i:7"><span class="lb-ok">[  OK  ]</span> sync layer 07</div>
-    <div class="lb-line lb-out" style="--i:8"><span class="lb-ok">[  OK  ]</span> link 0x7F3A</div>
-    <div class="lb-line lb-out" style="--i:9"><span class="lb-ok">[  OK  ]</span> signal acquired</div>
-    <div class="lb-line lb-out lb-final" style="--i:10"><span class="lb-arrow">&gt;</span> PRESENT DAY, PRESENT TIME</div>
+    <div class="lb-line lb-out" style="--i:0"><span class="lb-ok">[  OK  ]</span> raster lock</div>
+    <div class="lb-line lb-out" style="--i:1"><span class="lb-ok">[  OK  ]</span> phosphor warmup 525nm</div>
+    <div class="lb-line lb-out" style="--i:2"><span class="lb-ok">[  OK  ]</span> decrypt identity</div>
+    <div class="lb-line lb-out" style="--i:3"><span class="lb-ok">[  OK  ]</span> sync layer 07</div>
+    <div class="lb-line lb-out" style="--i:4"><span class="lb-ok">[  OK  ]</span> link 0x7F3A</div>
+    <div class="lb-line lb-out" style="--i:5"><span class="lb-ok">[  OK  ]</span> signal acquired</div>
+    <div class="lb-line lb-out lb-final" style="--i:6"><span class="lb-arrow">&gt;</span> PRESENT DAY, PRESENT TIME</div>
   </div>
-  <div class="lb-skip">click / any key to skip</div>
+  <div class="lb-seam"></div>
+  <div class="lb-flash"></div>
+  <div class="lb-hint">click / any key to skip</div>
 </div>
 <div class="lain-toast" id="lainToast" role="status" aria-live="polite"></div>
 
@@ -230,7 +224,9 @@ window.toggleMobileNav = function() {
   var boot = document.getElementById('lainBoot');
   var toast = document.getElementById('lainToast');
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var bootTimer = null, toastAfter = null, toastTimer = null;
+  var bootPreTimer = null, bootTimer = null, bootOutTimer = null, bootFxTimer = null;
+  var toastTimer = null, toastAfter = null;
+  var heroEl = null, heroOrig = '', heroRaf = null, heroFlicker = null;
 
   function showLainToast(msg, ms) {
     if (!toast) return;
@@ -241,36 +237,129 @@ window.toggleMobileNav = function() {
   }
   window.showLainToast = showLainToast;
 
+  function clearLainBoot() {
+    clearTimeout(bootPreTimer);
+    clearTimeout(bootTimer);
+    clearTimeout(bootOutTimer);
+    clearTimeout(bootFxTimer);
+    clearTimeout(toastAfter);
+    html.classList.remove('lain-booting', 'lain-preload', 'lain-out');
+  }
+
+  /* 2.59s 内容在遮罩仍不透明时先恢复, 2.69s 再淡出 */
+  function endLainBoot(instant) {
+    if (!html.classList.contains('lain-booting')) return;
+    clearTimeout(bootTimer);
+    html.classList.add('lain-preload', 'lain-out');
+    bootFxTimer = setTimeout(startLainHeroFx, instant ? 0 : 360);
+    toastAfter = setTimeout(function() {
+      showLainToast('WIRED LINK ESTABLISHED · 点 EXIT 退出');
+    }, instant ? 0 : 300);
+    bootOutTimer = setTimeout(function() {
+      html.classList.remove('lain-booting', 'lain-preload', 'lain-out');
+    }, 340);
+  }
+
   window.playLainBoot = function() {
-    if (REDUCED) { showLainToast('WIRED LINK ESTABLISHED · 点主题开关退出'); return; }
     if (!boot) return;
-    html.classList.remove('lain-booting');
+    if (REDUCED) {
+      startLainHeroFx();
+      showLainToast('WIRED LINK ESTABLISHED · 点 EXIT 退出');
+      return;
+    }
+    clearLainBoot();
     void boot.offsetWidth;
     html.classList.add('lain-booting');
-    clearTimeout(bootTimer);
-    clearTimeout(toastAfter);
-    bootTimer = setTimeout(function() { html.classList.remove('lain-booting'); }, 4400);
-    toastAfter = setTimeout(function() {
-      showLainToast('WIRED LINK ESTABLISHED · 点主题开关退出');
-    }, 4400);
+    bootPreTimer = setTimeout(function() { html.classList.add('lain-preload'); }, 2590);
+    bootTimer = setTimeout(function() { endLainBoot(false); }, 2690);
   };
 
-  window.cancelLainBoot = function() {
-    clearTimeout(bootTimer);
-    clearTimeout(toastAfter);
-    html.classList.remove('lain-booting');
-  };
+  window.cancelLainBoot = function() { clearLainBoot(); };
 
   function skipLainBoot() {
     if (!html.classList.contains('lain-booting')) return;
-    clearTimeout(bootTimer);
-    clearTimeout(toastAfter);
-    html.classList.remove('lain-booting');
-    showLainToast('WIRED LINK ESTABLISHED · 点主题开关退出');
+    endLainBoot(true);
   }
   document.addEventListener('pointerdown', skipLainBoot, true);
   document.addEventListener('keydown', function(e) {
     if (e.key !== 'F5' && e.key !== 'F12') skipLainBoot();
   }, true);
+
+  /* ---- Hero 标题: 解码 + 单字母磷光 (仅首页) ---- */
+  function getHeroEl() { return document.querySelector('.hero-line1 .en'); }
+
+  function splitLetters(el, text) {
+    el.textContent = '';
+    for (var i = 0; i < text.length; i++) {
+      var sp = document.createElement('span');
+      sp.className = 'lain-letter';
+      sp.textContent = text.charAt(i);
+      el.appendChild(sp);
+    }
+  }
+
+  function startFlicker(el) {
+    clearTimeout(heroFlicker);
+    var tick = function() {
+      var letters = el.querySelectorAll('.lain-letter');
+      if (!letters.length) return;
+      var one = letters[Math.floor(Math.random() * letters.length)];
+      one.classList.add('is-dim');
+      setTimeout(function() { one.classList.remove('is-dim'); }, 80);
+      heroFlicker = setTimeout(tick, 8000 + Math.random() * 4000);
+    };
+    heroFlicker = setTimeout(tick, 6000 + Math.random() * 3000);
+  }
+
+  function startLainHeroFx() {
+    var el = getHeroEl();
+    if (!el || REDUCED) return;
+    if (!heroOrig) heroOrig = el.textContent;
+    var target = heroOrig.toUpperCase();
+    var total = 18, frame = 0, start = null;
+    var glyphs = '01<>/\|[]{}=+*#@$%&';
+    if (heroRaf) cancelAnimationFrame(heroRaf);
+    function step(ts) {
+      if (start === null) start = ts;
+      frame = Math.min(total, Math.round((ts - start) / (300 / total)));
+      var lock = Math.floor(target.length * frame / total);
+      var out = '';
+      for (var i = 0; i < target.length; i++) {
+        out += i < lock ? target.charAt(i) : glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+      }
+      el.textContent = out;
+      if (frame < total) {
+        heroRaf = requestAnimationFrame(step);
+      } else {
+        el.textContent = '';
+        splitLetters(el, target);
+        startFlicker(el);
+        heroRaf = null;
+      }
+    }
+    heroRaf = requestAnimationFrame(step);
+  }
+
+  /* 刷新后已在隐藏场景: 只闪字母, 重新播解码反而像卡住 */
+  window.startLainHeroFlicker = function() {
+    var el = getHeroEl();
+    if (!el || REDUCED) return;
+    if (!heroOrig) heroOrig = el.textContent;
+    if (!el.querySelector('.lain-letter')) splitLetters(el, heroOrig);
+    startFlicker(el);
+  };
+
+  window.restoreLainHero = function() {
+    clearTimeout(bootFxTimer);
+    if (heroRaf) { cancelAnimationFrame(heroRaf); heroRaf = null; }
+    if (heroFlicker) { clearTimeout(heroFlicker); heroFlicker = null; }
+    var el = getHeroEl();
+    if (el && heroOrig) el.textContent = heroOrig;
+    heroOrig = '';
+  };
+
+  if (html.getAttribute('data-scene') === 'lain') {
+    setTimeout(function() { window.startLainHeroFlicker(); }, 400);
+  }
 })();
 </script>
