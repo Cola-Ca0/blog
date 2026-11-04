@@ -373,7 +373,7 @@
         pts += (i * (SCOPE_W / (SCOPE_N - 1))).toFixed(1) + ',' + scopeBuf[i].toFixed(1) + ' ';
       }
       scopeLine.setAttribute('points', pts);
-    }, 120);
+    }, 45);
   }
 
   /* 时钟: 角落 HUD + 系统自检屏 (其他场景不可见, 照常走也不费什么) */
