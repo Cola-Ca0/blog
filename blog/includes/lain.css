@@ -314,12 +314,32 @@ html[data-scene="lain"] .hero-badge { background: rgba(76, 237, 151, 0.06); }
    4. 公共 chrome — 导航 / 开关 / 搜索 / 按钮
    ------------------------------------------------------------ */
 html[data-scene="lain"] .navbar {
-  /* 首页原本「滚过 hero 才现身」; 隐藏场景必须常驻, 否则 EXIT 在 hero 上不可达 */
-  transform: translateY(0) !important;
+  /* 2026-11-04 用户要求: 和普通主题一致 —— hero 上藏起来, 滚过首屏才现身。
+     (此前为让 EXIT 在 hero 可达而强制常驻; 现在的代价是停在首屏时要往下滚一点才能退出。) */
   background: var(--bg-deep) !important;
   backdrop-filter: none; -webkit-backdrop-filter: none;
   border-bottom-color: rgba(76, 237, 151, 0.20);
   box-shadow: 0 1px 0 rgba(76, 237, 151, 0.08), 0 2px 26px rgba(2, 5, 3, 0.35);
+  /* 逐格落下: 6 段阶梯位移, 像显像管重新对齐, 而不是普通主题那种平滑滑入 */
+  transition: transform .3s steps(6, end),
+              border-color .3s steps(2),
+              box-shadow .3s steps(2),
+              background-color .3s steps(2);
+}
+/* 出现瞬间, 底边扫过一道亮线 —— 只在 .visible 加上时播一次 */
+html[data-scene="lain"] .navbar::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(165, 250, 198, 0.95), transparent);
+  opacity: 0; pointer-events: none;
+}
+html[data-scene="lain"] .navbar.visible::after {
+  animation: lain-nav-seam .55s steps(16, end) 1;
+}
+@keyframes lain-nav-seam {
+  0%   { opacity: 0;    transform: translateX(-45%); }
+  12%  { opacity: .95; }
+  100% { opacity: 0;    transform: translateX(45%); }
 }
 html[data-scene="lain"] .brand-text {
   font-family: var(--font-display);
@@ -1268,6 +1288,8 @@ html[data-scene="lain"] :focus-visible {
   html[data-scene="lain"] .lain-wires,
   html[data-scene="lain"] .lain-wires::after,
   html[data-scene="lain"] .tl-item.is-collection::before { animation: none !important; }
+  html[data-scene="lain"] .navbar.visible::after { animation: none !important; }
+  html[data-scene="lain"] .navbar { transition: none !important; }
   .lain-rain { display: none !important; }
   .lain-boot { display: none !important; }
 }
