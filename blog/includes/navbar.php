@@ -319,6 +319,9 @@ window.toggleMobileNav = function() {
     var total = 18, frame = 0, start = null;
     var glyphs = '01<>/\|[]{}=+*#@$%&';
     if (heroRaf) cancelAnimationFrame(heroRaf);
+    /* 解码期间换成便宜的文字阴影: 5 层含 84px 模糊的光晕每帧重绘一次太贵,
+       18 帧就是 18 次大面积高斯模糊。收成 2 层小的, 收工再把完整光晕接回来。 */
+    html.classList.add('lain-decoding');
     function step(ts) {
       if (start === null) start = ts;
       frame = Math.min(total, Math.round((ts - start) / (300 / total)));
@@ -333,6 +336,7 @@ window.toggleMobileNav = function() {
       } else {
         el.textContent = '';
         splitLetters(el, target);
+        html.classList.remove('lain-decoding');
         startFlicker(el);
         heroRaf = null;
       }
@@ -351,6 +355,7 @@ window.toggleMobileNav = function() {
 
   window.restoreLainHero = function() {
     clearTimeout(bootFxTimer);
+    html.classList.remove('lain-decoding');
     if (heroRaf) { cancelAnimationFrame(heroRaf); heroRaf = null; }
     if (heroFlicker) { clearTimeout(heroFlicker); heroFlicker = null; }
     var el = getHeroEl();

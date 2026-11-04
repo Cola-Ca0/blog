@@ -23,7 +23,7 @@
   var FONT = 12;
   var COL_W = READING ? 26 : 16;
   var TRAIL = READING ? 4 : 6;
-  var FRAME_MS = 60; /* ~16fps, 再慢也不影响可读性 */
+  var FRAME_MS = 70; /* ~14fps: 下落速度按 dt 走, 降帧不降观感, 但少画 1/6 的帧 */
   var SPEED_MIN = READING ? 7 : 12;
   var SPEED_MAX = READING ? 24 : 40;
   var ALPHA_MIN = READING ? 0.10 : 0.22;
@@ -49,7 +49,8 @@
 
   /* 景深: 近列更大更亮更快, 远列更小更暗更慢。
      没有这一层, 雨是一张均匀纹理; 有了这层, 雨才是背后的空间。 */
-  function depthSize(c) { return READING ? 12 : 10 + c.near * 5; }
+  /* 只取 3 档字号: 配合按 near 排序的列, 每帧 ctx.font 从 ~90 次降到 3 次 */
+  function depthSize(c) { return READING ? 12 : 10 + Math.round(c.near * 2) * 2.5; }
   function depthAlpha(c) {
     return c.alpha * (READING ? 0.78 + c.near * 0.34 : 0.40 + c.near * 0.92);
   }
@@ -77,6 +78,9 @@
         mut: MUT_MIN + Math.random() * (MUT_MAX - MUT_MIN)
       });
     }
+    /* 按景深排序: 同字号的列排在一起, 绘制时 font 只在换档时设一次。
+       列之间互不影响 (x/speed 都挂在列上), 重排不改变画面。 */
+    cols.sort(function (a, b) { return a.near - b.near; });
   }
 
   function resize() {
@@ -102,14 +106,21 @@
     /* 启动闪屏/后台标签页/其他场景: 跳过绘制, 但保持循环以便恢复 */
     if (document.hidden) return;
     if (html.getAttribute('data-scene') !== 'lain') return;
+    /* 启动闪屏与 hero 解码期间停画: 那 300ms 里主线程要重绘标题,
+       背景画布每帧再插一脚就是肉眼可见的掉帧 */
     if (html.classList.contains('lain-booting')) return;
+    if (html.classList.contains('lain-decoding')) return;
 
     ctx.clearRect(0, 0, W, H);
+    var lastSize = 0;
     for (var i = 0; i < cols.length; i++) {
       var c = cols[i];
       var size = depthSize(c);
       if (c.y > -size && c.y < H + size) {
-        ctx.font = size + 'px "Lucida Console","Courier New",monospace';
+        if (size !== lastSize) {
+          ctx.font = size + 'px "Lucida Console","Courier New",monospace';
+          lastSize = size;
+        }
         /* 头部: 偶尔一个代码 token, 其余是 0/1 与符号 */
         ctx.globalAlpha = Math.min(1, depthAlpha(c) + (READING ? 0.05 : 0.12));
         ctx.fillStyle = c.token ? '#a5fac6' : '#76faad';
@@ -160,7 +171,11 @@
 
   function sync() {
     if (!reduced && !document.hidden && html.getAttribute('data-scene') === 'lain') start();
-    else stop();
+    else {
+      stop();
+      /* 切走时别把 lain 头像留在原地 */
+      if (avatarEl) avatarEl.classList.remove('is-glitch');
+    }
   }
 
   window.addEventListener('resize', function () {
@@ -182,6 +197,34 @@
   /* 场景切换: deepsea/daylight/rain 时彻底停掉 */
   if (window.MutationObserver) {
     new MutationObserver(sync).observe(html, { attributes: true, attributeFilter: ['data-scene'] });
+  }
+
+  /* 头像信号不稳: 每隔 10–15s 抖一次。
+     一次抖动 = 快切几下来回 (70/55/100/60ms, 这段就是"闪"), 然后停在 lain 头像 0.9s
+     让人看清换的是谁, 再收回到正常。全程硬切, 没有过渡。 */
+  var avatarEl = document.querySelector('.panel-avatar');
+  if (avatarEl && !reduced) {
+    var AV_SEQ = [[1, 70], [0, 55], [1, 100], [0, 60], [1, 900]];
+    var avatarNext, avatarRun;
+    avatarRun = function (i) {
+      var step = AV_SEQ[i];
+      if (!step) {
+        avatarEl.classList.remove('is-glitch', 'is-flicker');
+        avatarNext();
+        return;
+      }
+      if (step[0]) avatarEl.classList.add('is-glitch');
+      else avatarEl.classList.remove('is-glitch');
+      avatarEl.classList.add('is-flicker');
+      setTimeout(function () { avatarRun(i + 1); }, step[1] + Math.random() * 45);
+    };
+    avatarNext = function () {
+      setTimeout(function () {
+        if (!document.hidden && html.getAttribute('data-scene') === 'lain') avatarRun(0);
+        else avatarNext();
+      }, 10000 + Math.random() * 5000);
+    };
+    avatarNext();
   }
 
   /* 时钟: 角落 HUD + 系统自检屏 (其他场景不可见, 照常走也不费什么) */

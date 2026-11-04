@@ -25,4 +25,4 @@
 <div class="lain-crt" aria-hidden="true"></div>
 <!-- 角落 HUD: 层号 / 链路地址 / 实时时钟 (时钟由 lain-rain.js 驱动) -->
 <div class="lain-hud" aria-hidden="true">LAYER 07 · 0x7F3A · <b id="lainHudClock">--:--:--</b> · <i>LINK STABLE</i></div>
-<script src="<?= $BASE ?>/js/lain-rain.js" defer></script>
+<script src="<?= $BASE ?>/js/lain-rain.js?v=<?= @filemtime(__DIR__ . '/../js/lain-rain.js') ?>" defer></script>
