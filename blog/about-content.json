@@ -35,6 +35,23 @@
             "icon": "🐉"
         }
     ],
+    "standbySkills": [
+        {
+            "name": "SOLIDITY",
+            "level": 30,
+            "icon": "◇"
+        },
+        {
+            "name": "JS",
+            "level": 10,
+            "icon": "◇"
+        },
+        {
+            "name": "SQL",
+            "level": 10,
+            "icon": "◇"
+        }
+    ],
     "timeline": [
         {
             "year": "2026.09",

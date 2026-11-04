@@ -109,6 +109,37 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
   </div>
   <?php endif; ?>
 
+  <!-- Standby Skills — PHOSPHOR 隐藏场景的「备用技能」, 仅站长可见/可编辑 (2026-11-04) -->
+  <?php if ($isAdmin): ?>
+  <div class="about-card">
+    <h2><span class="diamond"></span> Standby / 备用技能</h2>
+    <p style="font-size:.76rem;color:var(--text-muted);margin:-8px 0 14px;line-height:1.7">
+      只在隐藏场景（Phosphor）的技能抖动里出现，<b>不参与</b>上面的正式技能列表和雷达图。<br>
+      拖动进度条调整熟练度，点保存按钮一起写入。
+    </p>
+    <div class="skills-grid" id="standbyGrid">
+      <?php foreach (($about['standbySkills'] ?? []) as $idx => $sk): ?>
+      <div class="skill-item">
+        <span class="skill-icon"><?= htmlspecialchars($sk['icon'] ?? '◇') ?></span>
+        <div class="skill-info">
+          <div class="skill-name">
+            <?= htmlspecialchars($sk['name'] ?? '') ?>
+            <span class="skill-pct" id="standbyPct<?= $idx ?>"><?= (int) ($sk['level'] ?? 0) ?>%</span>
+          </div>
+          <div class="skill-bar-wrap" style="cursor:ew-resize">
+            <div class="skill-bar-fill" id="standbyFill<?= $idx ?>" style="width:<?= (int) ($sk['level'] ?? 0) ?>%"></div>
+          </div>
+        </div>
+      </div>
+      <?php endforeach; ?>
+      <div style="grid-column:1/-1;text-align:right;margin-top:8px">
+        <button onclick="saveSkills()" style="font-family:var(--font-display);background:var(--primary);color:var(--text-primary);border:none;padding:6px 16px;border-radius:var(--radius-pill);cursor:pointer;font-size:0.78rem">Save / 保存（含备用技能）</button>
+        <span id="saveStandbyMsg" style="font-size:0.7rem;color:var(--accent);margin-left:10px"></span>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- Timeline -->
   <?php if (!empty($about['timeline'])): ?>
   <div class="about-card">
@@ -194,22 +225,29 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
 <?php require __DIR__ . '/includes/footer.php'; ?>
 <?php if ($isAdmin): ?>
 <script>
-// Draggable skill bars (admin only)
+// Draggable skill bars (admin only) — 正式技能 + 备用技能, 共用同一套拖动与保存
 (function() {
-  var skillsData = <?= json_encode($about['skills'] ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-  var dragging = null, dragBar = null, dragIdx = -1;
+  var groups = [
+    { grid: 'skillsGrid',  prefix: 'skill',   data: <?= json_encode($about['skills'] ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?> },
+    { grid: 'standbyGrid', prefix: 'standby', data: <?= json_encode($about['standbySkills'] ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?> }
+  ];
+  var dragging = false, dragBar = null, dragCtx = null, dragIdx = -1;
 
-  document.querySelectorAll('.skill-bar-wrap').forEach(function(bar, i) {
-    bar.addEventListener('mousedown', function(e) { startDrag(e, bar, i); });
-    bar.addEventListener('touchstart', function(e) { startDrag(e.touches[0], bar, i); }, {passive:false});
+  groups.forEach(function(g) {
+    var grid = document.getElementById(g.grid);
+    if (!grid) return;
+    grid.querySelectorAll('.skill-bar-wrap').forEach(function(bar, i) {
+      bar.addEventListener('mousedown', function(e) { startDrag(e, bar, g, i); });
+      bar.addEventListener('touchstart', function(e) { startDrag(e.touches[0], bar, g, i); }, {passive:false});
+    });
   });
   document.addEventListener('mousemove', onDrag);
   document.addEventListener('touchmove', onDrag, {passive:false});
   document.addEventListener('mouseup', stopDrag);
   document.addEventListener('touchend', stopDrag);
 
-  function startDrag(e, bar, idx) {
-    dragging = true; dragBar = bar; dragIdx = idx;
+  function startDrag(e, bar, g, idx) {
+    dragging = true; dragBar = bar; dragCtx = g; dragIdx = idx;
     updateFromEvent(e);
     e.preventDefault();
   }
@@ -221,18 +259,28 @@ body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-pri
   function updateFromEvent(e) {
     var rect = dragBar.getBoundingClientRect();
     var pct = Math.round(Math.max(5, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)));
-    document.getElementById('skillFill' + dragIdx).style.width = pct + '%';
-    document.getElementById('skillPct' + dragIdx).textContent = pct + '%';
-    if (skillsData[dragIdx]) skillsData[dragIdx].level = pct;
+    document.getElementById(dragCtx.prefix + 'Fill' + dragIdx).style.width = pct + '%';
+    document.getElementById(dragCtx.prefix + 'Pct' + dragIdx).textContent = pct + '%';
+    if (dragCtx.data[dragIdx]) dragCtx.data[dragIdx].level = pct;
+  }
+
+  function flash(msg) {
+    ['saveSkillsMsg', 'saveStandbyMsg'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = msg;
+    });
   }
 
   window.saveSkills = function() {
-    var body = JSON.stringify({skills: skillsData.map(function(s){return {name:s.name,level:s.level,icon:s.icon}})}, null, 2);
+    var body = JSON.stringify({
+      skills: groups[0].data.map(function(s){return {name:s.name,level:s.level,icon:s.icon}}) ,
+      standbySkills: groups[1].data.map(function(s){return {name:s.name,level:s.level,icon:s.icon}})
+    }, null, 2);
     fetch('admin/save-skills.php', {method:'POST',body:body,headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken}}).then(function(r){
       return r.json().then(function(d){
-        document.getElementById('saveSkillsMsg').textContent = d.ok ? 'Saved! / 已保存!' : (d.error||'Failed');
+        flash(d.ok ? 'Saved! / 已保存!' : (d.error||'Failed'));
       });
-    }).catch(function(){ document.getElementById('saveSkillsMsg').textContent = 'Network error'; });
+    }).catch(function(){ flash('Network error'); });
   };
 })();
 </script>

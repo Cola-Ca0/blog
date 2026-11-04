@@ -38,3 +38,14 @@ Options -Indexes
   # 渐进 CSP: 站内大量内联脚本, 暂不锁 script-src; HTTPS(8443) 上线后补 Strict-Transport-Security
   Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
 </IfModule>
+
+# ===== 主题化 404 (2026-11-04) =====
+# 不存在的路径内部重写到 404.php 渲染, 由该页自行发 404 状态码。
+# 用相对路径, 本地 /blog/ 子目录与线上域名根部署都成立 —— 不能写死 /blog/404.php。
+# 必须放在最末: 上面的规则都是 [L], 命中的不会走到这里。
+# .well-known 例外 (certbot 签证书验证路径, 与上面的豁免同理)。
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteCond %{REQUEST_URI} !/\.well-known/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ 404.php [L]

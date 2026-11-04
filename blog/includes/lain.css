@@ -251,9 +251,44 @@ html[data-scene="lain"] .hero-wallpaper .wallpaper-shimmer {
     linear-gradient(180deg, rgba(76, 237, 151, 0.03), transparent 38%);
 }
 html[data-scene="lain"] .hero-wallpaper .caustic-overlay { opacity: 0; }
+/* 2026-11-04 声呐环 → 示波器: 一个带刻度网格的框 + 一条实时更新的信号线。
+   (声呐是深海主题的语言, 在"有线"世界里应该是示波器) */
+.lain-scope { display: none; }
 html[data-scene="lain"] .hero-sonar {
-  border-color: rgba(76, 237, 151, 0.5);
-  box-shadow: 0 0 14px rgba(76, 237, 151, 0.3), inset 0 0 8px rgba(76, 237, 151, 0.25);
+  width: 208px; height: 78px;
+  margin: -39px 0 0 -104px;
+  /* 2026-11-04 去掉左右边框: 只留上下两条导轨, 读作"一条开放的仪表面板"而不是一个框 */
+  border: 0;
+  border-top: 1px solid rgba(76, 237, 151, 0.26);
+  border-bottom: 1px solid rgba(76, 237, 151, 0.26);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  opacity: 1;
+  animation: none;
+}
+/* 刻度网格单独放一层, 好让它跟波形一样左右渐隐 */
+html[data-scene="lain"] .hero-sonar::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(76, 237, 151, 0.055) 0 1px, transparent 1px 13px),
+    repeating-linear-gradient(90deg, rgba(76, 237, 151, 0.045) 0 1px, transparent 1px 26px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+html[data-scene="lain"] .lain-scope {
+  display: block;
+  position: absolute; inset: 1px;
+  width: calc(100% - 2px); height: calc(100% - 2px);
+  /* 线两端在框内渐隐, 不硬切到边框 */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 11%, #000 89%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 11%, #000 89%, transparent 100%);
+}
+html[data-scene="lain"] .lain-scope-line {
+  stroke: var(--accent);
+  filter: drop-shadow(0 0 4px rgba(76, 237, 151, 0.75));
 }
 html[data-scene="lain"] .hero-text-center .hero-line1 {
   font-family: var(--font-display);
@@ -305,10 +340,45 @@ html[data-scene="lain"] .hero-text-center .hero-line2::before {
 /* 单字母磷光闪烁 (JS 拆分后挂 .is-dim) */
 html[data-scene="lain"] .hero-line1 .en .lain-letter { transition: opacity .08s linear; }
 html[data-scene="lain"] .hero-line1 .en .is-dim { opacity: .22; }
-html[data-scene="lain"] .wave-divider .waves use:nth-child(1) { fill: rgba(30, 120, 73, 0.16) !important; }
-html[data-scene="lain"] .wave-divider .waves use:nth-child(2) { fill: rgba(22, 35, 27, 0.42) !important; }
-html[data-scene="lain"] .wave-divider .waves use:nth-child(3) { fill: rgba(4, 6, 5, 0.78) !important; }
-html[data-scene="lain"] .wave-divider .waves use:nth-child(4) { fill: var(--bg-deep) !important; }
+/* 2026-11-04 底部：深海波浪 → 显像管底边。
+   老电视画面下沿的样子：一条硬亮线，下面是横向噪点带，再几条拖影缓慢漂移。
+   (波浪是深海主题的遗留物，跟"有线"世界对不上，用户拍板换掉) */
+html[data-scene="lain"] .wave-divider {
+  height: 24px;
+  margin-top: -1px;
+  margin-bottom: 0;
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(76, 237, 151, 0.16) 0 1px, transparent 1px 3px,
+      rgba(76, 237, 151, 0.07) 3px 4px, transparent 4px 9px),
+    linear-gradient(180deg, rgba(76, 237, 151, 0.10), transparent 85%);
+  animation: lain-raster-drift 7s linear infinite;
+}
+html[data-scene="lain"] .wave-divider .waves { display: none; }
+html[data-scene="lain"] .wave-divider::before {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg,
+    transparent, rgba(165, 250, 198, 0.80) 12%,
+    rgba(76, 237, 151, 0.62) 50%,
+    rgba(165, 250, 198, 0.80) 88%, transparent);
+  box-shadow: 0 0 14px rgba(76, 237, 151, 0.45);
+}
+html[data-scene="lain"] .wave-divider::after {
+  content: '';
+  position: absolute; left: -15%; right: -15%; top: 6px; height: 2px;
+  background:
+    linear-gradient(90deg, transparent 0 6%, rgba(165, 250, 198, 0.45) 9%, transparent 21%),
+    linear-gradient(90deg, transparent 0 37%, rgba(76, 237, 151, 0.30) 41%, transparent 56%),
+    linear-gradient(90deg, transparent 0 72%, rgba(165, 250, 198, 0.24) 75%, transparent 89%);
+  animation: lain-raster-streak 5.5s linear infinite;
+  will-change: transform;
+}
+@keyframes lain-raster-drift { to { background-position: -90px 0, 0 0; } }
+@keyframes lain-raster-streak {
+  from { transform: translate3d(-7%, 0, 0); }
+  to   { transform: translate3d(7%, 0, 0); }
+}
 
 html[data-scene="lain"] .blog-hero-title {
   background-image: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, var(--primary) 100%);
@@ -610,7 +680,41 @@ html[data-scene="lain"] .sidebar-widget:hover::after { opacity: 1; transition-du
 html[data-scene="lain"] .panel-hud-header,
 html[data-scene="lain"] .hud-data-row { border-color: rgba(30, 120, 73, 0.16); }
 html[data-scene="lain"] .hud-bar { background: rgba(30, 120, 73, 0.12); }
-html[data-scene="lain"] .hud-bar-fill { box-shadow: 0 0 8px rgba(76, 237, 151, 0.45); }
+html[data-scene="lain"] .hud-bar-fill {
+  box-shadow: 0 0 8px rgba(76, 237, 151, 0.45);
+  transition: width .18s linear, box-shadow .25s, background .25s;
+}
+/* 技能栏信号抖动: 乱码 → 落到备用技能 → 停一会儿 → 收回。
+   名字切换时先"显示器失真"(横向剪切 wobble + 亮度阶跃), 再落定 */
+html[data-scene="lain"] .hud-bar-wrap.is-glitch .hud-bar-label span:first-child {
+  color: var(--accent);
+  letter-spacing: .18em;
+  text-shadow: 0 0 12px rgba(76, 237, 151, 0.65);
+  animation: lain-warp .2s steps(1, end) infinite;
+}
+/* 雷达那边的轴标签同步失真 */
+html[data-scene="lain"] .radar-svg text.is-glitch {
+  fill: var(--accent);
+  animation: lain-warp .2s steps(1, end) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+html[data-scene="lain"] .radar-svg .radar-shape.is-glitch {
+  filter: drop-shadow(0 0 6px rgba(76, 237, 151, 0.85));
+}
+@keyframes lain-warp {
+  0%   { transform: skewX(0deg)  scaleX(1);    opacity: 1;   }
+  20%  { transform: skewX(-16deg) scaleX(1.14); opacity: .45; }
+  40%  { transform: skewX(10deg) scaleX(.90);  opacity: 1;   }
+  60%  { transform: skewX(-7deg) scaleX(1.06); opacity: .6;  }
+  80%  { transform: skewX(4deg)  scaleX(.97);  opacity: 1;   }
+  100% { transform: skewX(0deg)  scaleX(1);    opacity: 1;   }
+}
+html[data-scene="lain"] .hud-bar-wrap.is-glitch .hud-bar-label span:last-child { color: var(--accent); }
+html[data-scene="lain"] .hud-bar-wrap.is-glitch .hud-bar-fill {
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(76, 237, 151, 0.85);
+}
 html[data-scene="lain"] .article-card {
   background: var(--bg-card);
   backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -894,7 +998,17 @@ html[data-scene="lain"] .project-card .tags span {
   border-radius: 2px;
 }
 html[data-scene="lain"] .project-card .files-row { border-top-color: var(--border-glow); }
-html[data-scene="lain"] .project-card .file-link { color: var(--accent); }
+/* 2026-11-04 扫描补漏: index.php / projects 的页面级样式里写死了旧蓝边 */
+html[data-scene="lain"] .project-card .file-link,
+html[data-scene="lain"] .file-link,
+html[data-scene="lain"] .file-link.dl { color: var(--accent); border-color: rgba(76, 237, 151, 0.22); }
+html[data-scene="lain"] .file-link:hover {
+  border-color: var(--accent);
+  background: rgba(76, 237, 151, 0.08);
+  box-shadow: 0 0 14px rgba(76, 237, 151, 0.18);
+}
+html[data-scene="lain"] .file-link.locked { color: var(--text-muted); border-color: rgba(30, 120, 73, 0.20); }
+html[data-scene="lain"] .hero-badge { border-color: rgba(76, 237, 151, 0.20); }
 html[data-scene="lain"] .project-card .status-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
 /* Treehole */

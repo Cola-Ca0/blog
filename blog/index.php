@@ -346,7 +346,7 @@ body {
   transform: rotate(45deg); box-shadow: 0 0 3px var(--accent); flex-shrink: 0;
 }
 .radar-chart { text-align: center; }
-.radar-svg { width: 100%; max-width: 260px; height: auto; }
+.radar-svg { width: 100%; max-width: 292px; height: auto; }
 .radar-shape { transition: all 0.6s ease; }
 .radar-card:hover .radar-shape { fill: rgba(91,160,224,0.22); }
 
@@ -721,7 +721,12 @@ body {
   <div class="wallpaper-fallback"></div>
   <div class="wallpaper-shimmer"></div>
   <div class="caustic-overlay"></div>
-  <div class="hero-sonar" aria-hidden="true"></div>
+  <div class="hero-sonar" aria-hidden="true">
+    <!-- 隐藏场景专用: 声呐环换成示波器波形 (其他场景 display:none) -->
+    <svg class="lain-scope" viewBox="0 0 200 76" preserveAspectRatio="none" aria-hidden="true">
+      <polyline class="lain-scope-line" id="lainScopeLine" fill="none" stroke-width="1.2" points=""></polyline>
+    </svg>
+  </div>
 
   <div class="hero-text-center">
     <h1 class="hero-line1"><span class="en">Hello</span><br><span class="en-sub">Welcome to Cola's blog</span></h1>
@@ -925,6 +930,10 @@ body {
         <span class="hud-data-label">FOCUS</span>
         <span class="hud-data-val">Web Security · SRC · Backend</span>
       </div>
+      <!-- PHOSPHOR 备用技能 (2026-11-04): 数据源是 about-content.json 的 standbySkills,
+           在「关于」页登录后的技能编辑器里拖动调整即可, 不参与正式技能与雷达图。 -->
+      <?php $lainGhostSkills = $aboutJson['standbySkills'] ?? []; ?>
+
       <!-- Skill Bars (2026-08 数据源统一: 与雷达图同读 about-content.json, 不再写死 mock) -->
       <?php foreach (array_slice($radarSkills, 0, 4) as $barIdx => $barSk): $barLv = intval($barSk['level'] ?? 0); ?>
       <div class="hud-bar-wrap"<?= $barIdx > 0 ? ' style="margin-top:10px;"' : '' ?>>
@@ -932,6 +941,7 @@ body {
         <div class="hud-bar"><div class="hud-bar-fill" style="width:<?= $barLv ?>%;"></div></div>
       </div>
       <?php endforeach; ?>
+      <div class="lain-ghost-skills" hidden data-skills="<?= htmlspecialchars(json_encode($lainGhostSkills, JSON_UNESCAPED_UNICODE)) ?>"></div>
       <!-- Social links row -->
       <!-- Skill Radar Chart (dynamic from about-content.json) -->
       <?php
@@ -968,7 +978,8 @@ body {
       <div class="radar-card">
         <div class="radar-title"><span class="diamond-sm"></span> Skill Matrix / 技能雷达</div>
         <div class="radar-chart" id="radarChart">
-          <svg viewBox="0 0 200 200" class="radar-svg">
+          <!-- 2026-11-04: viewBox 留出 14 单位外扩, 否则左右轴标签 (C/C++ / Security) 会被裁掉 -->
+          <svg viewBox="-24 -14 236 236" class="radar-svg" data-values="<?= implode(',', $radarValues) ?>">
             <circle cx="100" cy="100" r="30" fill="none" stroke="var(--border-glow)" stroke-width="0.5"/>
             <circle cx="100" cy="100" r="58" fill="none" stroke="var(--border-glow)" stroke-width="0.5"/>
             <circle cx="100" cy="100" r="84" fill="none" stroke="var(--border-glow)" stroke-width="0.5"/>
@@ -980,11 +991,12 @@ body {
             <circle cx="<?= $d['x'] ?>" cy="<?= $d['y'] ?>" r="3" fill="var(--accent)"/>
             <?php endforeach; ?>
             <?php foreach ($labelPositions as $i => $lp): ?>
-            <text x="<?= $lp['x'] ?>" y="<?= $lp['y'] ?>" text-anchor="<?= $lp['anchor'] ?>" fill="var(--text-muted)" font-size="8" font-family="var(--font-display)"><?= htmlspecialchars($radarLabels[$i]) ?></text>
+            <text x="<?= $lp['x'] ?>" y="<?= $lp['y'] ?>" text-anchor="<?= $lp['anchor'] ?>" fill="var(--text-muted)" font-size="8" font-family="var(--font-display)" data-axis="<?= $i ?>"><?= htmlspecialchars($radarLabels[$i]) ?></text>
             <?php endforeach; ?>
           </svg>
         </div>
       </div>
+
     </div>
   </section>
 

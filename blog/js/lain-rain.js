@@ -35,6 +35,7 @@
   var cols = [];
   var raf = null, last = 0, running = false;
   var resizeTimer = null;
+  var ghostRestore = null; /* 技能栏抖动的撤销句柄 (切场景时用) */
 
   function rand(n) { return Math.floor(Math.random() * n); }
   function glyph() {
@@ -173,8 +174,9 @@
     if (!reduced && !document.hidden && html.getAttribute('data-scene') === 'lain') start();
     else {
       stop();
-      /* 切走时别把 lain 头像留在原地 */
+      /* 切走时别把 lain 头像 / 备用技能留在原地 */
       if (avatarEl) avatarEl.classList.remove('is-glitch');
+      if (ghostRestore) ghostRestore();
     }
   }
 
@@ -225,6 +227,153 @@
       }, 10000 + Math.random() * 5000);
     };
     avatarNext();
+  }
+
+  /* 技能栏 + 雷达联动抖动: 隔 12–20s 挑一条, 名字先乱码再失真扭动, 最后落到"备用技能"。
+     进度条与雷达是同一个技能, 所以两边必须一起变。
+     数据来自 index.php 的 .lain-ghost-skills[data-skills], 不进 about-content.json。 */
+  var ghostBox = document.querySelector('.lain-ghost-skills');
+  var barRows = [].slice.call(document.querySelectorAll('.hero-panel .hud-bar-wrap'));
+  var radarSvg = document.querySelector('.radar-svg');
+  var radarPoly = radarSvg && radarSvg.querySelector('.radar-shape');
+  var radarDots = radarSvg ? [].slice.call(radarSvg.querySelectorAll('circle[r="3"]')) : [];
+  var radarTexts = radarSvg ? [].slice.call(radarSvg.querySelectorAll('text[data-axis]')) : [];
+  var radarVals = null;
+  if (radarSvg) {
+    radarVals = (radarSvg.getAttribute('data-values') || '').split(',').map(function (x) {
+      return parseInt(x, 10) || 0;
+    });
+    while (radarVals.length < 6) radarVals.push(50);
+  }
+  function radarApply(vals) {
+    if (!radarPoly) return;
+    var pts = [];
+    for (var i = 0; i < 6; i++) {
+      var a = (-90 + i * 60) * Math.PI / 180;
+      var r = (vals[i] / 100) * 84;
+      var x = 100 + r * Math.cos(a), y = 100 + r * Math.sin(a);
+      pts.push(x.toFixed(1) + ',' + y.toFixed(1));
+      if (radarDots[i]) {
+        radarDots[i].setAttribute('cx', x.toFixed(1));
+        radarDots[i].setAttribute('cy', y.toFixed(1));
+      }
+    }
+    radarPoly.setAttribute('points', pts.join(' '));
+  }
+
+  if (ghostBox && barRows.length && !reduced) {
+    var ghosts = [];
+    try { ghosts = JSON.parse(ghostBox.getAttribute('data-skills') || '[]'); } catch (e) { ghosts = []; }
+    if (ghosts.length) {
+      var GLY = '01<>/[]{}=+*#@$%&';
+      var ghostNext, ghostPick;
+
+      ghostPick = function (j) {
+        var row = barRows[j];
+        if (!row) return;
+        var nameEl = row.querySelector('.hud-bar-label span:first-child');
+        var pctEl = row.querySelector('.hud-bar-label span:last-child');
+        var fill = row.querySelector('.hud-bar-fill');
+        if (!nameEl || !pctEl || !fill) return;
+
+        var rText = radarTexts[j] || null;
+        var oName = nameEl.textContent, oPct = pctEl.textContent, oW = fill.style.width;
+        var oRName = rText ? rText.textContent : '', oRVal = radarVals ? radarVals[j] : 0;
+        var g = ghosts[Math.floor(Math.random() * ghosts.length)];
+        var done = false, scr = null, raf = null, hold = null;
+
+        ghostRestore = function () {
+          done = true;
+          if (scr) clearInterval(scr);
+          if (hold) clearTimeout(hold);
+          if (raf) cancelAnimationFrame(raf);
+          row.classList.remove('is-glitch');
+          if (rText) rText.classList.remove('is-glitch');
+          radarPoly && radarPoly.classList.remove('is-glitch');
+          nameEl.textContent = oName;
+          pctEl.textContent = oPct;
+          fill.style.width = oW;
+          if (rText) rText.textContent = oRName;
+          if (radarVals) { radarVals[j] = oRVal; radarApply(radarVals); }
+          ghostRestore = null;
+        };
+
+        row.classList.add('is-glitch');
+        if (rText) rText.classList.add('is-glitch');
+        if (radarPoly) radarPoly.classList.add('is-glitch');
+
+        var n = 0;
+        scr = setInterval(function () {
+          var s = '';
+          for (var i = 0; i < oName.length; i++) s += GLY.charAt(Math.floor(Math.random() * GLY.length));
+          nameEl.textContent = s;
+          if (rText) rText.textContent = s;
+          if (++n < 4) return;
+
+          clearInterval(scr); scr = null;
+          nameEl.textContent = g.name;
+          if (rText) rText.textContent = g.name;
+
+          var from = parseInt(oPct, 10) || 0, to = g.level, t0 = null;
+          var step = function (ts) {
+            if (done) return;
+            if (t0 === null) t0 = ts;
+            var k = Math.min(1, (ts - t0) / 340);
+            var v = Math.round(from + (to - from) * k + (Math.random() - 0.5) * 20 * (1 - k));
+            v = Math.max(0, Math.min(100, v));
+            pctEl.textContent = v + '%';
+            fill.style.width = v + '%';
+            if (radarVals) { radarVals[j] = v; radarApply(radarVals); }
+            if (k < 1) { raf = requestAnimationFrame(step); return; }
+            pctEl.textContent = to + '%';
+            fill.style.width = to + '%';
+            if (radarVals) { radarVals[j] = to; radarApply(radarVals); }
+            raf = null;
+            hold = setTimeout(function () {
+              if (!done && ghostRestore) ghostRestore();
+              ghostNext();
+            }, 1100);
+          };
+          raf = requestAnimationFrame(step);
+        }, 55);
+      };
+
+      ghostNext = function () {
+        setTimeout(function () {
+          if (!document.hidden && html.getAttribute('data-scene') === 'lain') {
+            ghostPick(Math.floor(Math.random() * barRows.length));
+          } else ghostNext();
+        }, 12000 + Math.random() * 8000);
+      };
+      ghostNext();
+    }
+  }
+
+  /* 示波器: hero 里那条信号线, 70ms 推一格 (只在 Lain 场景更新) */
+  var scopeLine = document.getElementById('lainScopeLine');
+  if (scopeLine && !reduced) {
+    /* 密集采样 + 短步进: 波速靠"每步移动多少"决定, 不靠降帧。
+       之前 120ms/56 点是靠掉帧变慢, 看起来就是卡; 现在 45ms/140 点, 同样速度但顺滑。 */
+    var SCOPE_W = 200, SCOPE_N = 140, scopeBuf = [];
+    /* 预热: 一开始就填满一整条波形, 否则头 6 秒左半段是条直线 */
+    var scopeV = 38;
+    for (var si = 0; si < SCOPE_N; si++) {
+      scopeV = scopeV + (38 - scopeV) * 0.045 + (Math.random() - 0.5) * 7;
+      scopeBuf.push(Math.max(6, Math.min(70, scopeV)));
+    }
+    setInterval(function () {
+      if (document.hidden || html.getAttribute('data-scene') !== 'lain') return;
+      scopeBuf.shift();
+      var prev = scopeBuf[scopeBuf.length - 1];
+      /* 往中线回拉一点, 再叠抖动 —— 读作"信号", 而不是纯随机噪声 */
+      var v = prev + (38 - prev) * 0.045 + (Math.random() - 0.5) * 7;
+      scopeBuf.push(Math.max(6, Math.min(70, v)));
+      var pts = '';
+      for (var i = 0; i < SCOPE_N; i++) {
+        pts += (i * (SCOPE_W / (SCOPE_N - 1))).toFixed(1) + ',' + scopeBuf[i].toFixed(1) + ' ';
+      }
+      scopeLine.setAttribute('points', pts);
+    }, 120);
   }
 
   /* 时钟: 角落 HUD + 系统自检屏 (其他场景不可见, 照常走也不费什么) */
