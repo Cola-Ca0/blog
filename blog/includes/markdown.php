@@ -354,7 +354,7 @@ function renderMarkdown(string $text): string {
     $text = preg_replace('/^---$/m', '<hr>', $text);
 
     // 4. Blockquote — ⚠️ 入口已整体转义, '>' 已变成 '&gt;', 故匹配 &gt;
-    $text = preg_replace_callback('/^&gt;\s+(.+)$/m', fn($m) => '<blockquote>' . $m[1] . '</blockquote>', $text);
+    $text = preg_replace_callback('/^&gt;\s*(.+)$/m', fn($m) => '<blockquote>' . $m[1] . '</blockquote>', $text);
 
     // 5. Images (before links — same bracket syntax)
     // 2026-10-16: 站内图片路径规范化 —— 文章模板示例写 '/blog/assets/...'(本地 $BASE 恰为 '/blog'),
