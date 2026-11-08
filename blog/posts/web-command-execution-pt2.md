@@ -107,7 +107,7 @@ if(!preg_match("/flag|system|php/i", $c))
 这道题禁用了上道题我们采用的system和php，所以我们需要另辟蹊径
 
 这里是需要学习的地方
->PHP支持用反引号``执行系统命令，等价于shell_exec
+>PHP支持用反引号（｀）执行系统命令，等价于shell_exec
 
 因此我们可以使用 
 ```php
