@@ -58,6 +58,7 @@ function buildCollectionCards(string $postsDir): array {
             'description' => $m['description'] ?? '',
             'date'        => $m['date'] ?? $g['latest'],
             'tags'        => $m['tags'] ?? [],
+            'pinned'      => $m['pinned'] ?? true,
             'total'       => $g['total'],
             'categories'  => $cats,
         ];
@@ -159,7 +160,7 @@ echo json_encode([
     'total'       => $total,
     'page'        => $page,
     'totalPages'  => $totalPages,
-    // 首页默认视图（无筛选）时由前端渲染成合集入口卡
+    // 首页默认视图（无筛选）时由前端渲染成合集入口卡；pinned:false 的不置顶
     'collections' => (!$hasCollectionParam && !$filterTag && !$filterCat && $page === 1)
-        ? buildCollectionCards($postsDir) : [],
+        ? array_values(array_filter(buildCollectionCards($postsDir), fn($c) => ($c['pinned'] ?? true) !== false)) : [],
 ], JSON_UNESCAPED_UNICODE);
