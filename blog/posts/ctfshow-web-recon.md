@@ -290,7 +290,7 @@ backup-20250918.sql  db-2025-09-18.sql   ← 日期系
 | 后缀 | 谁产生的 | 备注 |
 | --- | --- | --- |
 | `.sql` | mysqldump | 原生输出 |
-| `.sql.gz` | `mysqldump \| gzip` | 真实运维最爱，下完先 `gzip -d` |
+| `.sql.gz` | `mysqldump ｜ gzip` | 真实运维最爱，下完先 `gzip -d` |
 | `.sql.zip/.rar/.7z` | 打包备份 | 常见于整站备份里 |
 | `.sql.bak/.sql.old/.sql~` | 编辑器/手残残留 | phps 家族亲戚 |
 | `.dump` | pg_dump | PostgreSQL |
