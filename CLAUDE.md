@@ -6,13 +6,15 @@
 
 ## 第一条 世界宪法
 
-1.1 **DESIGN.md 是设计意图的真理源，tokens.css 是设计实现的真理源。**（MUST）动任何 UI 前必读 [DESIGN.md](DESIGN.md) 与 [blog/includes/tokens.css](blog/includes/tokens.css)。两文件冲突时停下问用户，不得自行裁决。
+1.1 **DESIGN.md 是设计意图的真理源，tokens.css 是设计实现的真理源。**（MUST）动任何 UI 前必读 [DESIGN.md](DESIGN.md) 与 [blog/includes/tokens.css](blog/includes/tokens.css)。两文件冲突时停下问用户，不得自行裁决。石墨世界的 token 真理源是 [blog/includes/graphite.css](blog/includes/graphite.css)，规格见 DESIGN.md 的 Graphite 章节。
 
 1.2 **深海研究站美学。**（MUST）博客是一艘锚定海底的孤独研究舱——安静、内省、HUD 质感。禁止喧闹的渐变、无限循环的装饰动画、任何与深海隐喻相悖的视觉元素。
 *Why: 北星是「深海之下，别有洞天」；视觉上的一切都在为这个意象服务。*
+*限定：本条约束旧世界（deepsea / daylight / rain / lain）。石墨主主题是独立世界，见 1.10。*
 
-1.3 **One Accent Rule: 全站唯一强调色 = Signal Blue #5ba0e0。**（MUST NOT）Alert Orange #f08060 仅限退出/危险操作；禁止引入第三强调色（无 teal、无紫、无绿成功态）。
+1.3 **One Accent Rule: 旧世界唯一强调色 = Signal Blue #5ba0e0。**（MUST NOT）Alert Orange #f08060 仅限退出/危险操作；禁止引入第三强调色（无 teal、无紫、无绿成功态）。
 *Why: 「一个强调色，锁死，审查」——DESIGN.md 命名规则。*
+*限定：本条约束旧世界。石墨世界有自己的唯一强调色（鼠尾草绿 --g-accent），两世界的强调色不得交叉使用，见 1.10。*
 
 1.4 **Pure White Ban: 禁止 #ffffff 与 #000000。**（MUST NOT）最亮用 Text Ice #d8eaf8，最暗用 Void Ink #081828。纯白纯黑杀死深海深度感。
 
@@ -26,6 +28,9 @@
 
 1.9 **双主题并存。**（MUST）深色主题是默认世界；浅色主题（海面白昼）的 token 定义于 tokens.css 的 `[data-theme="light"]`。改动浅色主题必须同时保持两套 token 的完整对应关系。
 
+1.10 **Graphite 世界（主主题）。**（MUST）Graphite 是默认世界（`html[data-scene="graphite"]`），独立 token 体系 `--g-*` 定义于 [blog/includes/graphite.css](blog/includes/graphite.css)；它有自己的深浅两档（`html[data-g="dark|light"]`）与唯一强调色鼠尾草绿。石墨的一切样式必须限定在 `html[data-scene="graphite"]` 及 `.g-home` / `.g-post` / `body.g-page` 作用域内，不得泄漏到旧页面；旧世界的 token 与组件也不得渗入石墨。两世界通过 `setScene()` 互相切换，旧世界入口固定为「旧版 / VIEW OLD THEME」，Lain 仍只认 flag 口令。
+*Why: 2026-11-08 用户拍板「石墨为主主题，旧的留一个入口」——两套世界各自完整，任何一边都不做另一边的补丁。*
+
 ## 第二条 技术禁区
 
 2.1 **theme-init.php 必须在 <head> 最先执行。**（MUST）它是防 FOUC（主题闪烁）的闸门：在任何 CSS 渲染前读取 localStorage 并设置 data-theme。改动页面结构时不得把它挪到 body 里或异步化。
@@ -38,7 +43,7 @@
 
 2.5 **preloader 与背景层是每页标配。**（MUST）includes/preloader.php 与 includes/background.php 构成页面进入体验与氛围底座，新增页面时按 index.php 的顺序引入。
 
-2.6 **CSS 单一来源。**（MUST NOT）页面级 <style> 只能放该页独有的局部规则；可复用样式必须进 includes/（tokens.css 管 token，shared.css 管公共 chrome，editor-shared.css 管编辑器）。禁止复制粘贴已有规则。
+2.6 **CSS 单一来源。**（MUST NOT）页面级 <style> 只能放该页独有的局部规则；可复用样式必须进 includes/（tokens.css 管旧世界 token，graphite.css 管石墨 token，shared.css 管公共 chrome，editor-shared.css 管编辑器）。禁止复制粘贴已有规则。
 
 ## 第三条 安全宪法
 
@@ -88,7 +93,7 @@
 
 ## 第六条 内容宪法
 
-6.1 **博客身份：CS/网络安全/CTF 学习记录站。**（MUST）站名「Cola_CaO · 深海之下，别有洞天」，作者署名 Cola_CaO（可乐，杭师大 CS，CTF & SRC）。内容改动需与此身份一致。
+6.1 **博客身份：CS/网络安全/CTF 学习记录站。**（MUST）站名 **Cola's security blog**（对外标题、页脚、RSS、og:title 统一），作者署名 Cola_CaO（可乐，杭师大 CS，CTF & SRC）。「深海之下，别有洞天」保留为旧世界的场景意象，不再作为站名。内容改动需与此身份一致。
 
 6.2 **知识库联动。**（SHOULD）Obsidian 知识库（Z:\laragon\knowledge-base）的 blog-posts/ 与博客文章内容联动——在知识库写好的文章是博客内容的上游来源。改动文章系统时保持该通道畅通。
 

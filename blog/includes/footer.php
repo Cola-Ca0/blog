@@ -7,13 +7,14 @@
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="shark-fin-icon"></div>
-      <span>Cola_CaO · 深海之下，别有洞天</span>
+      <span>Cola_CaO · Cola's security blog</span>
     </div>
     <div class="footer-links">
       <a href="<?= $BASE ?>/">Home</a>
       <a href="<?= $BASE ?>/projects/">Projects</a>
       <a href="<?= $BASE ?>/about.php">About</a>
       <a href="<?= $BASE ?>/terms.php">Terms</a>
+      <a href="<?= $BASE ?>/" onclick="setScene('graphite')">新版主题</a>
       <a href="<?= $BASE ?>/feed.xml">RSS</a>
       <a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">GitHub</a>
       <a href="mailto:cola_ca0@qq.com" title="投诉举报 / Report abuse">举报</a>

@@ -245,3 +245,53 @@ No square (0px) elements exist on this page. The station has no sharp corners �
 - **Don't** increase border-radius beyond the tier system. No random 32px cards next to 20px cards.
 - **Don't** animate continuously without purpose. Pulse = status indicator. Float = deliberate. Infinite-loop micro-animations on static content are noise.
 - **Don't** ship a section without its mobile collapse declared. Every multi-column layout must specify its < 768px behavior.
+
+---
+
+# Graphite — 主主题（2026-11-08，用户拍板）
+
+> 上一节「The Deep-Sea Station」描述的是**旧世界**（deepsea / daylight / rain / lain），继续有效。
+> 本节描述默认世界 Graphite。实现真理源：[blog/includes/graphite.css](blog/includes/graphite.css)。
+
+## 定位
+
+Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正文栏、右侧目录。它不沿用深海隐喻，也不继承旧世界的任何 token。旧世界经「旧版 / VIEW OLD THEME」进入；Lain 仍只认 flag 口令。两世界通过 `html[data-scene]` 切换，互不补丁。
+
+**Key Characteristics:**
+- 不用动画讲气氛：无循环动画、无渐显；只保留 hover/focus 状态与阅读进度
+- 单强调色：鼠尾草绿；元信息统一沙色
+- 排版优先：正文 820px 阅读栏 + 粘性目录，标题衬线、正文无衬线、代码 Fira Code
+- 形状：容器与按钮直角（0），行内代码与输入框 2px，代码窗口 8px——只有代码窗有圆角
+
+## Tokens
+
+| Token | Dark | Light |
+|---|---|---|
+| `--g-bg` | `#161917` | `#f7f8f4` |
+| `--g-raised` | `#1d201e` | `#fcfcfa` |
+| `--g-rule` / `--g-rule-soft` | `#2d332e` / `#242a26` | `#e2e5dd` / `#ebeee7` |
+| `--g-ink` | `#dde1db` | `#2c322e` |
+| `--g-ink-2` / `--g-ink-3` | `#a8b1aa` / `#848e87` | `#545e57` / `#65706a` |
+| `--g-accent`（唯一强调色） | `#9cc5a8` | `#3f6d55` |
+| `--g-meta`（日期/编号） | `#c2a878` | `#8a6537` |
+| `--g-code-bg` | `#111413` | `#eef0ea` |
+
+深浅档由 `html[data-g="dark\|light"]` 控制，选择存 localStorage `graphiteMode`。
+
+## Typography
+
+- **标题**：`Noto Serif SC`（回退 Source Han Serif / Songti / SimSun），600
+- **正文**：`Segoe UI Variable Text` → `Noto Sans SC` → `PingFang SC` → `Microsoft YaHei`
+- **代码/编号**：`Fira Code`（自托管 `assets/fonts/fira-code/`，只在 Graphite 下加载），回退 Cascadia Mono / Consolas
+- 中文 Noto 依赖系统安装；Fira Code 随仓库部署，不是系统字体
+
+## Layout
+
+- 外框 `--g-wrap: 1200px`，两侧 28px 内边距
+- 首页报头两栏：`1fr / 384px`（左简介+歌词，右 LATEST WORK 卡），< 900px 收单栏
+- 文章页：正文 `--g-measure: 820px` + 右侧粘性目录（CONTENTS），目录超高时内部滚动 + 省略号
+- 代码窗口：`data-lang` 语言标签 + Mac 三色圆点（`#ff5f57` `#febc2e` `#28c840`），横向滚动不换行
+
+## 作用域纪律
+
+石墨规则一律以 `html[data-scene="graphite"]` 开头，并且只挂在 `.g-home` / `.g-post` / `body.g-page` 上；旧页面（about/gallery/timeline/terms/login）不受影响。旧世界的 preloader、粒子海洋、navbar、页脚在石墨页面里全部 `display:none`（见 graphite.css 第 54–70 行）。

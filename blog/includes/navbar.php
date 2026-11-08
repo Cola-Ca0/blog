@@ -28,6 +28,7 @@ require_once __DIR__ . '/config.php';
       <span></span><span></span><span></span>
     </button>
     <div class="nav-auth">
+      <a href="<?= $BASE ?>/" class="nav-new-theme" onclick="setScene('graphite')" title="新版主题 / Graphite">新版</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换场景 / Scene" title="切换场景 / Scene">
         <span class="theme-toggle-track">
           <span class="theme-toggle-thumb"></span>
@@ -69,6 +70,7 @@ require_once __DIR__ . '/config.php';
   <a href="<?= $BASE ?>/timeline.php">TIMELINE</a>
   <a href="<?= $BASE ?>/treehole.php">TREEHOLE</a>
   <a href="<?= $BASE ?>/about.php">ABOUT</a>
+  <a href="<?= $BASE ?>/" onclick="setScene('graphite')">新版主题</a>
   <?php if ($isAdmin): ?>
   <a href="<?= $BASE ?>/admin/editor.php">EDITOR</a>
   <?php endif; ?>

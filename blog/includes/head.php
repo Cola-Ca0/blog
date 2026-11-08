@@ -37,6 +37,8 @@ $cssV = fn (string $f): string => $BASE . '/includes/' . $f . '?v=' . filemtime(
 ?>
 <link rel="stylesheet" href="<?= $cssV('tokens.css') ?>">
 <link rel="stylesheet" href="<?= $cssV('shared.css') ?>">
+<!-- 石墨主主题 (2026-11-08; 仅 data-scene=graphite 生效) -->
+<link rel="stylesheet" href="<?= $cssV('graphite.css') ?>">
 <!-- 隐藏场景 Lain (data-scene="lain" 时生效; 其余场景零影响) -->
 <link rel="stylesheet" href="<?= $cssV('lain.css') ?>">
 <?php if (!empty($editorCss)): ?>
@@ -48,3 +50,4 @@ $cssV = fn (string $f): string => $BASE . '/includes/' . $f . '?v=' . filemtime(
 <?php if ($fontSet === 'code'): ?>
 <link rel="stylesheet" href="<?= $BASE ?>/assets/fonts/fira-code/index.css">
 <?php endif; ?>
+<script src="<?= $BASE ?>/js/graphite.js?v=<?= @filemtime(__DIR__ . '/../js/graphite.js') ?>" defer></script>

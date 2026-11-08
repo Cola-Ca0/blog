@@ -1,5 +1,16 @@
 [
   {
+    "id": "cola-hub",
+    "title": "Cola Hub",
+    "description": "个人桌面指挥中心 —— 一块 frameless Electron 竖屏，把分散在各网站和应用里的信息与动作收拢到同一块屏幕：基金、汇率、天气、课程、倒计时、新闻、世界信号、系统状态，顺手完成日常任务。",
+    "tags": ["Electron", "Dashboard", "AI", "Local-first"],
+    "date": "2026-09",
+    "status": "completed",
+    "featured": true,
+    "url": "https://github.com/Cola-Ca0/cola-hub",
+    "files": []
+  },
+  {
     "id": "cyber-toolkit",
     "title": "Cyber Toolkit",
     "description": "SRC 信息收集 + CTF 编码/密码/混淆，纯 Python 标准库零依赖。Web 界面与 CLI 双入口。",

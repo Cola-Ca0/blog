@@ -239,7 +239,8 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="g-page">
+<div class="legacy-post">
 <?php require __DIR__ . '/includes/background.php'; ?>
 <?php require __DIR__ . '/includes/navbar.php'; ?>
 
@@ -294,6 +295,7 @@ body {
 </main>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
+</div><!-- /.legacy-post -->
 
 <!-- Code Copy Buttons -->
 <script>
@@ -341,5 +343,6 @@ body {
 })();
 </script>
 
+<?php require __DIR__ . '/includes/graphite-post.php'; ?>
 </body>
 </html>

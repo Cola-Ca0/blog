@@ -31,9 +31,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>Cola_CaO · Deep Sea Station</title>
+  <title>Cola's security blog</title>
   <link><?= htmlspecialchars($siteUrl) ?></link>
-  <description>深海之下，别有洞天 — 可乐的水下研究站。CS / 网络安全 / CTF / SRC。</description>
+  <description>Cola's security blog — 可乐的水下研究站。CS / 网络安全 / CTF / SRC。</description>
   <language>zh-CN</language>
   <lastBuildDate><?= date('r') ?></lastBuildDate>
   <atom:link href="<?= $siteUrl ?>/feed.xml" rel="self" type="application/rss+xml"/>

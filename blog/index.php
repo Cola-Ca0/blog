@@ -38,9 +38,9 @@ if ($lainHost === '' || $lainHost === '127.0.0.1' || stripos($lainHost, 'localho
 <html lang="zh-CN">
 <head>
 <?php
-$pageTitle = 'Cola_CaO · 深海之下，别有洞天';
+$pageTitle = "Cola's security blog";
 $pageDesc = '可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹，分享安全探索与代码思考。';
-$extraHead = '<meta property="og:title" content="Cola_CaO · 深海之下，别有洞天">
+$extraHead = '<meta property="og:title" content="Cola\'s security blog">
 <meta property="og:description" content="可乐的水下研究站 — CS/网络安全/CTF。在深海中记录学习轨迹。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="' . $SITE_URL . '/">';
@@ -704,7 +704,8 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="g-page">
+<div class="legacy-home">
 <?php require __DIR__ . '/includes/preloader.php'; ?>
 <?php require __DIR__ . '/includes/background.php'; ?>
 
@@ -749,6 +750,7 @@ body {
     $heroLine = $heroLines[array_rand($heroLines)];
     ?>
     <p class="hero-line2"><span class="typewriter"><?= htmlspecialchars($heroLine['text']) ?></span> <span style="font-style:normal;">— <?= htmlspecialchars($heroLine['from']) ?></span></p>
+    <button type="button" class="legacy-switch" onclick="setScene('graphite')">新版主题 / Graphite</button>
   </div>
 
 </section>
@@ -806,7 +808,7 @@ body {
         <span class="diamond"></span>
         DEPTH 0x0028 // OCEAN LINK ACTIVE
       </div>
-      <h2 class="blog-hero-title section-reveal" style="transition-delay:100ms">深海之下，别有洞天</h2>
+      <h2 class="blog-hero-title section-reveal" style="transition-delay:100ms">Cola's security blog</h2>
       <p class="blog-hero-subtitle section-reveal" style="transition-delay:200ms">
         恭喜你发现了可乐的秘密基地馁…里面汇集了可乐的各种知识内容的总结以及可能有碎碎念…可以往下翻翻看喔…只是一个小白啦如果知识内容有错误还请多多包涵馁…
       </p>
@@ -1216,6 +1218,7 @@ body {
 </div>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
+</div><!-- /.legacy-home -->
 
 <!-- ============================================================
      Scripts
@@ -1273,7 +1276,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   if (!textEl) return;
   var verses = [], idx = -1;
   var FALLBACK = [
-    { text: '深海之下，别有洞天。', from: 'Cola_CaO' },
     { text: '雨点敲窗之前，先敲了敲我的终端。', from: '深海研究站日志' }
   ];
 
@@ -1369,5 +1371,6 @@ function toggleHeroVault() {
   if (b) b.textContent = showVault ? '◂ 回到观测窗' : 'Classified / 深海密件 ▸';
 }
 </script>
+<?php require __DIR__ . '/includes/graphite-home.php'; ?>
 </body>
 </html>
