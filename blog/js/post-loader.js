@@ -60,14 +60,14 @@
           return;
         }
 
-        var cardsHtml = data.posts.map(function(p) {
+        var cards = data.posts.map(function(p) {
           var tagsHtml = (p.tags || []).map(function(t) {
             var safe = escapeHtml(t);
             return '<span onclick="event.stopPropagation();filterByTag(\'' + safe.replace(/'/g, "\\'") + '\')" style="cursor:pointer" title="Filter by ' + escAttr(safe) + '">' + safe + '</span>';
           }).join('');
           var coverAttr = p.cover ? ' style="--card-cover:url(' + escAttr(p.cover) + ')"' : '';
 
-          return '<article class="article-card"' + coverAttr + '>' +
+          return { date: p.date || '', html: '<article class="article-card"' + coverAttr + '>' +
             '<div class="card-body">' +
             '<div class="card-glow-line"></div>' +
             '<div class="card-meta">' +
@@ -83,8 +83,23 @@
             '</div>' +
             '</div>' + // /card-body
             (p.cover ? '<div class="card-cover-side"><img src="' + escAttr(p.cover) + '" alt="" loading="lazy"></div>' : '') +
-          '</article>';
-        }).join('');
+          '</article>' };
+        });
+
+        var pinnedHtml = '';
+        if (data.collections && data.collections.length) {
+          data.collections.forEach(function(c) {
+            var html = collectionCardHtml(c);
+            if (c.pinned === false) {
+              // 不置顶：按日期插进文章列表
+              cards.push({ date: c.sort_date || c.date || '', html: html });
+            } else {
+              pinnedHtml += html;
+            }
+          });
+        }
+        cards.sort(function(a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+        var cardsHtml = pinnedHtml + cards.map(function(x) { return x.html; }).join('');
 
         if (activeTag) {
           cardsHtml = '<div class="tag-filter-bar"><span>Filtered by: <strong>' + escapeHtml(activeTag) + '</strong></span> <a href="' + BASE + '/#postsGrid" class="tag-filter-clear">Clear filter / 清除筛选</a></div>' + cardsHtml;
@@ -93,10 +108,6 @@
           // 第二层：合集内某个分类，给一条返回合集的路径
           var crumb = escapeHtml(activeCollection) + (activeCat ? ' · ' + escapeHtml(activeCat) : '');
           cardsHtml = '<div class="tag-filter-bar"><span><strong>' + crumb + '</strong></span> <a href="' + BASE + '/?collection=' + encodeURIComponent(activeCollection) + '#postsGrid" class="tag-filter-clear">Back / 返回合集</a></div>' + cardsHtml;
-        }
-        if (data.collections && data.collections.length) {
-          // 首页最前面放合集入口卡（外观与文章卡一致，只是 href 和右下角文案不同）
-          cardsHtml = data.collections.map(collectionCardHtml).join('') + cardsHtml;
         }
         grid.innerHTML = cardsHtml;
 
