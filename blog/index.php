@@ -1309,7 +1309,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 <script src="<?= $BASE ?>/js/rain-layer.js"></script>
 <script src="<?= $BASE ?>/js/typewriter.js"></script>
 <script src="<?= $BASE ?>/js/sparkles.js?v=3"></script>
-<script src="<?= $BASE ?>/js/post-loader.js?v=20260928"></script>
+<script src="<?= $BASE ?>/js/post-loader.js?v=20261108"></script>
 <script>
 // 深海观测窗 (2026-10-02): 8s 交叉淡化 · 悬停暂停 · prefers-reduced-motion 时完全静止
 // 非首帧走 data-src 懒加载: 轮到自己才下载, 避免一次拉完整个图库 (每张 ~1MB)
