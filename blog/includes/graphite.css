@@ -690,6 +690,10 @@ html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)
 @media (min-width:761px) and (max-width:1120px){
   html[data-scene="graphite"] .g-menu-btn{ display:inline-flex; align-items:center; }
 }
+/* 中宽含管理员 EDIT/ACCOUNT 时避免顶栏挤出；文章页仍有 EDIT 入口 */
+@media (max-width:1200px){
+  html[data-scene="graphite"] .g-actions a.g-login[href$="/admin/editor.php"]{ display:none; }
+}
 @media (max-width:760px){
   html[data-scene="graphite"] .g-bar-in{ padding:0 14px; height:52px; gap:10px; }
   html[data-scene="graphite"] .g-mark i,
