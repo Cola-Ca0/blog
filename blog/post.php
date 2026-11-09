@@ -68,7 +68,7 @@ if ($post === null || $post['draft']) {
 // $pageTitle 在 head 块内由 head.php 统一转义 (2026-08-17 提取)
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-scene="graphite" data-g="dark">
 <head>
 <?php
 $pageTitle = $post['title'] . ' · Cola_CaO';

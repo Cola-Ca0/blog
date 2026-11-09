@@ -5,19 +5,35 @@
  */
 if (!isset($gNavContext)) $gNavContext = 'home';
 $gHome = ($gNavContext === 'home' && !isset($_GET['collection'])) ? '' : $BASE . '/';
+/* 导航与随后的首页模板共用荣誉数据；文章页也据此判断入口是否存在。 */
+$gHonorsData = json_decode((string) @file_get_contents(__DIR__ . '/../honors.json'), true);
+$gHonors = is_array($gHonorsData) && array_is_list($gHonorsData)
+    ? array_values(array_filter($gHonorsData, static fn($h) =>
+        is_array($h)
+        && is_string($h['date'] ?? null) && preg_match('/^\d{4}-(0[1-9]|1[0-2])$/D', $h['date'])
+        && is_string($h['title'] ?? null) && trim($h['title']) !== ''
+        && is_string($h['rank'] ?? null) && trim($h['rank']) !== ''
+        && (!isset($h['note']) || is_string($h['note']))
+    )) : [];
+/* 荣誉按时间倒序；YYYY-MM 可直接字符串比较。 */
+usort($gHonors, static fn(array $a, array $b): int => strcmp($b['date'], $a['date']));
 ?>
 <header class="g-bar">
   <div class="g-bar-in">
     <a class="g-mark" href="<?= $BASE ?>/" aria-label="Cola's security blog">
       <b>Cola_CaO</b><i>/</i><span>Cola's security blog</span>
     </a>
-    <nav class="g-nav" aria-label="Main navigation">
+    <nav class="g-nav" id="gNav" aria-label="Main navigation">
       <a href="<?= $gHome ?>#g-top">WORKS</a>
       <a href="<?= $gHome ?>#g-topics">COLLECTIONS</a>
+      <?php if (count($gHonors) > 0): ?>
+      <a href="<?= $gHome ?>#g-honors">HONORS</a>
+      <?php endif; ?>
       <a href="<?= $gHome ?>#g-works">PROJECTS</a>
       <a href="<?= $gHome ?>#g-about">ABOUT</a>
     </nav>
     <div class="g-actions">
+      <button type="button" class="g-menu-btn" aria-expanded="false" aria-controls="gNav">MENU</button>
       <form class="g-search" role="search" onsubmit="return false;">
         <input id="gSearchInput" type="search" placeholder="Search posts…" autocomplete="off" aria-label="Search posts">
         <div class="g-search-results" id="gSearchResults"></div>

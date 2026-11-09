@@ -22,6 +22,75 @@
   });
   markMode(html.getAttribute('data-g') || 'dark');
 
+  /* ---- 中宽导航下拉 ---- */
+  var menuBtn = document.querySelector('.g-menu-btn');
+  var nav = document.getElementById('gNav');
+  if (menuBtn && nav) {
+    var setMenu = function (open) {
+      nav.classList.toggle('is-open', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+    };
+    menuBtn.addEventListener('click', function () {
+      setMenu(!nav.classList.contains('is-open'));
+    });
+    nav.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a')) setMenu(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && !e.target.closest('.g-bar')) setMenu(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        setMenu(false);
+        menuBtn.focus();
+      }
+    });
+  }
+
+  /* ---- 代码块复制 ---- */
+  document.querySelectorAll('.g-article pre[data-lang]').forEach(function (pre) {
+    var wrap = document.createElement('div');
+    wrap.className = 'g-codewrap';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'g-copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.textContent = 'COPY';
+    wrap.appendChild(btn);
+    var copyTimer = null;
+    var reset = function (label) {
+      btn.textContent = label;
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () { btn.textContent = 'COPY'; }, 1200);
+    };
+    btn.addEventListener('click', function () {
+      var text = pre.innerText;
+      var fallback = function () {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          reset('COPIED');
+        } catch (err) {
+          reset('FAILED');
+        }
+        document.body.removeChild(ta);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { reset('COPIED'); }, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+
   /* ---- 搜索 / Lain 口令 ---- */
   var input = document.getElementById('gSearchInput');
   var results = document.getElementById('gSearchResults');
@@ -88,7 +157,7 @@
   /* ---- 目录当前位置 ---- */
   var heads = document.querySelectorAll('.g-article h2[id], .g-article h3[id]');
   var tocLinks = document.querySelectorAll('.g-toc a');
-  if (heads.length && tocLinks.length && 'IntersectionObserver' in window) {
+  if (heads.length && tocLinks.length && typeof window.IntersectionObserver === 'function') {
     var byId = {};
     tocLinks.forEach(function (a) {
       var id = a.getAttribute('href').slice(1);

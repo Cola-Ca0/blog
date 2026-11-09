@@ -10,6 +10,17 @@ require __DIR__ . '/includes/markdown.php'; // 深海密件区列表 (2026-09-10
 $aboutJson = json_decode(file_get_contents(__DIR__ . '/about-content.json'), true) ?: [];
 $radarSkills = $aboutJson['skills'] ?? [];
 
+/* 两套首页共用友链数据；只接收有效的 http/https 外链。 */
+$friendsRaw = json_decode((string) @file_get_contents(__DIR__ . '/friends.json'), true);
+$friendsData = is_array($friendsRaw) && array_is_list($friendsRaw)
+    ? array_values(array_filter($friendsRaw, static fn($friend) =>
+        is_array($friend)
+        && is_string($friend['name'] ?? null) && trim($friend['name']) !== ''
+        && is_string($friend['url'] ?? null) && filter_var($friend['url'], FILTER_VALIDATE_URL) !== false
+        && in_array(strtolower((string) parse_url($friend['url'], PHP_URL_SCHEME)), ['http', 'https'], true)
+        && (!isset($friend['desc']) || is_string($friend['desc']))
+    )) : [];
+
 /* 首页口径统计 (2026-11-03 上提到 <head> 之前: hero 里的 PHOSPHOR 系统自检屏要用) */
 $publishedAll = getPublishedPosts(__DIR__ . '/posts/');
 $postCount = count(array_filter($publishedAll, fn($p) => ($p['collection'] ?? '') === ''));
@@ -35,7 +46,7 @@ $lainHost = parse_url($SITE_URL, PHP_URL_HOST) ?: '';
 if ($lainHost === '' || $lainHost === '127.0.0.1' || stripos($lainHost, 'localhost') !== false) $lainHost = 'wired://0x7F3A';
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-scene="graphite" data-g="dark">
 <head>
 <?php
 $pageTitle = "Cola's security blog";
@@ -1202,16 +1213,16 @@ body {
       </div>
 
       <!-- Friend Links -->
+      <?php if (count($friendsData) > 0): ?>
       <div class="sidebar-widget">
         <h3 class="widget-title"><span class="diamond-sm"></span> Links / 友链</h3>
         <div class="friend-links">
-          <a href="https://www.ymsora.com/" target="_blank" rel="noopener">Sora大佬</a>
-          <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://www.bilibili.com" target="_blank" rel="noopener">Bilibili</a>
-          <a href="https://moejue.cn" target="_blank" rel="noopener">Moejue</a>
-          <a href="https://xz.aliyun.com" target="_blank" rel="noopener">先知社区</a>
+          <?php foreach ($friendsData as $friend): ?>
+          <a href="<?= htmlspecialchars($friend['url'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer"><?= htmlspecialchars($friend['name'], ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endforeach; ?>
         </div>
       </div>
+      <?php endif; ?>
 
     </aside>
   </div>

@@ -47,6 +47,7 @@ require __DIR__ . '/test_projects.php';
 require __DIR__ . '/test_markdown_xss.php';
 require __DIR__ . '/test_collections.php';
 require __DIR__ . '/test_json_store.php';
+require __DIR__ . '/test_data_files.php';
 require __DIR__ . '/test_paths.php';
 
 echo "\n---\n";

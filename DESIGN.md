@@ -258,7 +258,7 @@ No square (0px) elements exist on this page. The station has no sharp corners �
 Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正文栏、右侧目录。它不沿用深海隐喻，也不继承旧世界的任何 token。旧世界经「旧版 / VIEW OLD THEME」进入；Lain 仍只认 flag 口令。两世界通过 `html[data-scene]` 切换，互不补丁。
 
 **Key Characteristics:**
-- 不用动画讲气氛：无循环动画、无渐显；只保留 hover/focus 状态与阅读进度
+- 动效保持克制：仅报头两组一次轻入场，以及 hover/focus 状态反馈；无循环、无逐段正文出现、无滚动视差。
 - 单强调色：鼠尾草绿；元信息统一沙色
 - 排版优先：正文 820px 阅读栏 + 粘性目录，标题衬线、正文无衬线、代码 Fira Code
 - 形状：容器与按钮直角（0），行内代码与输入框 2px，代码窗口 8px——只有代码窗有圆角
@@ -267,18 +267,33 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 
 | Token | Dark | Light |
 |---|---|---|
-| `--g-bg` | `#161917` | `#f7f8f4` |
-| `--g-raised` | `#1d201e` | `#fcfcfa` |
-| `--g-rule` / `--g-rule-soft` | `#2d332e` / `#242a26` | `#e2e5dd` / `#ebeee7` |
+| `--g-bg` | `#161917` | `#f7f5ef` |
+| `--g-raised` | `#1d201e` | `#fcfaf5` |
+| `--g-hover` | `#252e28` | `#e9eee5` |
+| `--g-rule` / `--g-rule-soft` | `#3b453e` / `#242a26` | `#d6dbd1` / `#ebeee7` |
+| `--g-control-rule`（控件边界） | `#68776b` | `#858f80` |
 | `--g-ink` | `#dde1db` | `#2c322e` |
 | `--g-ink-2` / `--g-ink-3` | `#a8b1aa` / `#848e87` | `#545e57` / `#65706a` |
 | `--g-accent`（唯一强调色） | `#9cc5a8` | `#3f6d55` |
 | `--g-meta`（日期/编号） | `#c2a878` | `#8a6537` |
-| `--g-code-bg` | `#111413` | `#eef0ea` |
+| `--g-code-bg` | `#111413` | `#efeee7` |
+| `--g-tk-key` | `#7cb7f0` | `#2f5fa8` |
+| `--g-tk-str` | `#d69a7a` | `#a14f38` |
+| `--g-tk-com` | `#93aa8b` | `#46683e` |
+| `--g-tk-num` | `#a9c98f` | `#3c753c` |
+| `--g-tk-fn` | `#dcc98a` | `#7a5c26` |
 
 深浅档由 `html[data-g="dark\|light"]` 控制，选择存 localStorage `graphiteMode`。
 
 **报头纸面（2026-11-09）**：首页报头用局部纸面 token，不是全局底色——dark 纸面 `#1e2320`、卡片 `#28322b`；light 纸面 `#f4efe4`、卡片 `#e6ebdf`、沙色元信息 `#7a5b30`。标题字重 500，引文 1.25rem。
+
+## 配色微调（2026-11-09）
+
+- 浅色全局底纸、浮层与代码底纸略暖；报头的既定纸面和卡片局部 token 保持不变。
+- 暗色 hover 提亮，主分隔线更清楚；soft 分隔线继续保持克制。装饰线不承担控件识别职责。
+- 新增一个辅助 token --g-control-rule，仅用于搜索框、搜索结果面板、深浅模式控件边界；两档控件边界对相邻纸面均不低于 3:1。
+- 代码注释在两档分别提高明度或加深；浅色数字随代码底纸微调，确保代码文本不低于 4.5:1。
+- 强调色仍只有鼠尾草绿，meta 沙色与字体保持现值。
 
 ## Typography
 
@@ -293,15 +308,36 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 - 首页报头两栏：`1fr / 384px`（左简介+歌词，右 LATEST WORK 卡），< 900px 收单栏
 - 文章页：正文 `--g-measure: 820px` + 右侧粘性目录（CONTENTS，240px，间距 80px），目录超高时内部滚动 + 省略号；≤1215px 目录收起
 - 正文长串（PATH、长行内代码）允许任意断行（`overflow-wrap:anywhere`）；`pre` 与表格保留各自的横向滚动
-- 顶栏：≤980px 收起导航；≤760px 收起 OLD 按钮，页脚的「VIEW OLD THEME」始终保留
+- 顶栏：≤1120px 品牌收短、导航收进 MENU 下拉（761–1120px 显示 MENU；≤760px 保持紧凑顶栏，不显示导航）；≤760px 收起 OLD 按钮，页脚的「VIEW OLD THEME」始终保留
 - 代码窗口：`data-lang` 语言标签 + Mac 三色圆点（`#ff5f57` `#febc2e` `#28c840`），横向滚动不换行
 
 ## 交互微过渡（2026-11-09）
 
 - Graphite 使用 `--g-dur:160ms` 与 `--g-ease:cubic-bezier(.2,0,0,1)`。
-- 只覆盖交互元素及其随状态变色的标题；仅过渡 color、background-color、border-color、text-decoration-color、opacity，不移动布局。
+- 主要覆盖交互元素及其随状态变色的标题；常规过渡为 color、background-color、border-color、text-decoration-color、opacity。仅导航下划线和友链箭头允许 transform，不移动布局。
 - 根节点、body 不做主题过渡；主题按钮处于 hover / active / focus-visible 时关闭 Graphite 内容的过渡，深浅切换瞬时生效。
-- prefers-reduced-motion:reduce 下，Graphite 页面及其后代、伪元素全部 transition:none。旧世界不受影响。
+- prefers-reduced-motion:reduce 下，Graphite 页面及其后代、生成的伪元素全部 transition:none / animation:none；报头保持可见、无位移，交互标记瞬时切换。旧世界不受影响。
+
+## 报头入场与交互位移（2026-11-09）
+
+- 报头左简介组与右文章卡在每次首页加载时入场一次：opacity 与 translateY(8px)，440ms，右组延迟 60ms；总长 500ms。
+- 由 CSS 在 `html.js` 条件下触发（head 内联脚本在样式之前挂上 .js）；无 JS 时不触发、内容默认可见，不依赖 FCP/IO 计时。
+- reduce 下 animation:none；切换场景不会重复播放。
+- 导航 ::after 下划线以 scaleX 展开，160ms；友链独立箭头向右 2px，160ms。鼠标与键盘焦点同样反馈，正文与交互区域本身不移动。
+- 主题切换继续瞬时生效；不使用 rAF 循环和 scroll 监听器。reduce 下动画与过渡全部关闭。
+- 首页与文章页 html 提供 data-scene="graphite" / data-g="dark" 静态默认值，无 JS 时 Graphite 内容可读且旧 preloader 让位；theme-init 仍在 head 原位置同步覆盖保存偏好，不改变双标记结构。
+
+## 阅读进度条（2026-11-09）
+
+- 文章页顶部 2px 鼠尾草绿进度条，`animation-timeline: scroll(root block)` 纯 CSS 驱动，无 JS、无 scroll 监听。
+- 仅在 `@supports (animation-timeline: scroll(root block))` 下渲染；不支持的浏览器不显示，不影响布局。
+- reduced-motion 下随全局规则关闭。
+
+## 代码复制（2026-11-09）
+
+- 每个 `pre[data-lang]` 由 JS 包一层 `.g-codewrap`，右上角放 COPY 按钮；按钮不随代码横向滚动移动，语言标签相应左移。
+- 复制成功显示 COPIED 1.2s；Clipboard API 不可用时回退 textarea + execCommand；失败显示 FAILED。
+- 按钮默认 opacity .55，hover / focus-within 提到 1；无 JS 时不生成按钮，代码块保持原样。
 
 ## 目录当前位置标记（2026-11-09）
 
@@ -309,6 +345,22 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 - 短线通过 ::before 实现，仅 opacity 做 100ms 过渡，不滑动；reduced-motion 下 transition:none。
 - 目录底部 26px 渐隐（mask-image）提示可滚动；底部留白 28px，滚到末端时末项不被遮。
 - 继续使用原有 is-active / aria-current，不改变目录检测逻辑、内部滚动、隐藏滚动条及底部留白。
+
+## 荣誉账本 HONORS（2026-11-09）
+
+- 数据来源为 blog/honors.json：数组，字段 date（YYYY-MM）、title、rank、note（可空）；仅迁移已有荣誉事实。bio 仅删除迁出的对应整行。
+- 首页 #g-honors 位于 COLLECTIONS 与 PROJECTS 之间；使用 g-sec 标题与 ledger 分隔线，日期 / 赛事名 / 名次三列，日期等宽，名次使用 --g-meta。
+- ≤760px 时排列为日期与名次一行、赛事名下一行；可选 note 位于赛事名下，无内容时不输出。
+- 荣誉名次按用户指定显示为 3rd 🥉；赛事名称、日期与事实保持原值。
+- 列表按 date 倒序排列（YYYY-MM 字符串比较）；导航与首页共用有效数据；有效条目为零时整段与 HONORS 导航入口均不输出。动态文本统一 htmlspecialchars 转义。
+
+## 友链 FRIENDS（2026-11-09）
+
+- blog/friends.json 是两套首页共用的唯一友链数据源：数组，字段 name、url、desc（可空）。现为三条（Sora大佬 / Moejue / 先知社区）；GitHub 与 Bilibili 按用户决定移除，不补写描述。
+- index.php 读取并筛选一次，只保留有效 http/https URL；动态文本与 URL 使用 htmlspecialchars 转义。两处外链均使用 target="_blank" rel="noopener noreferrer"。
+- Graphite 首页 #g-friends 位于 ABOUT 之后，桌面每行两条友链，列间距 32px；每条内部使用名称 / 域名或描述 / ↗ 的行式布局，padding 12px 10px。≤760px 收为单列，名称与箭头一行、详情下一行，padding 10px 4px、行内间距 2px；长串允许断行。名称 .97rem、详情 .82rem，沿用正文栈与现有颜色 token。
+- 悬停和键盘焦点复用 160ms 微过渡：名称变色并显示下划线，独立箭头右移 2px；reduce 下取消位移。旧侧栏保留原 friend-links 样式，只更换数据循环。
+- 有效数据为空时，Graphite 区块与旧侧栏对应整个 widget 均不输出。FRIENDS 不新增顶栏导航入口。
 
 ## 作用域纪律
 

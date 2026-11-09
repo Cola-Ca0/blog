@@ -47,6 +47,7 @@ $gE = fn(?string $s): string => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8
 $gUpdated = !empty($post['updated']) ? (string) $post['updated'] : (string) $post['date'];
 ?>
 <div class="g-post">
+  <div class="g-progress" aria-hidden="true"></div>
   <?php $gNavContext = 'post'; require __DIR__ . '/graphite-nav.php'; ?>
   <main class="g-main">
     <div class="g-art-layout<?= empty($gToc) ? ' no-toc' : '' ?>">

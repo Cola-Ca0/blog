@@ -8,8 +8,9 @@ html[data-scene="graphite"]{
   color-scheme: dark;
   --g-bg:#161917;
   --g-raised:#1d201e;
-  --g-hover:#1b211d;
-  --g-rule:#2d332e;
+  --g-hover:#252e28;
+  --g-rule:#3b453e;
+  --g-control-rule:#68776b;
   --g-rule-soft:#242a26;
   --g-ink:#dde1db;
   --g-ink-2:#a8b1aa;
@@ -20,7 +21,7 @@ html[data-scene="graphite"]{
   --g-code-bg:#111413;
   --g-tk-key:#7cb7f0;
   --g-tk-str:#d69a7a;
-  --g-tk-com:#7f9a76;
+  --g-tk-com:#93aa8b;
   --g-tk-num:#a9c98f;
   --g-tk-fn:#dcc98a;
   --g-font-display:'Noto Serif SC','Source Han Serif SC','Songti SC',SimSun,Georgia,serif;
@@ -34,10 +35,11 @@ html[data-scene="graphite"]{
 
 html[data-scene="graphite"][data-g="light"]{
   color-scheme: light;
-  --g-bg:#f7f8f4;
-  --g-raised:#fcfcfa;
-  --g-hover:#eef2ec;
-  --g-rule:#e2e5dd;
+  --g-bg:#f7f5ef;
+  --g-raised:#fcfaf5;
+  --g-hover:#e9eee5;
+  --g-rule:#d6dbd1;
+  --g-control-rule:#858f80;
   --g-rule-soft:#ebeee7;
   --g-ink:#2c322e;
   --g-ink-2:#545e57;
@@ -45,11 +47,11 @@ html[data-scene="graphite"][data-g="light"]{
   --g-accent:#3f6d55;
   --g-meta:#8a6537;
   --g-accent-dim:rgba(63,109,85,.2);
-  --g-code-bg:#eef0ea;
+  --g-code-bg:#efeee7;
   --g-tk-key:#2f5fa8;
   --g-tk-str:#a14f38;
-  --g-tk-com:#4f7445;
-  --g-tk-num:#3f7a3f;
+  --g-tk-com:#46683e;
+  --g-tk-num:#3c753c;
   --g-tk-fn:#7a5c26;
 }
 
@@ -132,12 +134,19 @@ html[data-scene="graphite"] .g-nav{ display:flex; gap:22px; margin-left:auto; }
 html[data-scene="graphite"] .g-nav a{ font-size:.82rem; color:var(--g-ink-2); padding:4px 0; border-bottom:1px solid transparent; }
 html[data-scene="graphite"] .g-nav a:hover{ color:var(--g-ink); border-bottom-color:var(--g-accent-dim); }
 html[data-scene="graphite"] .g-actions{ display:flex; align-items:center; gap:12px; flex:none; }
+html[data-scene="graphite"] .g-menu-btn{
+  display:none; appearance:none; background:transparent;
+  border:1px solid var(--g-control-rule); color:var(--g-ink-2);
+  padding:6px 9px; font:500 9.5px/1.2 var(--g-font-mono); letter-spacing:.08em; cursor:pointer;
+}
+/* 无 JS 时下拉打不开，不留一个点不动的按钮 */
+html:not(.js)[data-scene="graphite"] .g-menu-btn{ display:none; }
 html[data-scene="graphite"] .g-old{
   appearance:none; border:0; background:transparent; padding:0; cursor:pointer;
   font:500 10.5px/1.4 var(--g-font-mono); letter-spacing:.04em; color:var(--g-ink-3);
 }
 html[data-scene="graphite"] .g-old:hover{ color:var(--g-accent); }
-html[data-scene="graphite"] .g-mode{ display:flex; gap:1px; border:1px solid var(--g-rule); padding:2px; }
+html[data-scene="graphite"] .g-mode{ display:flex; gap:1px; border:1px solid var(--g-control-rule); padding:2px; }
 html[data-scene="graphite"] .g-mode button{
   appearance:none; border:0; background:transparent; color:var(--g-ink-3);
   padding:5px 9px; font:500 9.5px/1.2 var(--g-font-mono); letter-spacing:.08em; cursor:pointer;
@@ -150,14 +159,14 @@ html[data-scene="graphite"] .g-login:hover{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-search{ position:relative; }
 html[data-scene="graphite"] .g-search input{
   width:150px; height:28px; padding:0 9px;
-  background:transparent; color:var(--g-ink); border:1px solid var(--g-rule);
+  background:transparent; color:var(--g-ink); border:1px solid var(--g-control-rule);
   border-radius:2px; font:400 11.5px/1.2 var(--g-font-body);
 }
 html[data-scene="graphite"] .g-search input::placeholder{ color:var(--g-ink-3); }
 html[data-scene="graphite"] .g-search input:focus{ outline:1px solid var(--g-accent); outline-offset:0; border-color:transparent; }
 html[data-scene="graphite"] .g-search-results{
   display:none; position:absolute; right:0; top:34px; width:320px; max-height:360px; overflow-y:auto;
-  background:var(--g-raised); border:1px solid var(--g-rule); z-index:30;
+  background:var(--g-raised); border:1px solid var(--g-control-rule); z-index:30;
 }
 html[data-scene="graphite"] .g-search-results.is-open{ display:block; }
 html[data-scene="graphite"] .g-sr-item{ display:block; padding:10px 12px; border-bottom:1px solid var(--g-rule-soft); }
@@ -317,6 +326,19 @@ html[data-scene="graphite"] .g-row h3{ grid-area:title; margin:0; font:500 1rem/
 html[data-scene="graphite"] .g-row:hover h3{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-row .g-cat{ grid-area:cat; font:500 10.5px/1.6 var(--g-font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--g-meta); }
 
+/* ---------- 荣誉账本 ---------- */
+html[data-scene="graphite"] .g-home .g-honors{ margin:12px 0 0; padding:0; list-style:none; }
+html[data-scene="graphite"] .g-home .g-honor-row{
+  display:grid; grid-template-columns:92px minmax(0,1fr) auto;
+  grid-template-areas:"date title rank"; align-items:baseline; column-gap:20px;
+  margin:0; padding:16px 10px; border-bottom:1px solid var(--g-rule-soft);
+}
+html[data-scene="graphite"] .g-home .g-honor-row time{ grid-area:date; font:500 11.5px/1.6 var(--g-font-mono); color:var(--g-ink-3); }
+html[data-scene="graphite"] .g-home .g-honor-body{ grid-area:title; min-width:0; overflow-wrap:anywhere; }
+html[data-scene="graphite"] .g-home .g-honor-body h3{ margin:0; font:500 1rem/1.55 var(--g-font-body); color:var(--g-ink); }
+html[data-scene="graphite"] .g-home .g-honor-note{ margin:4px 0 0; font-size:.86rem; line-height:1.8; color:var(--g-ink-2); }
+html[data-scene="graphite"] .g-home .g-honor-rank{ grid-area:rank; font:500 .82rem/1.6 var(--g-font-body); color:var(--g-meta); }
+
 /* ---------- 专题 / 项目 / 关于 ---------- */
 html[data-scene="graphite"] .g-topic{
   display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:32px;
@@ -347,6 +369,25 @@ html[data-scene="graphite"] .g-contact dd a:hover{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-focus{ margin-top:22px; font:500 11px/2 var(--g-font-mono); color:var(--g-ink-3); }
 html[data-scene="graphite"] .g-focus b{ display:block; font-weight:500; letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px; color:var(--g-ink-3); }
 
+/* ---------- 友链 ---------- */
+html[data-scene="graphite"] .g-home .g-friends{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:32px; margin:12px 0 0; padding:0; list-style:none; border-top:1px solid var(--g-rule-soft); }
+html[data-scene="graphite"] .g-home .g-friends > li{ margin:0; }
+html[data-scene="graphite"] .g-home .g-friend{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;
+  grid-template-areas:"name detail arrow"; align-items:baseline; column-gap:20px;
+  padding:12px 10px; border-bottom:1px solid var(--g-rule-soft);
+}
+html[data-scene="graphite"] .g-home .g-friend-name{
+  grid-area:name; min-width:0; overflow-wrap:anywhere;
+  font:500 .97rem/1.6 var(--g-font-body); color:var(--g-ink);
+  text-decoration:underline; text-decoration-color:transparent; text-underline-offset:4px;
+}
+html[data-scene="graphite"] .g-home .g-friend-detail{ grid-area:detail; min-width:0; overflow-wrap:anywhere; font-size:.82rem; line-height:1.8; color:var(--g-ink-3); }
+html[data-scene="graphite"] .g-home .g-friend-arrow{ grid-area:arrow; font-size:.9rem; line-height:1.6; color:var(--g-ink-3); }
+html[data-scene="graphite"] .g-home .g-friend:is(:hover,:focus-visible){ background:var(--g-hover); }
+html[data-scene="graphite"] .g-home .g-friend:is(:hover,:focus-visible) .g-friend-name{ color:var(--g-accent); text-decoration-color:var(--g-accent); }
+html[data-scene="graphite"] .g-home .g-friend:is(:hover,:focus-visible) .g-friend-arrow{ color:var(--g-accent); }
+
 /* ---------- 页脚 ---------- */
 html[data-scene="graphite"] .g-foot{
   display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px 24px;
@@ -357,6 +398,17 @@ html[data-scene="graphite"] .g-foot a:hover{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-foot .beian{ font-family:var(--g-font-mono); font-size:11px; }
 
 /* ---------- 阅读页 ---------- */
+/* 阅读进度：纯 CSS 滚动驱动；不支持 animation-timeline 的浏览器不显示 */
+@supports (animation-timeline: scroll(root block)){
+  html[data-scene="graphite"] .g-post .g-progress{
+    position:fixed; top:0; left:0; width:100%; height:2px; z-index:40;
+    background:var(--g-accent); transform-origin:0 50%; transform:scaleX(0);
+    animation:g-progress-grow linear both;
+    animation-timeline:scroll(root block);
+    pointer-events:none;
+  }
+  @keyframes g-progress-grow{ from{ transform:scaleX(0); } to{ transform:scaleX(1); } }
+}
 html[data-scene="graphite"] .g-post .g-art-layout{
   display:grid; grid-template-columns:minmax(0,var(--g-measure)) 240px; gap:80px;
   justify-content:center; align-items:start; max-width:1140px; margin:0 auto;
@@ -494,6 +546,19 @@ html[data-scene="graphite"] .g-article pre[data-lang]::after{
 html[data-scene="graphite"] .g-article pre code{
   display:block; border:0; background:none; padding:0; font:inherit; color:inherit; white-space:pre;
 }
+/* 代码块复制：包一层定位容器，按钮不随代码横向滚动 */
+html[data-scene="graphite"] .g-article .g-codewrap{ position:relative; margin:1.6em 0; }
+html[data-scene="graphite"] .g-article .g-codewrap > pre[data-lang]{ margin:0; }
+html[data-scene="graphite"] .g-article .g-codewrap > pre[data-lang]::after{ right:68px; }
+html[data-scene="graphite"] .g-article .g-copy{
+  position:absolute; top:7px; right:10px; z-index:2;
+  appearance:none; background:transparent; border:1px solid var(--g-control-rule);
+  color:var(--g-ink-3); padding:3px 7px; cursor:pointer;
+  font:500 9.5px/1.2 var(--g-font-mono); letter-spacing:.08em; opacity:.55;
+  transition:opacity var(--g-dur) var(--g-ease), color var(--g-dur) var(--g-ease), border-color var(--g-dur) var(--g-ease);
+}
+html[data-scene="graphite"] .g-article .g-codewrap:is(:hover,:focus-within) .g-copy{ opacity:1; }
+html[data-scene="graphite"] .g-article .g-copy:is(:hover,:focus-visible){ color:var(--g-accent); border-color:var(--g-accent); opacity:1; }
 html[data-scene="graphite"] .g-article .hl-kw{ color:var(--g-tk-key); }
 html[data-scene="graphite"] .g-article .hl-str{ color:var(--g-tk-str); }
 html[data-scene="graphite"] .g-article .hl-com{ color:var(--g-tk-com); }
@@ -544,6 +609,7 @@ html[data-scene="graphite"] .g-art-back:hover{ color:var(--g-accent); }
 html[data-scene="graphite"] :is(.g-home,.g-post) :is(
   .g-nav a,.g-actions button,.g-login,.g-old,.g-search input,.g-sr-item,
   .g-links a,.g-spotlight,.g-row,.g-topic,.g-work,.g-contact a,.g-foot a,
+  .g-friend,.g-friend-name,.g-friend-arrow,
   .g-toc a,.g-article a,.g-art-nav a,.g-art-back,
   .g-spotlight h2,.g-spotlight .g-more,.g-row h3,.g-topic h3,.g-work h3,.g-art-nav b
 ){
@@ -551,6 +617,31 @@ html[data-scene="graphite"] :is(.g-home,.g-post) :is(
   transition-duration:var(--g-dur);
   transition-timing-function:var(--g-ease);
 }
+/* 报头一次入场：.js 由 head 内联脚本在 CSS 之前挂上；无 JS 不触发，默认可见。 */
+html.js[data-scene="graphite"] .g-home .g-masthead > .g-mast-copy,
+html.js[data-scene="graphite"] .g-home .g-masthead > .g-spotlight{
+  animation:g-mast-in 440ms var(--g-ease) both;
+}
+html.js[data-scene="graphite"] .g-home .g-masthead > .g-spotlight{ animation-delay:60ms; }
+@keyframes g-mast-in{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:none; }
+}
+/* 只移动下划线与独立箭头，交互区域及文字位置不变。 */
+html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a{ position:relative; }
+html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a:hover{ border-bottom-color:transparent; }
+html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:var(--g-accent); transform:scaleX(0); transform-origin:left center;
+  transition:transform var(--g-dur) var(--g-ease);
+}
+html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a:is(:hover,:focus-visible)::after{ transform:scaleX(1); }
+html[data-scene="graphite"] .g-home .g-friend .g-friend-arrow{
+  transform:translateX(0);
+  transition-property:color,transform;
+}
+html[data-scene="graphite"] .g-home .g-friend:is(:hover,:focus-visible) .g-friend-arrow{ transform:translateX(2px); }
+
 /* 根节点与页面不继承旧世界的主题过渡；不影响没有 g-page 的旧页面。 */
 html[data-scene="graphite"]:has(> body.g-page),
 html[data-scene="graphite"] body.g-page{ transition:none !important; }
@@ -580,9 +671,24 @@ html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)
   html[data-scene="graphite"] .g-post .g-art-layout{ grid-template-columns:minmax(0,var(--g-measure)); justify-content:center; }
   html[data-scene="graphite"] .g-post .g-toc{ display:none; }
 }
-/* 中等宽度：导航让位，避免顶栏挤出视口 */
-@media (max-width:980px){
-  html[data-scene="graphite"] .g-nav{ display:none; }
+/* 中宽：品牌收短 + 导航收进 MENU 下拉；手机保持紧凑顶栏 */
+@media (max-width:1120px){
+  html[data-scene="graphite"] .g-mark i,
+  html[data-scene="graphite"] .g-mark span{ display:none; }
+  html[data-scene="graphite"] .g-nav{
+    position:absolute; top:100%; left:0; right:0; z-index:35;
+    display:none; flex-direction:column; gap:0; margin:0;
+    background:var(--g-raised); border-bottom:1px solid var(--g-control-rule);
+    padding:6px 18px;
+  }
+  html[data-scene="graphite"] .g-nav.is-open{ display:flex; }
+  html[data-scene="graphite"] .g-nav a{ padding:11px 0; border-bottom:1px solid var(--g-rule-soft); }
+  html[data-scene="graphite"] .g-nav a:last-child{ border-bottom:0; }
+  html[data-scene="graphite"] .g-nav a::after{ display:none; }
+  html[data-scene="graphite"] .g-nav a:hover{ border-bottom-color:var(--g-rule-soft); }
+}
+@media (min-width:761px) and (max-width:1120px){
+  html[data-scene="graphite"] .g-menu-btn{ display:inline-flex; align-items:center; }
 }
 @media (max-width:760px){
   html[data-scene="graphite"] .g-bar-in{ padding:0 14px; height:52px; gap:10px; }
@@ -604,11 +710,22 @@ html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)
     row-gap:6px; column-gap:14px; padding:14px 4px;
   }
   html[data-scene="graphite"] .g-row .g-cat{ justify-self:end; }
+  html[data-scene="graphite"] .g-home .g-honor-row{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"date rank" "title title";
+    row-gap:6px; column-gap:14px; padding:14px 4px;
+  }
+  html[data-scene="graphite"] .g-home .g-honor-rank{ text-align:right; }
   html[data-scene="graphite"] .g-topic{ grid-template-columns:1fr; row-gap:10px; padding:20px 4px; }
   html[data-scene="graphite"] .g-topic .g-meta{ text-align:left; }
   html[data-scene="graphite"] .g-work{ grid-template-columns:1fr; row-gap:6px; padding:16px 4px; }
   html[data-scene="graphite"] .g-work .g-meta{ text-align:left; }
   html[data-scene="graphite"] .g-about-grid{ grid-template-columns:1fr; gap:30px; }
+  html[data-scene="graphite"] .g-home .g-friends{ grid-template-columns:1fr; }
+  html[data-scene="graphite"] .g-home .g-friend{
+    grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"name arrow" "detail detail";
+    row-gap:2px; column-gap:14px; padding:10px 4px;
+  }
   html[data-scene="graphite"] .g-art-head{ padding:42px 0 20px; }
   html[data-scene="graphite"] .g-art-head h1{ font-size:1.85rem; }
   html[data-scene="graphite"] .g-article{ font-size:15.5px; line-height:1.9; padding-top:22px; }
@@ -625,5 +742,8 @@ html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)
   html[data-scene="graphite"] body.g-page,
   html[data-scene="graphite"] body.g-page *,
   html[data-scene="graphite"] body.g-page *::before,
-  html[data-scene="graphite"] body.g-page *::after{ transition:none !important; }
+  html[data-scene="graphite"] body.g-page *::after{ transition:none !important; animation:none !important; }
+  html[data-scene="graphite"] .g-home .g-friend .g-friend-arrow{ transform:none !important; }
+  html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a::after{ transform:scaleX(0) !important; }
+  html[data-scene="graphite"] :is(.g-home,.g-post) .g-nav a:is(:hover,:focus-visible)::after{ transform:scaleX(1) !important; }
 }

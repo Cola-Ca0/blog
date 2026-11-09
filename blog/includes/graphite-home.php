@@ -1,7 +1,7 @@
 <?php
 /**
  * Graphite home — 石墨主主题首页 (2026-11-08)
- * 由 index.php 在 </body> 前 require; 复用 $publishedAll / $projectsData / $aboutJson。
+ * 由 index.php 在 </body> 前 require; 复用 $publishedAll / $projectsData / $aboutJson / $friendsData。
  * 只在 html[data-scene="graphite"] 下显示 (graphite.css)。
  */
 $gCollection = isset($_GET['collection']) ? (string) $_GET['collection'] : '';
@@ -61,7 +61,7 @@ $gNo = function (int $i, int $total): string {
   <?php $gNavContext = 'home'; require __DIR__ . '/graphite-nav.php'; ?>
   <main class="g-main">
     <section class="g-masthead" id="g-top">
-      <div>
+      <div class="g-mast-copy">
         <h1>Cola's security blog</h1>
         <p class="g-lede"><em><?= $gE($gLine['text']) ?></em></p>
         <p class="g-attr">— <?= $gE($gLine['from']) ?></p>
@@ -120,6 +120,28 @@ $gNo = function (int $i, int $total): string {
     </section>
     <?php endif; ?>
 
+    <?php if (count($gHonors) > 0): ?>
+    <section class="g-sec" id="g-honors" aria-labelledby="g-honors-h">
+      <div class="g-sec-head">
+        <h2 id="g-honors-h">HONORS</h2><span class="g-rule"></span>
+      </div>
+      <ul class="g-ledger g-honors">
+        <?php foreach ($gHonors as $honor): ?>
+        <li class="g-honor-row">
+          <time datetime="<?= $gE($honor['date']) ?>"><?= $gE($gD($honor['date'])) ?></time>
+          <div class="g-honor-body">
+            <h3><?= $gE($honor['title']) ?></h3>
+            <?php if (($honor['note'] ?? '') !== ''): ?>
+            <p class="g-honor-note"><?= $gE($honor['note']) ?></p>
+            <?php endif; ?>
+          </div>
+          <span class="g-honor-rank"><?= $gE($honor['rank']) ?></span>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+    <?php endif; ?>
+
     <section class="g-sec" id="g-works" aria-labelledby="g-works-h">
       <div class="g-sec-head">
         <h2 id="g-works-h">PROJECTS</h2><span class="g-rule"></span>
@@ -159,6 +181,26 @@ $gNo = function (int $i, int $total): string {
         </div>
       </div>
     </section>
+
+    <?php if (count($friendsData) > 0): ?>
+    <section class="g-sec" id="g-friends" aria-labelledby="g-friends-h">
+      <div class="g-sec-head">
+        <h2 id="g-friends-h">FRIENDS</h2><span class="g-rule"></span>
+      </div>
+      <ul class="g-friends">
+        <?php foreach ($friendsData as $friend): ?>
+        <?php $gFriendDetail = trim($friend['desc'] ?? '') !== '' ? $friend['desc'] : (string) parse_url($friend['url'], PHP_URL_HOST); ?>
+        <li>
+          <a class="g-friend" href="<?= $gE($friend['url']) ?>" target="_blank" rel="noopener noreferrer">
+            <span class="g-friend-name"><?= $gE($friend['name']) ?></span>
+            <span class="g-friend-detail"><?= $gE($gFriendDetail) ?></span>
+            <span class="g-friend-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+    <?php endif; ?>
 
     <?php require __DIR__ . '/graphite-foot.php'; ?>
   </main>
