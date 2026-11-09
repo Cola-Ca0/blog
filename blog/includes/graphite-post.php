@@ -56,6 +56,7 @@ $gUpdated = !empty($post['updated']) ? (string) $post['updated'] : (string) $pos
             <span class="by">Cola_CaO</span>
             <time datetime="<?= $gE(substr((string) $post['date'], 0, 10)) ?>"><?= $gE($gD((string) $post['date'])) ?></time>
             <span><?= $gE($post['category'] !== '' ? $post['category'] : '笔记') ?></span>
+            <span class="read">≈ <?= $gReadMin ?> MIN READ</span>
             <?php if ($isAdmin): ?>
             <a href="<?= $BASE ?>/admin/editor-article.php?slug=<?= $gE($slug) ?>">EDIT</a>
             <?php endif; ?>

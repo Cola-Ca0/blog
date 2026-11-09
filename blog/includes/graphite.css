@@ -28,6 +28,8 @@ html[data-scene="graphite"]{
   --g-font-mono:'Fira Code','Cascadia Mono','SFMono-Regular',Consolas,'Courier New',monospace;
   --g-wrap:1200px;
   --g-measure:820px;
+  --g-dur:160ms;
+  --g-ease:cubic-bezier(.2,0,0,1);
 }
 
 html[data-scene="graphite"][data-g="light"]{
@@ -218,6 +220,79 @@ html[data-scene="graphite"] .g-spotlight .g-meta{ font:500 10.5px/1.6 var(--g-fo
 html[data-scene="graphite"] .g-spotlight .g-more{ font:500 10.5px/1.6 var(--g-font-mono); color:var(--g-ink-3); }
 html[data-scene="graphite"] .g-spotlight:hover .g-more{ color:var(--g-accent); }
 
+/* 报头：暖灰纸面与灰绿分区；深浅档共用字阶与留白。 */
+html[data-scene="graphite"] .g-home .g-masthead{
+  --g-mast-paper:#1e2320;
+  --g-mast-panel:#28322b;
+  --g-mast-meta:var(--g-meta);
+  gap:48px;
+  padding:80px 32px 64px;
+  background:var(--g-mast-paper);
+  border-bottom:0;
+}
+html[data-scene="graphite"][data-g="light"] .g-home .g-masthead{
+  --g-mast-paper:#f4efe4;
+  --g-mast-panel:#e6ebdf;
+  --g-mast-meta:#7a5b30;
+}
+html[data-scene="graphite"] .g-home .g-masthead h1{
+  margin-bottom:32px;
+  font-size:clamp(2.5rem,4.2vw,3.5rem);
+  font-weight:500;
+  line-height:1.2;
+  letter-spacing:-.02em;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-lede{
+  max-width:28em;
+  font-size:1.25rem;
+  line-height:1.8;
+  letter-spacing:0;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-lede em{ color:inherit; }
+html[data-scene="graphite"] .g-home .g-masthead .g-attr{
+  margin-top:16px;
+  font-size:11px;
+  line-height:1.8;
+  letter-spacing:.03em;
+  color:var(--g-meta);
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-links{
+  margin-top:32px;
+  gap:8px 24px;
+  line-height:1.8;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-links a:is(:hover,:focus-visible){
+  color:var(--g-accent);
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight{
+  padding:24px;
+  background:var(--g-mast-panel);
+  border:0;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight .g-more{ color:var(--g-ink-2); }
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight .g-meta{ color:var(--g-mast-meta); }
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight .label{
+  margin-bottom:24px;
+  padding-bottom:0;
+  border-bottom:0;
+  letter-spacing:.08em;
+  color:var(--g-mast-meta);
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight h2{
+  margin-bottom:16px;
+  font-size:1.75rem;
+  line-height:1.5;
+  font-weight:500;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight:is(:hover,:focus-visible) h2{
+  color:var(--g-accent);
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:6px;
+}
+
 /* ---------- 区块 ---------- */
 html[data-scene="graphite"] .g-sec{ padding-top:54px; }
 html[data-scene="graphite"] .g-sec-head{ display:flex; align-items:baseline; gap:14px; }
@@ -282,25 +357,43 @@ html[data-scene="graphite"] .g-foot a:hover{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-foot .beian{ font-family:var(--g-font-mono); font-size:11px; }
 
 /* ---------- 阅读页 ---------- */
-html[data-scene="graphite"] .g-art-layout{
-  display:grid; grid-template-columns:minmax(0,var(--g-measure)) 196px; gap:56px;
+html[data-scene="graphite"] .g-post .g-art-layout{
+  display:grid; grid-template-columns:minmax(0,var(--g-measure)) 240px; gap:80px;
   justify-content:center; align-items:start; max-width:1140px; margin:0 auto;
 }
 html[data-scene="graphite"] .g-art-main{ min-width:0; }
-html[data-scene="graphite"] .g-art-layout.no-toc{
+html[data-scene="graphite"] .g-post .g-art-layout.no-toc{
   grid-template-columns:minmax(0,var(--g-measure)); justify-content:center;
 }
-html[data-scene="graphite"] .g-toc{ position:sticky; top:84px; padding-top:64px; }
-html[data-scene="graphite"] .g-toc-title{ margin:0 0 12px; font:500 10.5px/1.5 var(--g-font-mono); letter-spacing:.16em; text-transform:uppercase; color:var(--g-ink-3); }
-html[data-scene="graphite"] .g-toc nav{
-  display:flex; flex-direction:column; gap:3px; padding-left:14px;
-  border-left:1px solid var(--g-rule-soft); max-height:calc(100vh - 180px); overflow-y:auto; scrollbar-width:thin;
+html[data-scene="graphite"] .g-post .g-toc{
+  position:sticky; top:84px; padding-top:64px;
+  display:flex; flex-direction:column;
+  max-height:calc(100vh - 124px); max-height:calc(100dvh - 124px);
 }
-html[data-scene="graphite"] .g-toc a{ display:block; font-size:.84rem; line-height:1.9; color:var(--g-ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-html[data-scene="graphite"] .g-toc a:hover{ color:var(--g-accent); }
-html[data-scene="graphite"] .g-toc a.is-active{ color:var(--g-accent); }
-html[data-scene="graphite"] .g-toc a.sub{ padding-left:12px; font-family:var(--g-font-mono); font-size:11px; color:var(--g-ink-3); }
-html[data-scene="graphite"] .g-toc a.sub.is-active{ color:var(--g-accent); }
+html[data-scene="graphite"] .g-post .g-toc-title{ flex:none; margin:0 0 20px; font:500 10.5px/1.5 var(--g-font-mono); letter-spacing:.16em; text-transform:uppercase; color:var(--g-ink-3); }
+html[data-scene="graphite"] .g-post .g-toc nav{
+  display:flex; flex-direction:column; gap:4px; padding:0 0 28px 20px;
+  min-height:0; overflow-y:auto; scrollbar-width:none;
+  border-left:1px solid var(--g-rule-soft);
+  /* 底部 26px 渐隐提示可滚动；28px 底距保证滚到末端时末项不被遮 */
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 26px),transparent);
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 26px),transparent);
+}
+/* 仅隐藏目录内部滚动条，保留滚轮、触控与键盘滚动。 */
+html[data-scene="graphite"] .g-post .g-toc nav::-webkit-scrollbar{ display:none; width:0; height:0; }
+html[data-scene="graphite"] .g-post .g-toc a{ position:relative; display:block; min-height:28px; margin-left:-12px; padding-left:12px; font-size:.84rem; line-height:1.9; color:var(--g-ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* 短线位于预留槽内；负外边距抵消内边距，文字位置保持不变。 */
+html[data-scene="graphite"] .g-post .g-toc a::before{
+  content:""; position:absolute; left:0; top:.45em; width:2px; height:1em;
+  background:var(--g-accent); opacity:0; pointer-events:none;
+  transition:opacity 100ms var(--g-ease);
+}
+html[data-scene="graphite"] .g-post .g-toc a.is-active::before{ opacity:1; }
+html[data-scene="graphite"] .g-post .g-toc a:not(.sub):not(:first-child){ margin-top:8px; }
+html[data-scene="graphite"] .g-post .g-toc a:hover{ color:var(--g-accent); }
+html[data-scene="graphite"] .g-post .g-toc a.is-active{ color:var(--g-accent); }
+html[data-scene="graphite"] .g-post .g-toc a.sub{ min-height:24px; padding-left:24px; font-family:var(--g-font-mono); font-size:11px; color:var(--g-ink-3); }
+html[data-scene="graphite"] .g-post .g-toc a.sub.is-active{ color:var(--g-accent); }
 
 html[data-scene="graphite"] .g-art-head{ max-width:var(--g-measure); margin:0 auto; padding:60px 0 24px; border-bottom:1px solid var(--g-rule-soft); }
 html[data-scene="graphite"] .g-art-meta{
@@ -328,34 +421,45 @@ html[data-scene="graphite"] .g-article{
   max-width:var(--g-measure); margin:0 auto; padding:28px 0 8px;
   font-size:17px; line-height:1.9; color:var(--g-ink);
 }
-html[data-scene="graphite"] .g-article p{ margin:0 0 1.3em; text-wrap:pretty; }
+html[data-scene="graphite"] .g-post .g-article p,
+html[data-scene="graphite"] .g-post .g-article ul,
+html[data-scene="graphite"] .g-post .g-article ol{ margin:0 0 1.3em; }
+html[data-scene="graphite"] .g-post .g-article p{ text-wrap:pretty; }
 html[data-scene="graphite"] .g-article h2{
   font-family:var(--g-font-display); font-weight:600; font-size:1.65rem; line-height:1.5;
   margin:2.4em 0 .75em; padding-top:.7em; border-top:1px solid var(--g-rule); letter-spacing:.005em;
 }
 html[data-scene="graphite"] .g-article h2:first-child{ margin-top:0; padding-top:0; border-top:0; }
-html[data-scene="graphite"] .g-article h3{
-  font-family:var(--g-font-display); font-weight:600; font-size:1.15rem; line-height:1.6; margin:1.8em 0 .5em;
+html[data-scene="graphite"] .g-post .g-article h3{
+  font-family:var(--g-font-display); font-weight:600; font-size:1.25rem; line-height:1.6; margin:1.8em 0 .5em;
 }
+html[data-scene="graphite"] .g-post .g-article h2 + h3{ margin-top:.75em; }
 html[data-scene="graphite"] .g-article h4{ font-size:1rem; font-weight:600; margin:1.5em 0 .4em; }
-html[data-scene="graphite"] .g-article ul,
-html[data-scene="graphite"] .g-article ol{ margin:0 0 1.3em; padding-left:1.35em; }
-html[data-scene="graphite"] .g-article li{ margin:.35em 0; }
+html[data-scene="graphite"] .g-post .g-article ul,
+html[data-scene="graphite"] .g-post .g-article ol{ padding-left:1.35em; }
+html[data-scene="graphite"] .g-post .g-article li{ margin:.35em 0; }
+html[data-scene="graphite"] .g-post .g-article li:first-child{ margin-top:0; }
+html[data-scene="graphite"] .g-post .g-article li:last-child{ margin-bottom:0; }
+html[data-scene="graphite"] .g-post .g-article li > ul,
+html[data-scene="graphite"] .g-post .g-article li > ol{ margin:.35em 0; line-height:inherit; }
+html[data-scene="graphite"] .g-post .g-article li > :is(p,ul,ol):last-child{ margin-bottom:0; }
 html[data-scene="graphite"] .g-article li::marker{ color:var(--g-accent); }
-html[data-scene="graphite"] .g-article blockquote{
-  margin:2.2em 0; padding:0; border:0; max-width:34em;
+html[data-scene="graphite"] .g-post .g-article blockquote{
+  margin:1.3em 0; padding:0; border:0; max-width:34em;
   font-family:var(--g-font-display); font-size:1.08em; line-height:1.8; color:var(--g-ink-2);
 }
 html[data-scene="graphite"] .g-article blockquote::before{
   content:""; display:block; width:32px; height:1px; background:var(--g-accent); opacity:.8; margin:0 0 14px;
 }
-html[data-scene="graphite"] .g-article blockquote p:last-child{ margin-bottom:0; }
+html[data-scene="graphite"] .g-post .g-article blockquote > :last-child{ margin-bottom:0; }
 html[data-scene="graphite"] .g-article a{
   text-decoration:underline; text-decoration-color:var(--g-accent-dim); text-underline-offset:3px;
 }
 html[data-scene="graphite"] .g-article a:hover{ color:var(--g-accent); text-decoration-color:var(--g-accent); }
 html[data-scene="graphite"] .g-article strong{ font-weight:600; }
 html[data-scene="graphite"] .g-article img{ max-width:100%; height:auto; border:1px solid var(--g-rule); margin:1.4em 0; }
+/* 长串（PATH 值、长行内代码）在窄屏必须可断，否则会把整页撑宽 */
+html[data-scene="graphite"] .g-article > :not(pre):not(.g-table-wrap){ overflow-wrap:anywhere; }
 html[data-scene="graphite"] .g-article hr{ border:0; border-top:1px solid var(--g-rule-soft); margin:2.4em 0; }
 
 /* 行内代码 */
@@ -398,7 +502,7 @@ html[data-scene="graphite"] .g-article .hl-fn{ color:var(--g-tk-fn); }
 html[data-scene="graphite"] .g-article .hl-var{ color:var(--g-ink); }
 
 /* 表格 */
-html[data-scene="graphite"] .g-table-wrap{ margin:1.6em 0; overflow-x:auto; border-top:1px solid var(--g-rule); }
+html[data-scene="graphite"] .g-post .g-article .g-table-wrap{ margin:1.3em 0; overflow-x:auto; border-top:1px solid var(--g-rule); }
 html[data-scene="graphite"] .g-article table{ border-collapse:collapse; width:100%; font-size:.87rem; line-height:1.75; }
 html[data-scene="graphite"] .g-article caption{
   caption-side:top; text-align:left; padding:10px 12px 8px;
@@ -436,22 +540,60 @@ html[data-scene="graphite"] .g-art-back{
 }
 html[data-scene="graphite"] .g-art-back:hover{ color:var(--g-accent); }
 
+/* ---------- 交互微过渡：只反馈状态，不移动布局 ---------- */
+html[data-scene="graphite"] :is(.g-home,.g-post) :is(
+  .g-nav a,.g-actions button,.g-login,.g-old,.g-search input,.g-sr-item,
+  .g-links a,.g-spotlight,.g-row,.g-topic,.g-work,.g-contact a,.g-foot a,
+  .g-toc a,.g-article a,.g-art-nav a,.g-art-back,
+  .g-spotlight h2,.g-spotlight .g-more,.g-row h3,.g-topic h3,.g-work h3,.g-art-nav b
+){
+  transition-property:color,background-color,border-color,text-decoration-color,opacity;
+  transition-duration:var(--g-dur);
+  transition-timing-function:var(--g-ease);
+}
+/* 根节点与页面不继承旧世界的主题过渡；不影响没有 g-page 的旧页面。 */
+html[data-scene="graphite"]:has(> body.g-page),
+html[data-scene="graphite"] body.g-page{ transition:none !important; }
+/* 主题按钮操作期间瞬时换色；离开按钮后恢复普通交互反馈。 */
+html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)) :is(.g-home,.g-post),
+html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)) :is(.g-home,.g-post) *{
+  transition:none !important;
+}
+
 /* ---------- 响应式 ---------- */
-@media (max-width:1120px){
-  html[data-scene="graphite"] .g-art-layout{ grid-template-columns:minmax(0,var(--g-measure)); justify-content:center; }
-  html[data-scene="graphite"] .g-toc{ display:none; }
+@media (max-width:899px){
+  html[data-scene="graphite"] .g-home .g-masthead{
+    grid-template-columns:1fr;
+    gap:32px;
+  }
+}
+@media (max-width:760px){
+  html[data-scene="graphite"] .g-home .g-masthead{
+    margin:0 -18px;
+    padding:48px 24px 40px;
+  }
+  html[data-scene="graphite"] .g-home .g-masthead h1{ font-size:2.5rem; }
+  html[data-scene="graphite"] .g-home .g-masthead .g-lede{ font-size:1.125rem; }
+}
+/* 阅读栏保持 820px；空间不足时目录按原有方式收起。 */
+@media (max-width:1215px){
+  html[data-scene="graphite"] .g-post .g-art-layout{ grid-template-columns:minmax(0,var(--g-measure)); justify-content:center; }
+  html[data-scene="graphite"] .g-post .g-toc{ display:none; }
+}
+/* 中等宽度：导航让位，避免顶栏挤出视口 */
+@media (max-width:980px){
+  html[data-scene="graphite"] .g-nav{ display:none; }
 }
 @media (max-width:760px){
   html[data-scene="graphite"] .g-bar-in{ padding:0 14px; height:52px; gap:10px; }
   html[data-scene="graphite"] .g-mark i,
   html[data-scene="graphite"] .g-mark span{ display:none; }
-  html[data-scene="graphite"] .g-nav{ display:none; }
   html[data-scene="graphite"] .g-actions{ gap:7px; }
   html[data-scene="graphite"] .g-search input{ width:88px; padding:0 6px; font-size:10.5px; }
   html[data-scene="graphite"] .g-search input::placeholder{ font-size:10px; }
   html[data-scene="graphite"] .g-search-results{ width:250px; }
   html[data-scene="graphite"] .g-mode button{ padding:5px 7px; }
-  html[data-scene="graphite"] .g-old{ display:none; }
+  html[data-scene="graphite"] .g-bar .g-old{ display:none; }
   html[data-scene="graphite"] .g-main{ padding:0 18px 20px; }
   html[data-scene="graphite"] .g-masthead{ grid-template-columns:1fr; gap:28px; padding:48px 0 38px; }
   html[data-scene="graphite"] .g-spotlight{ padding:24px 0 0; border-left:0; border-top:1px solid var(--g-rule-soft); }
@@ -471,6 +613,7 @@ html[data-scene="graphite"] .g-art-back:hover{ color:var(--g-accent); }
   html[data-scene="graphite"] .g-art-head h1{ font-size:1.85rem; }
   html[data-scene="graphite"] .g-article{ font-size:15.5px; line-height:1.9; padding-top:22px; }
   html[data-scene="graphite"] .g-article h2{ font-size:1.38rem; }
+  html[data-scene="graphite"] .g-post .g-article h3{ font-size:1.15rem; }
   html[data-scene="graphite"] .g-article pre[data-lang]{ font-size:12.5px; }
   html[data-scene="graphite"] .g-art-nav{ grid-template-columns:1fr; }
   html[data-scene="graphite"] .g-art-nav .next{ text-align:left; }
@@ -479,4 +622,8 @@ html[data-scene="graphite"] .g-art-back:hover{ color:var(--g-accent); }
 }
 @media (prefers-reduced-motion:reduce){
   html[data-scene="graphite"] *{ scroll-behavior:auto !important; }
+  html[data-scene="graphite"] body.g-page,
+  html[data-scene="graphite"] body.g-page *,
+  html[data-scene="graphite"] body.g-page *::before,
+  html[data-scene="graphite"] body.g-page *::after{ transition:none !important; }
 }

@@ -278,6 +278,8 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 
 深浅档由 `html[data-g="dark\|light"]` 控制，选择存 localStorage `graphiteMode`。
 
+**报头纸面（2026-11-09）**：首页报头用局部纸面 token，不是全局底色——dark 纸面 `#1e2320`、卡片 `#28322b`；light 纸面 `#f4efe4`、卡片 `#e6ebdf`、沙色元信息 `#7a5b30`。标题字重 500，引文 1.25rem。
+
 ## Typography
 
 - **标题**：`Noto Serif SC`（回退 Source Han Serif / Songti / SimSun），600
@@ -289,8 +291,24 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 
 - 外框 `--g-wrap: 1200px`，两侧 28px 内边距
 - 首页报头两栏：`1fr / 384px`（左简介+歌词，右 LATEST WORK 卡），< 900px 收单栏
-- 文章页：正文 `--g-measure: 820px` + 右侧粘性目录（CONTENTS），目录超高时内部滚动 + 省略号
+- 文章页：正文 `--g-measure: 820px` + 右侧粘性目录（CONTENTS，240px，间距 80px），目录超高时内部滚动 + 省略号；≤1215px 目录收起
+- 正文长串（PATH、长行内代码）允许任意断行（`overflow-wrap:anywhere`）；`pre` 与表格保留各自的横向滚动
+- 顶栏：≤980px 收起导航；≤760px 收起 OLD 按钮，页脚的「VIEW OLD THEME」始终保留
 - 代码窗口：`data-lang` 语言标签 + Mac 三色圆点（`#ff5f57` `#febc2e` `#28c840`），横向滚动不换行
+
+## 交互微过渡（2026-11-09）
+
+- Graphite 使用 `--g-dur:160ms` 与 `--g-ease:cubic-bezier(.2,0,0,1)`。
+- 只覆盖交互元素及其随状态变色的标题；仅过渡 color、background-color、border-color、text-decoration-color、opacity，不移动布局。
+- 根节点、body 不做主题过渡；主题按钮处于 hover / active / focus-visible 时关闭 Graphite 内容的过渡，深浅切换瞬时生效。
+- prefers-reduced-motion:reduce 下，Graphite 页面及其后代、伪元素全部 transition:none。旧世界不受影响。
+
+## 目录当前位置标记（2026-11-09）
+
+- 目录当前项保留变色，并在固定槽位显示 2px 鼠尾草绿短线；主级与子级文字位置保持不变。
+- 短线通过 ::before 实现，仅 opacity 做 100ms 过渡，不滑动；reduced-motion 下 transition:none。
+- 目录底部 26px 渐隐（mask-image）提示可滚动；底部留白 28px，滚到末端时末项不被遮。
+- 继续使用原有 is-active / aria-current，不改变目录检测逻辑、内部滚动、隐藏滚动条及底部留白。
 
 ## 作用域纪律
 
