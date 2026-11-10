@@ -31,7 +31,7 @@ A personal panorama blog — not pure technical tutorials, not pure lifestyle. T
 
 ## Operating Context
 
-- The user is a CS freshman at Hangzhou Normal University (杭州师范大学), class of 2024
+- The user is a CS freshman, class of 2024
 - Focus track: network security (网络空间安全), CTF + SRC vulnerability hunting
 - Learning path: Java, PHP, Web security, Kali Linux, Burp Suite
 - Tools: Laragon + VS Code + Continue (DeepSeek API), Obsidian for knowledge management

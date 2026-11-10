@@ -93,7 +93,7 @@
 
 ## 第六条 内容宪法
 
-6.1 **博客身份：CS/网络安全/CTF 学习记录站。**（MUST）站名 **Cola's security blog**（对外标题、页脚、RSS、og:title 统一），作者署名 Cola_CaO（可乐，杭师大 CS，CTF & SRC）。「深海之下，别有洞天」保留为旧世界的场景意象，不再作为站名。内容改动需与此身份一致。
+6.1 **博客身份：CS/网络安全/CTF 学习记录站。**（MUST）站名 **Cola's security blog**（对外标题、页脚、RSS、og:title 统一），作者署名 Cola_CaO（可乐，CS，CTF & SRC）。「深海之下，别有洞天」保留为旧世界的场景意象，不再作为站名。内容改动需与此身份一致。
 
 6.2 **知识库联动。**（SHOULD）Obsidian 知识库（Z:\laragon\knowledge-base）的 blog-posts/ 与博客文章内容联动——在知识库写好的文章是博客内容的上游来源。改动文章系统时保持该通道畅通。
 

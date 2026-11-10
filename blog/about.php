@@ -13,9 +13,9 @@ $about = json_decode(file_get_contents($aboutFile), true) ?: [];
 <head>
 <?php
 $pageTitle = 'About · Cola_CaO';
-$pageDesc = '关于可乐 — 杭师大 CS 2026 级新生，网络安全方向，CTF + SRC。了解我的技术栈、学习路线和联系方式。';
+$pageDesc = '关于可乐 — CS 2026 级新生，网络安全方向，CTF + SRC。了解我的技术栈、学习路线和联系方式。';
 $extraHead = '<meta property="og:title" content="About · Cola_CaO">
-<meta property="og:description" content="杭师大 CS 2026 级，网络安全方向，CTF + SRC。">
+<meta property="og:description" content="CS 2026 级，网络安全方向，CTF + SRC。">
 <meta property="og:type" content="website">';
 require __DIR__ . '/includes/head.php';
 ?>

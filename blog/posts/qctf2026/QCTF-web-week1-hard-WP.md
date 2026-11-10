@@ -713,4 +713,4 @@ GET /upload/uploads/default/sh2.jpg.php?f=/srv/upload/.secret/part2.php
 主要是这次在找入口这里停留了太长的时间了，所以导致在我眼里这道题超级无敌难，实际上并不是，找到了robots.txt然后进了ad1min.php，接下来的路还是可以走的。
 总而言之这道题还是十分有九分的有趣的(bushi)
 
-<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.10.8</blockquote>
+<blockquote style="text-align:right">Cola_CaO<br>2026.10.8</blockquote>

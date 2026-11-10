@@ -932,7 +932,7 @@ body {
         </div>
         <div class="panel-name-group">
           <h3>Cola_CaO</h3>
-          <span>// 可乐 · CS @ 杭师大 · CTF & SRC</span>
+          <span>// 可乐 · CS · CTF & SRC</span>
         </div>
       </div>
       <div class="hud-data-row">
@@ -1107,7 +1107,7 @@ body {
             <span>// 可乐</span>
           </div>
         </div>
-        <p class="about-bio">杭州师范大学 · 2026级 CS。方向：网络空间安全 Web + Crypto。稀饭二次元，工作栈以 Python + PHP 为主。</p>
+        <p class="about-bio">2026级 CS。方向：网络空间安全 Web + Crypto。稀饭二次元，工作栈以 Python + PHP 为主。</p>
         <div class="about-hud-mini">
           <div><strong>CTF</strong> TRAINING</div>
           <div><strong>SRC</strong> HUNTING</div>

@@ -97,4 +97,4 @@ susctf{Wowww_LSB_can_h1de_mess4ges!}
 3. **LSB 提取记住这套组合拳**：三通道 bit0 + MSB First + RGB 顺序 + 行序。顺序错了就是乱码，换个顺序再试一遍就好。
 4. **做不出来不一定是自己的问题。** 先去看题目更新时间、去群里问一句，实在不行就睡一觉——我这题是被「附件发错了」硬卡了五个小时。之前做过类似的流程，手上有一份现成的 LSB 提取脚本（当时让 AI 写的 poc），这次直接复用，所以附件一换我这边是光速出货。
 
-<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.09.22</blockquote>
+<blockquote style="text-align:right">Cola_CaO<br>2026.09.22</blockquote>

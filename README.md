@@ -6,7 +6,7 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
-CS student at Hangzhou Normal University (enrolled 2026), majoring in Computer Science with a focus on cybersecurity. On the CTF + SRC bug-hunting track. This blog is my personal knowledge base — quiet, focused, and logging every leg of the voyage.
+CS student (enrolled 2026), majoring in Computer Science with a focus on cybersecurity. On the CTF + SRC bug-hunting track. This blog is my personal knowledge base — quiet, focused, and logging every leg of the voyage.
 
 ---
 

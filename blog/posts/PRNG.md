@@ -511,4 +511,4 @@ print(f"预测浮点数: {predicted_float}, 实际浮点数: {actual_float}")
 
 **下一站预告**：单机随机解决了，那**互不信任的多方怎么一起产生随机**？
 
-<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.10.15</blockquote>
+<blockquote style="text-align:right">Cola_CaO<br>2026.10.15</blockquote>

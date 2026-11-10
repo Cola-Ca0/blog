@@ -163,7 +163,7 @@ test('URL 里的 & 正确实体化为 &amp;', function () {
 // ---- 白名单放行 (2026-10-02): 自己写的署名/换行要活, 其余 HTML 照旧死 ----
 
 test('署名块 <blockquote style="text-align:right"> 原样渲染', function () {
-    $sig = '<blockquote style="text-align:right">Cola_CaO From HZNU<br>2026.09.22</blockquote>';
+    $sig = '<blockquote style="text-align:right">Cola_CaO<br>2026.09.22</blockquote>';
     $out = renderMarkdown($sig);
     assertTrue(strpos($out, $sig) !== false, "署名没渲染: $out");
     assertFalse(strpos($out, '&lt;blockquote') !== false, "署名被转义了: $out");
