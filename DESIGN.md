@@ -314,7 +314,7 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 ## 交互微过渡（2026-11-09）
 
 - Graphite 使用 `--g-dur:160ms` 与 `--g-ease:cubic-bezier(.2,0,0,1)`。
-- 主要覆盖交互元素及其随状态变色的标题；常规过渡为 color、background-color、border-color、text-decoration-color、opacity。仅导航下划线和友链箭头允许 transform，不移动布局。
+- 主要覆盖交互元素及其随状态变色的标题；常规过渡为 color、background-color、border-color、text-decoration-color、opacity。导航下划线、主推卡顶边和友链箭头的 transform 不移动布局。
 - 根节点、body 不做主题过渡；主题按钮处于 hover / active / focus-visible 时关闭 Graphite 内容的过渡，深浅切换瞬时生效。
 - prefers-reduced-motion:reduce 下，Graphite 页面及其后代、生成的伪元素全部 transition:none / animation:none；报头保持可见、无位移，交互标记瞬时切换。旧世界不受影响。
 
@@ -324,6 +324,7 @@ Graphite 是编辑部式的阅读界面：灰绿纸面、衬线标题、窄正�
 - 由 CSS 在 `html.js` 条件下触发（head 内联脚本在样式之前挂上 .js）；无 JS 时不触发、内容默认可见，不依赖 FCP/IO 计时。
 - reduce 下 animation:none；切换场景不会重复播放。
 - 导航 ::after 下划线以 scaleX 展开，160ms；友链独立箭头向右 2px，160ms。鼠标与键盘焦点同样反馈，正文与交互区域本身不移动。
+- 首页主推卡在悬停或键盘聚焦时，以鼠尾草绿描亮顶边一次（440ms）。减少动态效果时边线直接亮起。
 - 主题切换继续瞬时生效；不使用 rAF 循环和 scroll 监听器。reduce 下动画与过渡全部关闭。
 - 首页与文章页 html 提供 data-scene="graphite" / data-g="dark" 静态默认值，无 JS 时 Graphite 内容可读且旧 preloader 让位；theme-init 仍在 head 原位置同步覆盖保存偏好，不改变双标记结构。
 

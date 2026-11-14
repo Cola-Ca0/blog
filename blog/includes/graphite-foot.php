@@ -4,7 +4,7 @@
  */
 ?>
 <footer class="g-foot">
-  <span>Cola_CaO · Cola's security blog</span>
+  <span>© 2026 Cola_CaO · Cola's security blog</span>
   <span class="beian">
     <button type="button" class="g-old" onclick="setScene('deepsea')">VIEW OLD THEME</button>
     · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2026084546号-1</a>

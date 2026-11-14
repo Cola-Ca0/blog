@@ -41,6 +41,12 @@ if ($gColl !== null) {
 
 $gProjects = $projectsData;
 usort($gProjects, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
+$gProjectDrawings = [
+    'misc-dashouzi' => 'misc-dashouzi.svg',
+    'cola-hub' => 'cola-hub.svg',
+    'cyber-toolkit' => 'cyber-toolkit.svg',
+    'lighthouse' => 'lighthouse.svg',
+];
 
 $gD = fn(string $s): string => str_replace('-', '.', substr($s, 0, 10));
 $gE = fn(?string $s): string => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
@@ -152,9 +158,15 @@ $gNo = function (int $i, int $total): string {
         <?php
           $gUrl = (string) ($pj['url'] ?? '');
           $gTag = $gUrl !== '' ? 'a' : 'div';
+          $gDrawing = $gProjectDrawings[$pj['id'] ?? ''] ?? null;
         ?>
-        <<?= $gTag ?> class="g-work"<?= $gTag === 'a' ? ' href="' . $gE($gUrl) . '" target="_blank" rel="noopener"' : '' ?>>
-          <div>
+        <<?= $gTag ?> class="g-work<?= $gDrawing !== null ? ' g-work-illustrated' : '' ?>"<?= $gTag === 'a' ? ' href="' . $gE($gUrl) . '" target="_blank" rel="noopener"' : '' ?>>
+          <?php if ($gDrawing !== null): ?>
+          <span class="g-work-drawing" aria-hidden="true">
+            <img src="<?= $gE($BASE . '/assets/images/graphite/' . $gDrawing) ?>" width="128" height="92" alt="" loading="lazy">
+          </span>
+          <?php endif; ?>
+          <div class="g-work-copy">
             <h3><?= $gE((string) $pj['title']) ?></h3>
             <p><?= $gE((string) $pj['description']) ?></p>
           </div>
@@ -178,6 +190,10 @@ $gNo = function (int $i, int $total): string {
             <dt>GitHub</dt><dd><a href="https://github.com/Cola-Ca0" target="_blank" rel="noopener">Cola-Ca0 ↗</a></dd>
             <dt>Bilibili</dt><dd><a href="https://space.bilibili.com/629007860" target="_blank" rel="noopener">629007860 ↗</a></dd>
           </dl>
+          <figure class="g-about-portrait">
+            <img src="<?= $gE($BASE . '/assets/images/graphite/gura-sketch.webp') ?>" width="640" height="640" alt="Gawr Gura 戴着鲨鱼兜帽的二创素描" loading="lazy">
+            <figcaption><a href="https://hololive.hololivepro.com/en/talents/gawr-gura/" target="_blank" rel="noopener">Gawr Gura</a></figcaption>
+          </figure>
         </div>
       </div>
     </section>

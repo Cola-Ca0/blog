@@ -276,9 +276,25 @@ html[data-scene="graphite"] .g-home .g-masthead .g-links a:is(:hover,:focus-visi
   text-underline-offset:4px;
 }
 html[data-scene="graphite"] .g-home .g-masthead .g-spotlight{
+  position:relative;
   padding:24px;
   background:var(--g-mast-panel);
   border:0;
+}
+/* 仅在选中主推文章入口时描亮顶边；减少动态效果时沿用静态终点。 */
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px;
+  background:var(--g-accent); pointer-events:none;
+  transform:scaleX(0); transform-origin:left center;
+}
+html[data-scene="graphite"] .g-home .g-masthead .g-spotlight:focus-visible::before{ transform:scaleX(1); }
+@media (hover:hover){
+  html[data-scene="graphite"] .g-home .g-masthead .g-spotlight:hover::before{ transform:scaleX(1); }
+}
+@media (prefers-reduced-motion:no-preference){
+  html[data-scene="graphite"] .g-home .g-masthead .g-spotlight:is(:hover,:focus-visible)::before{
+    transition:transform 440ms var(--g-ease);
+  }
 }
 html[data-scene="graphite"] .g-home .g-masthead .g-spotlight .g-more{ color:var(--g-ink-2); }
 html[data-scene="graphite"] .g-home .g-masthead .g-spotlight .g-meta{ color:var(--g-mast-meta); }
@@ -358,6 +374,20 @@ html[data-scene="graphite"] .g-work h3{ margin:0; font:500 .97rem/1.6 var(--g-fo
 html[data-scene="graphite"] .g-work:hover h3{ color:var(--g-accent); }
 html[data-scene="graphite"] .g-work p{ margin:4px 0 0; max-width:62ch; color:var(--g-ink-2); font-size:.86rem; line-height:1.8; }
 html[data-scene="graphite"] .g-work .g-meta{ align-self:center; text-align:right; font:500 10.5px/1.9 var(--g-font-mono); color:var(--g-ink-3); white-space:nowrap; }
+html[data-scene="graphite"] .g-home .g-work-illustrated{
+  grid-template-columns:7rem minmax(0,1fr) auto;
+  grid-template-areas:"drawing copy meta";
+  align-items:center; column-gap:clamp(1rem,2.5vw,2rem);
+}
+html[data-scene="graphite"] .g-home .g-work-illustrated .g-work-copy{ grid-area:copy; }
+html[data-scene="graphite"] .g-home .g-work-illustrated .g-meta{ grid-area:meta; }
+html[data-scene="graphite"] .g-home .g-work-drawing{
+  grid-area:drawing; display:block; border:1px solid var(--g-rule); background:var(--g-raised);
+}
+html[data-scene="graphite"][data-g="light"] .g-home .g-work-drawing img{ filter:brightness(.57); }
+html[data-scene="graphite"] .g-home :is(.g-work-drawing,.g-about-portrait) img{
+  display:block; width:100%; height:auto;
+}
 
 html[data-scene="graphite"] .g-about-grid{ display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:52px; padding-top:22px; }
 html[data-scene="graphite"] .g-about-grid p{ margin:0 0 14px; color:var(--g-ink-2); font-size:.9rem; line-height:1.95; max-width:52ch; }
@@ -366,6 +396,14 @@ html[data-scene="graphite"] .g-contact dl{ margin:0; display:grid; grid-template
 html[data-scene="graphite"] .g-contact dt{ font:500 10.5px/1.9 var(--g-font-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--g-ink-3); }
 html[data-scene="graphite"] .g-contact dd{ margin:0; color:var(--g-ink-2); }
 html[data-scene="graphite"] .g-contact dd a:hover{ color:var(--g-accent); }
+html[data-scene="graphite"] .g-home .g-about-portrait{ width:min(100%,15.5rem); margin:1.25rem 0 0; }
+html[data-scene="graphite"] .g-home .g-about-portrait figcaption{
+  margin-top:.4rem; font:400 .72rem/1.5 var(--g-font-mono);
+  text-align:center; color:var(--g-ink-3);
+}
+html[data-scene="graphite"] .g-home .g-about-portrait a:is(:hover,:focus-visible){
+  color:var(--g-accent); text-decoration:underline;
+}
 html[data-scene="graphite"] .g-focus{ margin-top:22px; font:500 11px/2 var(--g-font-mono); color:var(--g-ink-3); }
 html[data-scene="graphite"] .g-focus b{ display:block; font-weight:500; letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px; color:var(--g-ink-3); }
 
@@ -724,7 +762,13 @@ html[data-scene="graphite"]:has(.g-mode button:is(:hover,:active,:focus-visible)
   html[data-scene="graphite"] .g-topic .g-meta{ text-align:left; }
   html[data-scene="graphite"] .g-work{ grid-template-columns:1fr; row-gap:6px; padding:16px 4px; }
   html[data-scene="graphite"] .g-work .g-meta{ text-align:left; }
+  html[data-scene="graphite"] .g-home .g-work-illustrated{
+    grid-template-columns:4.5rem minmax(0,1fr);
+    grid-template-areas:"drawing copy" "drawing meta";
+    align-items:start; gap:.4rem .9rem;
+  }
   html[data-scene="graphite"] .g-about-grid{ grid-template-columns:1fr; gap:30px; }
+  html[data-scene="graphite"] .g-home .g-about-portrait{ width:min(100%,13rem); }
   html[data-scene="graphite"] .g-home .g-friends{ grid-template-columns:1fr; }
   html[data-scene="graphite"] .g-home .g-friend{
     grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"name arrow" "detail detail";
