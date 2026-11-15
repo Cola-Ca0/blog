@@ -65,7 +65,7 @@ if(!preg_match("/flag/i", $c)){
 而这里 `i` 的意思则是不区分大小写，因此Flag FLag这样的形式都不行
 关键的来了，下面的执行的代码竟然是 eval()
 
-`eval()`函数在php里是很危险的函数，相当于把$c里的字符当作命令来执行
+`eval()`函数在php里是很危险的函数，相当于把$c里的字符字符串当作PHP的代码来执行
 
 而最后一行
 ```php
@@ -77,7 +77,7 @@ else{    highlight_file(__FILE__);  }
 我们要做的是拿flag，也就是调用system来cat flag
 一般来说cat flag的指令是
 ```php
-system(cat flag);
+system('cat flag');
 ```
 但是遗憾的是，这里有两个问题：
 1. 一般来说cat这个命令太常见了所以就导致了基本上任何一个搭建平台的人都会把cat给屏掉。
@@ -418,8 +418,8 @@ if(!preg_match("/flag|php|file/i", $c))
 
 且这两者在这里都可以用，前者是绝对路径（注意file:// 后面要多加一个 /）后者是相对路径
 ```php
-include "file:///var/www/html/flag.php";
-include "var/www/html/flag.php";
+include "file:///var/www/html/flag.php";  //等价于 "/var/www/html/flag.php"
+include "flag.php";
 ```
 
 ### pt.2.2
