@@ -158,9 +158,12 @@ $gNo = function (int $i, int $total): string {
         <?php
           $gUrl = (string) ($pj['url'] ?? '');
           $gTag = $gUrl !== '' ? 'a' : 'div';
+          // 站内条目 (2026-11-23): url 以 / 开头表示站内页面, 用 $BASE 前缀且同标签页打开
+          $gInternal = str_starts_with($gUrl, '/');
+          $gHref = $gInternal ? $BASE . $gUrl : $gUrl;
           $gDrawing = $gProjectDrawings[$pj['id'] ?? ''] ?? null;
         ?>
-        <<?= $gTag ?> class="g-work<?= $gDrawing !== null ? ' g-work-illustrated' : '' ?>"<?= $gTag === 'a' ? ' href="' . $gE($gUrl) . '" target="_blank" rel="noopener"' : '' ?>>
+        <<?= $gTag ?> class="g-work<?= $gDrawing !== null ? ' g-work-illustrated' : '' ?>"<?= $gTag === 'a' ? ' href="' . $gE($gHref) . '"' . ($gInternal ? '' : ' target="_blank" rel="noopener"') : '' ?>>
           <?php if ($gDrawing !== null): ?>
           <span class="g-work-drawing" aria-hidden="true">
             <img src="<?= $gE($BASE . '/assets/images/graphite/' . $gDrawing) ?>" width="128" height="92" alt="" loading="lazy">
@@ -170,7 +173,7 @@ $gNo = function (int $i, int $total): string {
             <h3><?= $gE((string) $pj['title']) ?></h3>
             <p><?= $gE((string) $pj['description']) ?></p>
           </div>
-          <span class="g-meta"><?= $gE((string) ($pj['date'] ?? '')) ?><br><?= $gE($gUrl !== '' ? 'OPEN SOURCE ↗' : (string) ($pj['note'] ?? 'LOCAL')) ?></span>
+          <span class="g-meta"><?= $gE((string) ($pj['date'] ?? '')) ?><br><?= $gE($gInternal ? 'ENTER →' : ($gUrl !== '' ? 'OPEN SOURCE ↗' : (string) ($pj['note'] ?? 'LOCAL'))) ?></span>
         </<?= $gTag ?>>
         <?php endforeach; ?>
       </div>

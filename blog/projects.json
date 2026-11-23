@@ -42,5 +42,16 @@
     "featured": true,
     "url": "https://github.com/Cola-Ca0/misc-dashouzi",
     "files": []
+  },
+  {
+    "id": "tpctf2026-board",
+    "title": "TPCTF 2026 作战归档",
+    "description": "人机协同赛道正式赛的队内看板快照：六百条作战记录，从 php2shell 链标定到最后一小时连下三题的完整推演。密码进入。",
+    "tags": ["CTF", "Archive", "Log"],
+    "date": "2026-11",
+    "status": "completed",
+    "featured": false,
+    "url": "/board.php",
+    "files": []
   }
 ]
