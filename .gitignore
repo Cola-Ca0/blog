@@ -1,6 +1,9 @@
 # Laragon
 /laragon/
 
+# Local-only Apache hardening (never deployed; online docroot is blog/)
+/.htaccess
+
 # Music files (large)
 blog/assets/music/*.mp3
 blog/assets/music/*.lrc
