@@ -315,8 +315,11 @@ function renderMarkdown(string $text): string {
     };
 
     // 1. Fenced code blocks (protect from later processing)
+    // 2026-11-29: 语言后允许尾随空格/制表符 —— Obsidian 里手滑打个空格很常见(本笔记 L440 就是
+    // '```python ')，旧正则要求紧跟 \n，该行不算开启围栏，导致此后全文围栏两两错位：
+    // 正文被吞进 <pre>、代码块漏成正文，后半篇 markdown 原样输出。
     $text = preg_replace_callback(
-        '/```(\w*)\n(.*?)```/s',
+        '/```(\w*)[ \t]*\n(.*?)```/s',
         function ($m) use (&$placeholders, $esc) {
             $lang = $m[1] ? ' class="language-' . $esc($m[1]) . '"' : '';
             $langName = $m[1] !== '' ? $m[1] : 'text';  // 代码块角标用：无标注时回退 text
