@@ -3,7 +3,8 @@ RewriteEngine On
 # ===== 直接访问闸 (2026-11-28) =====
 # tests/ 与 includes/ 下的 PHP 只供 CLI / require 使用；HTTP 直连一律 403。
 # includes/editor-shared.css|js 等静态资源不走这条规则，仍可被页面引用。
-RewriteCond %{REQUEST_URI} \.php$
+# 必须同时匹配 PATH_INFO 形态（tests/run.php/x），只匹配 \.php$ 会被绕过。
+RewriteCond %{REQUEST_URI} \.php(/|$) [NC]
 RewriteRule ^(?:tests|includes)/ - [F,L]
 
 # RSS Feed
